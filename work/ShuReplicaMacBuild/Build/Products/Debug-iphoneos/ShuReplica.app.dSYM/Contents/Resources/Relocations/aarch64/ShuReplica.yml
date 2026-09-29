@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Build/Products/Debug-iphoneos/ShuReplica.app/ShuReplica'
+relocations:     []
+...

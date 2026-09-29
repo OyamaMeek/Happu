@@ -1,0 +1,72 @@
+{
+  "buildCommand" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildOnly"
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "475f18bba8fcc531984a6b7aeae6749c75d292f74331dd4584566b72d42df8c1"
+    }
+  ],
+  "containerPath" : "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "iphoneos",
+      "sdk" : "iphoneos18.5",
+      "sdkVariant" : "iphoneos",
+      "supportedArchitectures" : [
+        "arm64e",
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Build/Products",
+      "derivedDataPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild",
+      "indexDataStoreFolderPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaMacBuild/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+          "CODE_SIGNING_ALLOWED" : "NO"
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "build",
+          "ASSETCATALOG_FILTER_FOR_DEVICE_MODEL" : "MacFamily20,1",
+          "ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION" : "18.7",
+          "ASSETCATALOG_FILTER_FOR_THINNING_DEVICE_CONFIGURATION" : "MacFamily20,1",
+          "BUILD_ACTIVE_RESOURCES_ONLY" : "YES",
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_XOJIT_PREVIEWS" : "YES",
+          "ONLY_ACTIVE_ARCH" : "YES",
+          "TARGET_DEVICE_IDENTIFIER" : "00008132-000168E62ED9801C",
+          "TARGET_DEVICE_MODEL" : "Mac16,12",
+          "TARGET_DEVICE_OS_VERSION" : "15.7.7",
+          "TARGET_DEVICE_PLATFORM_NAME" : "macosx"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

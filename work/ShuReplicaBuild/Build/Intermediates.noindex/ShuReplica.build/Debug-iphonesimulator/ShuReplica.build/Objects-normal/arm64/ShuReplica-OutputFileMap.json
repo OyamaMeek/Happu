@@ -1,0 +1,78 @@
+{
+  "" : {
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplica-master.dia",
+    "emit-module-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplica-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplica-master-emit-module.dia",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplica-master.swiftdeps"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/DownloadManager.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadManager~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/DownloadRequest.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadRequest~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/DownloadsView.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/DownloadsView~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/FileStore.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FileStore~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/FilesView.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/FilesView~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/MoreView.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/MoreView~partial.swiftmodule"
+  },
+  "/Users/oyamahappa/Documents/GitHub/Happu/ShuReplica/ShuReplicaApp.swift" : {
+    "const-values" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.swiftconstvalues",
+    "dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.d",
+    "diagnostics" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.dia",
+    "index-unit-output-path" : "/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.o",
+    "llvm-bc" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.bc",
+    "object" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.o",
+    "swift-dependencies" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp.swiftdeps",
+    "swiftmodule" : "/Users/oyamahappa/Documents/GitHub/Happu/work/ShuReplicaBuild/Build/Intermediates.noindex/ShuReplica.build/Debug-iphonesimulator/ShuReplica.build/Objects-normal/arm64/ShuReplicaApp~partial.swiftmodule"
+  }
+}
