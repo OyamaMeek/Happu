@@ -113,11 +113,9 @@ struct FileStore {
                     succeeded.append(item)
                 case .group:
                     try checkItem(item)
-                    let path = item.resolvingSymlinksInPath().path
-                    let firstComponent = path.dropFirst(root.path.count + 1).split(separator: "/").first
+                    let parent = item.deletingLastPathComponent().resolvingSymlinksInPath().path
                     let values = try item.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
-                    guard firstComponent != "Downloads", firstComponent != "共享",
-                          values.isRegularFile == true, values.isSymbolicLink != true,
+                    guard parent == root.path, values.isRegularFile == true, values.isSymbolicLink != true,
                           let category = WorkspaceCategory.forFile(item) else {
                         skipped.append(item)
                         continue

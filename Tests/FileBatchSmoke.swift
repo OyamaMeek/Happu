@@ -43,6 +43,16 @@ struct FileBatchSmoke {
         try assertBytes("outside", at: outside)
         assert(manager.fileExists(atPath: outsideLink.path))
 
+        let nestedFolder = try store.createFolder(named: "Other", in: root)
+        let nestedPhoto = nestedFolder.appendingPathComponent("nested-photo.PNG")
+        try Data("nested photo".utf8).write(to: nestedPhoto)
+        let nestedGroup = store.perform(.group, on: [nestedPhoto])
+        assert(nestedGroup.succeeded.isEmpty)
+        assert(nestedGroup.skipped == [nestedPhoto])
+        assert(nestedGroup.failures.isEmpty)
+        try assertBytes("nested photo", at: nestedPhoto)
+        assert(!manager.fileExists(atPath: root.appendingPathComponent("图片/nested-photo.PNG").path))
+
         let missing = root.appendingPathComponent("missing.txt")
         let copied = store.perform(.copy(to: root.appendingPathComponent("文稿")), on: [unknown, missing])
         assert(copied.succeeded.count == 1)
