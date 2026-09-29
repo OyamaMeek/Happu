@@ -7,6 +7,12 @@ struct FileStore {
     init(root: URL) throws {
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         self.root = root.resolvingSymlinksInPath()
+        for name in WorkspaceCategory.allCases.map(\.rawValue) + ["Downloads", "共享"] {
+            try FileManager.default.createDirectory(
+                at: self.root.appendingPathComponent(name, isDirectory: true),
+                withIntermediateDirectories: true
+            )
+        }
     }
 
     func contents(of folder: URL) throws -> [URL] {

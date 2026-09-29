@@ -13,6 +13,8 @@ struct FileStoreSmoke {
         try "hello".write(to: source, atomically: true, encoding: .utf8)
 
         let store = try FileStore(root: root)
+        let initialDirectoryCount = try store.contents(of: root).count
+        assert(initialDirectoryCount == 11)
         let folder = try store.createFolder(named: "Notes", in: root)
         let imported = try store.importFile(source, into: folder)
         let contents = try String(contentsOf: imported, encoding: .utf8)
@@ -27,10 +29,10 @@ struct FileStoreSmoke {
         let unchangedLocation = try store.move(moved, to: root)
         assert(unchangedLocation == moved)
         let beforeDelete = try store.contents(of: root)
-        assert(beforeDelete.count == 3)
+        assert(beforeDelete.count == initialDirectoryCount + 3)
         try store.delete(copied)
         let afterDelete = try store.contents(of: root)
-        assert(afterDelete.count == 2)
+        assert(afterDelete.count == initialDirectoryCount + 2)
         let downloaded = try store.importFile(source, into: root, named: "download.txt")
         assert(downloaded.lastPathComponent == "download.txt")
         print("FileStore smoke passed")
