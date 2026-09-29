@@ -59,6 +59,21 @@ struct FileStore {
         return destination
     }
 
+    func importFiles(_ sources: [URL], into folder: URL) -> FileBatchResult {
+        var succeeded: [URL] = []
+        var failures: [(url: URL, message: String)] = []
+
+        for source in sources {
+            do {
+                succeeded.append(try importFile(source, into: folder))
+            } catch {
+                failures.append((url: source, message: error.localizedDescription))
+            }
+        }
+
+        return FileBatchResult(succeeded: succeeded, skipped: [], failures: failures)
+    }
+
     func rename(_ item: URL, to name: String) throws -> URL {
         try checkItem(item)
         let destination = item.deletingLastPathComponent().appendingPathComponent(try validName(name))
