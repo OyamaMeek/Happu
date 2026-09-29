@@ -9,6 +9,6 @@
 
 ## 本次结果
 
-- 三个自检均通过；下载测试使用回环地址上的真实 Python HTTP 服务。
-- generic iOS Simulator 与 Device Debug 构建退出码 0；设备版 `.app` 包信息已核对。
-- 沙箱内 CoreSimulatorService 连接被拒绝；只读检查 `simctl list runtimes` 为空，未运行或截图验证 UI。
+- 上一版的三个自检和两种构建已通过；本次改动尚未运行新的测试。
+- 本次只读检查确认 Xcode 27.0；`simctl list runtimes` 因 CoreSimulatorService 连接失败而退出 1。
+- 后续每个功能使用真实文件或请求验证；能运行模拟器时再验证界面。未获视觉验证要求，不主动截图。
