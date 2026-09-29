@@ -1,0 +1,123 @@
+import Foundation
+
+struct FileStore {
+    let root: URL
+    private let manager = FileManager.default
+
+    init(root: URL) throws {
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        self.root = root.resolvingSymlinksInPath()
+    }
+
+    func contents(of folder: URL) throws -> [URL] {
+        try checkInside(folder)
+        return try manager.contentsOfDirectory(
+            at: folder,
+            includingPropertiesForKeys: [.isDirectoryKey],
+            options: [.skipsHiddenFiles]
+        ).sorted {
+            let leftFolder = (try? $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+            let rightFolder = (try? $1.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+            return leftFolder == rightFolder
+                ? $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending
+                : leftFolder
+        }
+    }
+
+    func createFolder(named name: String, in folder: URL) throws -> URL {
+        try checkInside(folder)
+        let destination = folder.appendingPathComponent(try validName(name), isDirectory: true)
+        try manager.createDirectory(at: destination, withIntermediateDirectories: false)
+        return destination
+    }
+
+    func importFile(_ source: URL, into folder: URL, named name: String? = nil) throws -> URL {
+        try checkInside(folder)
+        let accessing = source.startAccessingSecurityScopedResource()
+        defer { if accessing { source.stopAccessingSecurityScopedResource() } }
+        let destination = uniqueDestination(for: try validName(name ?? source.lastPathComponent), in: folder)
+        try manager.copyItem(at: source, to: destination)
+        return destination
+    }
+
+    func rename(_ item: URL, to name: String) throws -> URL {
+        try checkItem(item)
+        let destination = item.deletingLastPathComponent().appendingPathComponent(try validName(name))
+        if destination == item { return item }
+        guard !manager.fileExists(atPath: destination.path) else {
+            throw CocoaError(.fileWriteFileExists)
+        }
+        try manager.moveItem(at: item, to: destination)
+        return destination
+    }
+
+    func copy(_ item: URL, to folder: URL) throws -> URL {
+        try checkItem(item)
+        try checkInside(folder)
+        try checkNotDescendant(folder, of: item)
+        let destination = uniqueDestination(for: item.lastPathComponent, in: folder)
+        try manager.copyItem(at: item, to: destination)
+        return destination
+    }
+
+    func move(_ item: URL, to folder: URL) throws -> URL {
+        try checkItem(item)
+        try checkInside(folder)
+        if folder.resolvingSymlinksInPath() == item.deletingLastPathComponent().resolvingSymlinksInPath() {
+            return item
+        }
+        try checkNotDescendant(folder, of: item)
+        let destination = uniqueDestination(for: item.lastPathComponent, in: folder)
+        try manager.moveItem(at: item, to: destination)
+        return destination
+    }
+
+    func delete(_ item: URL) throws {
+        try checkItem(item)
+        try manager.removeItem(at: item)
+    }
+
+    private func validName(_ name: String) throws -> String {
+        let value = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !value.isEmpty, value != ".", value != "..", !value.contains("/"), !value.contains("\0") else {
+            throw CocoaError(.fileWriteInvalidFileName)
+        }
+        return value
+    }
+
+    private func checkInside(_ url: URL) throws {
+        let path = url.resolvingSymlinksInPath().path
+        guard path == root.path || path.hasPrefix(root.path + "/") else {
+            throw CocoaError(.fileReadNoPermission)
+        }
+    }
+
+    private func checkItem(_ url: URL) throws {
+        try checkInside(url)
+        guard url.resolvingSymlinksInPath().path != root.path else {
+            throw CocoaError(.fileWriteNoPermission)
+        }
+    }
+
+    private func checkNotDescendant(_ folder: URL, of item: URL) throws {
+        let path = folder.resolvingSymlinksInPath().path
+        let source = item.resolvingSymlinksInPath().path
+        guard path != source, !path.hasPrefix(source + "/") else {
+            throw CocoaError(.fileWriteNoPermission)
+        }
+    }
+
+    private func uniqueDestination(for name: String, in folder: URL) -> URL {
+        let proposed = folder.appendingPathComponent(name)
+        guard manager.fileExists(atPath: proposed.path) else { return proposed }
+        let ext = (name as NSString).pathExtension
+        let stem = (name as NSString).deletingPathExtension
+        var index = 2
+        while true {
+            let numbered = ext.isEmpty ? "\(stem) \(index)" : "\(stem) \(index).\(ext)"
+            let candidate = folder.appendingPathComponent(numbered)
+            if !manager.fileExists(atPath: candidate.path) { return candidate }
+            index += 1
+        }
+    }
+}
