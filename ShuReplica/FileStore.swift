@@ -1,5 +1,18 @@
 import Foundation
 
+enum FileBatchAction {
+    case copy(to: URL)
+    case move(to: URL)
+    case delete
+    case group
+}
+
+struct FileBatchResult {
+    let succeeded: [URL]
+    let skipped: [URL]
+    let failures: [(url: URL, message: String)]
+}
+
 struct FileStore {
     let root: URL
     private let manager = FileManager.default
@@ -81,6 +94,42 @@ struct FileStore {
     func delete(_ item: URL) throws {
         try checkItem(item)
         try manager.removeItem(at: item)
+    }
+
+    func perform(_ action: FileBatchAction, on items: [URL]) -> FileBatchResult {
+        var succeeded: [URL] = []
+        var skipped: [URL] = []
+        var failures: [(url: URL, message: String)] = []
+
+        for item in items {
+            do {
+                switch action {
+                case .copy(let folder):
+                    succeeded.append(try copy(item, to: folder))
+                case .move(let folder):
+                    succeeded.append(try move(item, to: folder))
+                case .delete:
+                    try delete(item)
+                    succeeded.append(item)
+                case .group:
+                    try checkItem(item)
+                    let path = item.resolvingSymlinksInPath().path
+                    let firstComponent = path.dropFirst(root.path.count + 1).split(separator: "/").first
+                    let values = try item.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+                    guard firstComponent != "Downloads", firstComponent != "共享",
+                          values.isRegularFile == true, values.isSymbolicLink != true,
+                          let category = WorkspaceCategory.forFile(item) else {
+                        skipped.append(item)
+                        continue
+                    }
+                    succeeded.append(try move(item, to: root.appendingPathComponent(category.rawValue, isDirectory: true)))
+                }
+            } catch {
+                failures.append((url: item, message: error.localizedDescription))
+            }
+        }
+
+        return FileBatchResult(succeeded: succeeded, skipped: skipped, failures: failures)
     }
 
     private func validName(_ name: String) throws -> String {
