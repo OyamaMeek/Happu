@@ -1,5 +1,6 @@
 import SwiftUI
 import QuickLook
+import UIKit
 import UniformTypeIdentifiers
 
 struct FilesHomeView: View {
@@ -69,11 +70,12 @@ struct FolderView: View {
     @State private var result: FileBatchResult?
     @State private var selecting = false
     @State private var selection: Set<URL> = []
+    @State private var shareRequest: FileShareRequest?
 
     private enum Edit { case folder, rename(URL) }
     private enum Transfer { case copy([URL]), move([URL]) }
 
-    private var selectedItems: [URL] { visibleItems.filter { selection.contains($0) } }
+    private var selectedItems: [URL] { items.filter { selection.contains($0) } }
 
     private var visibleItems: [URL] {
         let filtered = items.filter { search.isEmpty || $0.lastPathComponent.localizedCaseInsensitiveContains(search) }
@@ -97,7 +99,7 @@ struct FolderView: View {
                             }
                             Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy([url]) }
                             Button("移动到…", systemImage: "folder") { transfer = .move([url]) }
-                            if !isFolder(url) {
+                            if store.canGroup(url) {
                                 Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: [url]) }
                             }
                             ShareLink(item: url) { Label("分享", systemImage: "square.and.arrow.up") }
@@ -136,22 +138,25 @@ struct FolderView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         Button("全选") { selection.formUnion(visibleItems) }
-                        Button("反选") { selection = Set(visibleItems).subtracting(selection) }
+                        Button("反选") { selection.formSymmetricDifference(visibleItems) }
                         Button("取消选择") { selection.removeAll() }
                     } label: { Label("选择", systemImage: "checkmark.circle") }
                     .accessibilityLabel("选择")
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Text("已选 \(selection.count) 项")
+                    Text("已选 \(selectedItems.count) 项")
                     Spacer()
                     Menu {
                         Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy(selectedItems) }
                         Button("移动到…", systemImage: "folder") { transfer = .move(selectedItems) }
                         Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: selectedItems) }
-                        ShareLink(items: selectedItems) { Label("分享", systemImage: "square.and.arrow.up") }
+                            .disabled(selectedItems.isEmpty || !selectedItems.allSatisfy { store.canGroup($0) })
+                        Button("分享", systemImage: "square.and.arrow.up") {
+                            shareRequest = FileShareRequest(items: selectedItems)
+                        }
                         Button("删除", systemImage: "trash", role: .destructive) { toDelete = selectedItems }
                     } label: { Label("操作", systemImage: "ellipsis.circle") }
-                    .disabled(selection.isEmpty)
+                    .disabled(selectedItems.isEmpty)
                     .accessibilityLabel("批量操作")
                 }
             }
@@ -187,6 +192,9 @@ struct FolderView: View {
                 }
                 transfer = nil
             }
+        }
+        .sheet(item: $shareRequest, onDismiss: finishSharing) { request in
+            FileShareSheet(items: request.items) { shareRequest = nil }
         }
         .alert("操作失败", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好") { errorMessage = nil }
@@ -269,6 +277,11 @@ struct FolderView: View {
         reload()
     }
 
+    private func finishSharing() {
+        selection.removeAll()
+        reload()
+    }
+
     private func reload() {
         do {
             items = try store.contents(of: folder)
@@ -276,6 +289,26 @@ struct FolderView: View {
         }
         catch { errorMessage = error.localizedDescription }
     }
+}
+
+private struct FileShareRequest: Identifiable {
+    let id = UUID()
+    let items: [URL]
+}
+
+private struct FileShareSheet: UIViewControllerRepresentable {
+    let items: [URL]
+    let onComplete: () -> Void
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, _, _, _ in
+            DispatchQueue.main.async(execute: onComplete)
+        }
+        return controller
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
 
 private extension FileBatchResult {

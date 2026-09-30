@@ -111,6 +111,10 @@ struct FileStore {
         try manager.removeItem(at: item)
     }
 
+    func canGroup(_ item: URL) -> Bool {
+        (try? groupingCategory(for: item)) != nil
+    }
+
     func perform(_ action: FileBatchAction, on items: [URL]) -> FileBatchResult {
         var succeeded: [URL] = []
         var skipped: [URL] = []
@@ -127,15 +131,7 @@ struct FileStore {
                     try delete(item)
                     succeeded.append(item)
                 case .group:
-                    try checkItem(item)
-                    let parent = item.deletingLastPathComponent().resolvingSymlinksInPath().path
-                    let values = try item.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
-                    let excluded = ["Downloads", "共享"].contains { name in
-                        let path = root.appendingPathComponent(name, isDirectory: true).path
-                        return parent == path || parent.hasPrefix(path + "/")
-                    }
-                    guard !excluded, values.isRegularFile == true, values.isSymbolicLink != true,
-                          let category = WorkspaceCategory.forFile(item) else {
+                    guard let category = try groupingCategory(for: item) else {
                         skipped.append(item)
                         continue
                     }
@@ -147,6 +143,18 @@ struct FileStore {
         }
 
         return FileBatchResult(succeeded: succeeded, skipped: skipped, failures: failures)
+    }
+
+    private func groupingCategory(for item: URL) throws -> WorkspaceCategory? {
+        try checkItem(item)
+        let parent = item.deletingLastPathComponent().resolvingSymlinksInPath().path
+        let values = try item.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
+        let excluded = ["Downloads", "共享"].contains { name in
+            let path = root.appendingPathComponent(name, isDirectory: true).path
+            return parent == path || parent.hasPrefix(path + "/")
+        }
+        guard !excluded, values.isRegularFile == true, values.isSymbolicLink != true else { return nil }
+        return WorkspaceCategory.forFile(item)
     }
 
     private func validName(_ name: String) throws -> String {

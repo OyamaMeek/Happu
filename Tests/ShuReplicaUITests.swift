@@ -25,6 +25,17 @@ final class ShuReplicaUITests: XCTestCase {
         app.buttons["选择"].tap()
         XCTAssertTrue(app.buttons["全选"].waitForExistence(timeout: 5))
         app.buttons["全选"].tap()
+        XCTAssertEqual(app.buttons[folderName].value as? String, "已选择")
+        let count = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "已选 ")).firstMatch
+        let selectedCount = count.label
+        let search = app.searchFields.firstMatch
+        search.tap()
+        search.typeText(folderName)
+        XCTAssertEqual(count.label, selectedCount)
+        app.buttons["选择"].tap()
+        app.buttons["反选"].tap()
+        XCTAssertEqual(app.buttons[folderName].value as? String, "未选择")
+        XCTAssertNotEqual(count.label, selectedCount)
         app.buttons["选择"].tap()
         XCTAssertTrue(app.buttons["取消选择"].waitForExistence(timeout: 5))
         app.buttons["取消选择"].tap()

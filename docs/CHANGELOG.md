@@ -37,3 +37,23 @@
 - **Git 提交**：`cd740b2813a212fda9f35cc9275d2ac9631cd290 feat: add Shu workspace controls with native glass navigation`。
 
 ---
+
+## [2026-09-30 16:11] 文件选择与归组审查修复
+
+- **需求/问题描述**：
+  > 修复搜索后批量操作集合不一致、无效归组入口及批量分享完成后未清理选择。
+
+- **实际实现的功能与改动**：
+  - 批量计数、操作启用和操作对象统一使用完整目录的选择集合；反选只切换可见行。
+  - 页面与 `FileStore` 共用归组资格判断，归组入口只对可分类普通文件开放；真实文件测试覆盖 Downloads 和共享的子目录。
+  - 批量分享使用系统 `UIActivityViewController` 的完成回调，结束或取消后刷新并清空选择；UI 测试增加搜索与选择状态断言。
+  - [测试/验证]：五项 Swift 自检、generic Simulator 与 Device 构建、UI 测试目标编译均退出 0；XCTest runner 本轮未运行，真实触控行为未验证。
+
+- **涉及文件**：
+  - `ShuReplica/FilesView.swift`、`ShuReplica/FileStore.swift`
+  - `Tests/FileBatchSmoke.swift`、`Tests/ShuReplicaUITests.swift`
+  - `memory/verify.md`、`docs/CHANGELOG.md`
+
+- **Git 提交**：待提交。
+
+---
