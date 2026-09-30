@@ -6,9 +6,9 @@
 
 ## 实施
 
-1. 用户已批准第一阶段规格 `docs/superpowers/specs/2026-09-29-shu-file-workspace-liquid-glass-design.md`；待审阅实施计划 `docs/superpowers/plans/2026-09-29-shu-file-workspace-liquid-glass.md`。
-2. 扩展文件工作区、批量整理、导入导出和 Liquid Glass 界面。
-3. 补齐常见归档、媒体与 PDF 处理；少见格式在入口明确提示。
-4. 补齐下载、传输与设置，并对各功能运行真实行为检查。
+1. 用户已批准第一阶段规格及实施计划 `docs/superpowers/plans/2026-09-29-shu-file-workspace-liquid-glass.md`，选择由子代理分步执行与复查。
+2. 第一阶段文件工作区、批量整理、系统导入分享及系统玻璃导航已实施；UI 交互测试受 XCTest runner 启动阻碍。
+3. 下一阶段补齐常见归档、媒体与 PDF 处理；少见格式在入口明确提示。
+4. 后续补齐下载增强、传输与设置，并对各功能运行真实行为检查。
 
-完整目标拆为文件工作区与 Liquid Glass、格式处理、下载增强、传输与设置四个可验证阶段；第一阶段实施计划已写入上述文件。
+完整目标拆为文件工作区与 Liquid Glass、格式处理、下载增强、传输与设置四个可验证阶段；第一阶段已完成代码与构建复查，UI 交互验收仍待 runner 可运行。

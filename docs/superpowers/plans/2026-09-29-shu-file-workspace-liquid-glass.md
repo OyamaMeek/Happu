@@ -4,6 +4,8 @@
 
 **Goal:** 完成 Shu Replica 第一阶段的真实文件归组、批量整理、系统导入导出和 iOS 26 原生 Liquid Glass 导航。
 
+**执行状态（2026-09-30）：** Tasks 1–4 的代码、真实文件测试、构建与提交已完成，审查发现均已修正；Task 4 的模拟器交互验收仍待 XCTest runner 运行测试方法。下方复选框保留原计划步骤，实际执行记录见 `memory/progress.md`、`memory/verify.md` 与 `docs/CHANGELOG.md`。
+
 **Architecture:** 沿用现有 SwiftUI 三栏和 `FileStore`，新增一个共享的文件分类定义，并让批量操作复用现有单文件方法。页面只持有选择状态，操作后重新读取真实目录；系统 `TabView`、工具栏和底部操作栏提供 iOS 26 的玻璃外观。
 
 **Tech Stack:** Swift 5、SwiftUI、Foundation、UniformTypeIdentifiers、Xcode 27；无新增第三方依赖。
@@ -14,7 +16,7 @@
 
 - 部署目标保持 iOS 18.0；iOS 26 上使用系统 Liquid Glass，旧系统使用对应系统外观。
 - 内建分类为文稿、图片、视频、音频、电子书、压缩文档、镜像文件、脚本配置、工具配置；`Downloads` 和“共享”保持独立。
-- 归组只移动普通文件到工作区根目录的分类文件夹，不递归，不移动 `Downloads` 或“共享”中的内容；未知类型保留原位置。
+- 归组可处理工作区根目录及其它普通文件夹中明确选择的直接子文件，目标为工作区根目录的分类文件夹；不递归，不移动 `Downloads` 或“共享”中的内容；未知类型保留原位置。
 - 文件写入不能覆盖已有内容；批量操作必须显示部分成功和具体失败项。
 - 不新增第三方依赖；不主动截图或进行视觉检查。
 
@@ -80,8 +82,8 @@
 - [ ] **Step 1: Wire the approved interactions.** Remove directory creation from `onAppear`; add root grouping, edit mode, all/invert selection, batch copy/move/share/delete/group, and per-item result feedback. Use system toolbar items including a bottom action group, with accessible labels. Keep existing single-file actions and QuickLook.
 - [ ] **Step 2: Verify the full behavior suite.** Re-run Tasks 1–3 smoke commands. Compile `DownloadRequestSmoke` from `ShuReplica/DownloadRequest.swift Tests/DownloadRequestSmoke.swift`, and `DownloadManagerSmoke` from `ShuReplica/WorkspaceCategory.swift ShuReplica/FileStore.swift ShuReplica/DownloadRequest.swift ShuReplica/DownloadManager.swift Tests/DownloadManagerSmoke.swift`, each to `DerivedData/<test-name>` and with `-module-cache-path DerivedData/ModuleCache`. Run the request smoke directly; serve `Tests/fixtures` with `/usr/bin/python3 -m http.server 8765 --bind 127.0.0.1 --directory Tests/fixtures`, run the manager smoke with `DerivedData/TestRuns/DownloadManagerSmoke`, then stop the server. Expect all processes exit 0; record commands and exits in `memory/verify.md`.
 - [ ] **Step 3: Verify both iOS builds.** Run `xcodebuild -project ShuReplica.xcodeproj -scheme ShuReplica -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath DerivedData/ShuReplica CODE_SIGNING_ALLOWED=NO build`, then `xcodebuild -project ShuReplica.xcodeproj -scheme ShuReplica -configuration Debug -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath DerivedData/ShuReplica CODE_SIGNING_ALLOWED=NO build`; expect both exit 0 and iOS 18.0 deployment target.
-- [ ] **Step 4: Check runtime availability.** Run `xcrun simctl list runtimes`; when a runtime works, exercise tabs, navigation, selection and import on a simulator. If CoreSimulatorService still fails, record that UI runtime behavior and visual appearance remain unverified. No screenshots without explicit user request.
+- [ ] **Step 4: Complete interaction verification.** The app installed and launched on iPhone 18 Pro, while XCTest stopped before entering a test method. Once the runner works, exercise tabs, navigation, selection, import, and dynamic type on a simulator. Record results separately from build and launch checks. No screenshots without explicit user request.
 - [ ] **Step 5: Record and commit.** Update `docs/CHANGELOG.md` with actual results and“待提交”, then stage only this task’s files and documentation. Commit `feat: add Shu workspace controls with native glass navigation`.
 - [ ] **Step 6: Save the actual commit hash.** Replace“待提交” in the changelog with the Step 5 hash and commit that documentation update as `docs: record Shu workspace commit`.
 
-SwiftUI view wiring in Task 4 is the explicit test-first exception: the current machine has no usable simulator service, so its platform presentation is checked by both builds and a device/simulator run when available. File-changing behavior is covered by Tasks 1–3 with failing tests before implementation.
+Task 4 added an XCUITest target after the simulator became accessible. The test target compiles; on this machine, the runner stopped before entering any test method, so UI interaction remains unverified. File-changing behavior was verified with failing real-file tests before implementation.
