@@ -34,6 +34,6 @@
   - `ShuReplica.xcodeproj/project.pbxproj`、`Tests/FileBatchSmoke.swift`、`Tests/ShuReplicaUITests.swift`
   - `memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
 
-- **Git 提交**：待提交。
+- **Git 提交**：`cd740b2813a212fda9f35cc9275d2ac9631cd290 feat: add Shu workspace controls with native glass navigation`。
 
 ---
