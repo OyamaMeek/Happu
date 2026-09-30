@@ -189,6 +189,6 @@
   - `docs/SHU_ANALYSIS.md`、`docs/superpowers/specs/2026-09-30-shu-zip-design.md`、`docs/superpowers/plans/2026-09-30-shu-zip.md`
   - `memory/agents.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`、`docs/CHANGELOG.md`
   - `context/2026/09/30/22-22-33/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`9ba29f662fa1d22908ad29f3202811073e34d1ec docs: record ZIP delivery and verification`；普通推送被自动审批拒绝，原因是文档含项目内部信息和完整可见对话归档，等待用户明确授权将其发送到当前 GitHub 远端。本行通过后续文档提交保存。
 
 ---
