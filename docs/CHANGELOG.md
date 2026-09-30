@@ -189,6 +189,34 @@
   - `docs/SHU_ANALYSIS.md`、`docs/superpowers/specs/2026-09-30-shu-zip-design.md`、`docs/superpowers/plans/2026-09-30-shu-zip.md`
   - `memory/agents.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`、`docs/CHANGELOG.md`
   - `context/2026/09/30/22-22-33/对话.md`
-- **Git 提交**：`9ba29f662fa1d22908ad29f3202811073e34d1ec docs: record ZIP delivery and verification`；普通推送被自动审批拒绝，原因是文档含项目内部信息和完整可见对话归档，等待用户明确授权将其发送到当前 GitHub 远端。本行通过后续文档提交保存。
+- **Git 提交**：`9ba29f662fa1d22908ad29f3202811073e34d1ec docs: record ZIP delivery and verification`；初次推送经自动审批拒绝，用户随后明确授权，最终与 `9f9cc19d9645ee79b7fdd1ac05190287d936a1ec` 一起普通推送到 `origin/main`。
+
+---
+
+## [2026-09-30 22:40] 文档推送授权与会话续档
+
+- **需求/问题描述**：
+  > 用户明确授权将 ZIP 阶段最终文档与可见对话归档推送到已配置的 GitHub 远端。
+- **实际实现的功能与改动**：
+  - 按授权普通推送此前本地提交的文档哈希与会话归档至 origin/main；更新本地开发进度，并续存包含授权及最终推送结果的可见消息归档。
+  - [测试/验证]：`git push` 退出 0；origin/main 更新至 `9f9cc19d9645ee79b7fdd1ac05190287d936a1ec`。最终文档提交 `9f9cc19d` 使分支与远端同步；工作区剩余用户 AGENTS.md 修改及 Xcode 未跟踪目录。
+- **涉及文件**：
+  - `docs/CHANGELOG.md`、`memory/progress.md`
+  - `context/2026/09/30/22-40-56/对话.md`
+- **Git 提交**：待提交。
+
+---
+
+## [2026-09-30 22:42] 推送结果续档
+
+- **需求/问题描述**：
+  > 记录用户授权后的普通推送结果，并按任务交付规则归档后续可见消息。
+- **实际实现的功能与改动**：
+  - 补存包含授权与推送结果的完整可见消息快照。
+  - [测试/验证]：归档文件非空，59 条可见消息按原顺序写入；远端核对见上一条记录。
+- **涉及文件**：
+  - `context/2026/09/30/22-42-45/对话.md`
+  - `docs/CHANGELOG.md`
+- **Git 提交**：待提交。
 
 ---
