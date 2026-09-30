@@ -109,3 +109,21 @@
 - **Git 提交**：待提交。
 
 ---
+
+## [2026-09-30 19:17] ZIP 服务与真实归档自检
+
+- **需求/问题描述**：
+  > 在 main 实现 ZIP 打包、普通及密码解压，保留源文件，同名编号，失败和取消不发布部分结果。
+- **实际实现的功能与改动**：
+  - 新增同步 ArchiveService，使用 SSZipArchive 2.6.0 精确版本；递归保留中文、隐藏文件、空目录，独立隐藏目录暂存、验证并移动发布。
+  - 拒绝越界、根目录、符号链接、重复和重叠输入；解压使用库的路径净化，在写入前拒绝链接并核对实际输出大小。取消在条目边界及最终发布前检查，失败明确清理。
+  - 库的实例写入函数未检查每次底层写入结果，打包后在暂存内解压并核对实际源文件内容，完成后才发布。
+  - [测试/验证]：指定 SwiftPM 自检 RED 因缺失 ArchiveService 退出 1；实现后完整真实自检和最终复验均退出 0。覆盖嵌套中文、隐藏和空目录、标准 zipfile 与系统 unzip、系统密码 ZIP、错误密码、损坏数据、碰撞保护、非法路径与链接、目的位于源目录内部、预取消／处理中／最后条目取消及清理。
+  - [测试/验证]：指定 generic iOS Simulator 构建退出 0，iOS 18.0 部署目标保持；未运行触控、截图或 XCTest runner。磁盘耗尽和系统清理权限故障未实际诱发。
+- **涉及文件**：
+  - `ShuReplica/ArchiveService.swift`、`ShuReplica.xcodeproj/project.pbxproj`
+  - `Package.swift`、`Package.resolved`、`.gitignore`
+  - `Tests/ArchiveSmoke.swift`、`Tests/make_archive_fixtures.py`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
