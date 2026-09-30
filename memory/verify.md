@@ -1,5 +1,7 @@
 # 验证标准
 
+- ZIP 本阶段真实自检：`swift run --scratch-path DerivedData/ArchivePackage ArchiveSmoke DerivedData/TestRuns/ArchiveSmoke`；覆盖目录、中文、空目录、密码、错误、同名、越界、取消与清理，具体实际结果待执行后补记。
+
 - `FileStoreSmoke` 在项目内被忽略的 `DerivedData/TestRuns/` 中真实创建、导入、移动、复制、重命名、删除文件，结果符合断言。
 - `xcodebuild` 针对 generic iOS Simulator 编译成功，代码签名关闭。
 - 下载输入仅接受 HTTP(S) URL；进度、暂停/继续与完成文件由真实 URLSession 回调驱动。

@@ -93,3 +93,19 @@
 - **Git 提交**：`613b2cf9e355759bba28fd81af0d1a6d4e6bef47 docs: add Shu replica handoff`。
 
 ---
+
+## [2026-09-30 18:44] main 续接 ZIP 归档开发
+
+- **需求/问题描述**：
+  > 读取 HANDOFF/20260930183017.md，直接在 main 工作目录开发并自动推送远端仓库。
+- **实际实现的功能与改动**：
+  - main 快进合入此前已完成的开发和交接提交；保留用户 AGENTS.md 改动与 Xcode 未跟踪目录。
+  - 写出 ZIP 打包、普通／密码解压的规格及两步实施计划，明确安全暂存、路径、取消和真实测试边界。
+  - [测试/验证]：Git 祖先关系、main upstream 和 origin fetch 核对完成；本次文档自查，不声称产品测试通过。
+- **涉及文件**：
+  - `docs/superpowers/specs/2026-09-30-shu-zip-design.md`
+  - `docs/superpowers/plans/2026-09-30-shu-zip.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
