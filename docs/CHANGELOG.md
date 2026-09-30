@@ -90,6 +90,6 @@
   - `docs/CHANGELOG.md`
   - `context/` 中本会话的可见消息归档
 
-- **Git 提交**：待提交。
+- **Git 提交**：`613b2cf9e355759bba28fd81af0d1a6d4e6bef47 docs: add Shu replica handoff`。
 
 ---
