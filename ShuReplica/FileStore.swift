@@ -130,7 +130,11 @@ struct FileStore {
                     try checkItem(item)
                     let parent = item.deletingLastPathComponent().resolvingSymlinksInPath().path
                     let values = try item.resourceValues(forKeys: [.isRegularFileKey, .isSymbolicLinkKey])
-                    guard parent == root.path, values.isRegularFile == true, values.isSymbolicLink != true,
+                    let excluded = ["Downloads", "共享"].contains { name in
+                        let path = root.appendingPathComponent(name, isDirectory: true).path
+                        return parent == path || parent.hasPrefix(path + "/")
+                    }
+                    guard !excluded, values.isRegularFile == true, values.isSymbolicLink != true,
                           let category = WorkspaceCategory.forFile(item) else {
                         skipped.append(item)
                         continue

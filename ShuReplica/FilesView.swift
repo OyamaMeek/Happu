@@ -5,24 +5,7 @@ import UniformTypeIdentifiers
 struct FilesHomeView: View {
     let store: FileStore
     @State private var errorMessage: String?
-
-    private struct Shortcut: Identifiable {
-        let name: String
-        let symbol: String
-        var id: String { name }
-    }
-
-    private let categories = [
-        Shortcut(name: "文稿", symbol: "doc.text"),
-        Shortcut(name: "图片", symbol: "photo"),
-        Shortcut(name: "视频", symbol: "film"),
-        Shortcut(name: "音频", symbol: "waveform"),
-        Shortcut(name: "电子书", symbol: "books.vertical"),
-        Shortcut(name: "压缩文档", symbol: "archivebox"),
-        Shortcut(name: "镜像文件", symbol: "opticaldisc"),
-        Shortcut(name: "脚本配置", symbol: "chevron.left.forwardslash.chevron.right"),
-        Shortcut(name: "工具配置", symbol: "wrench.and.screwdriver")
-    ]
+    @State private var result: FileBatchResult?
 
     var body: some View {
         List {
@@ -38,26 +21,34 @@ struct FilesHomeView: View {
                 } label: { Label("共享", systemImage: "square.and.arrow.up") }
             }
             Section("文件分类") {
-                ForEach(categories) { category in
+                ForEach(WorkspaceCategory.allCases, id: \.self) { category in
                     NavigationLink {
-                        FolderView(store: store, folder: store.root.appendingPathComponent(category.name))
-                    } label: { Label(category.name, systemImage: category.symbol) }
+                        FolderView(store: store, folder: store.root.appendingPathComponent(category.rawValue))
+                    } label: { Label(category.rawValue, systemImage: category.systemImage) }
                 }
             }
         }
         .navigationTitle("文件")
-        .onAppear {
-            do {
-                for name in categories.map(\.name) + ["共享"] {
-                    try FileManager.default.createDirectory(
-                        at: store.root.appendingPathComponent(name), withIntermediateDirectories: true
-                    )
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("一键归组", systemImage: "square.grid.2x2") {
+                    do {
+                        let files = try store.contents(of: store.root).filter {
+                            (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory != true
+                        }
+                        result = store.perform(.group, on: files)
+                    }
+                    catch { errorMessage = error.localizedDescription }
                 }
-            } catch { errorMessage = error.localizedDescription }
+                .accessibilityLabel("一键归组")
+            }
         }
-        .alert("无法创建工作区", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+        .alert("操作失败", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好") { errorMessage = nil }
         } message: { Text(errorMessage ?? "") }
+        .alert("归组结果", isPresented: Binding(get: { result != nil }, set: { if !$0 { result = nil } })) {
+            Button("好") { result = nil }
+        } message: { Text(result?.message ?? "") }
     }
 }
 
@@ -72,12 +63,17 @@ struct FolderView: View {
     @State private var importing = false
     @State private var edit: Edit?
     @State private var editName = ""
-    @State private var toDelete: URL?
+    @State private var toDelete: [URL] = []
     @State private var transfer: Transfer?
     @State private var errorMessage: String?
+    @State private var result: FileBatchResult?
+    @State private var selecting = false
+    @State private var selection: Set<URL> = []
 
     private enum Edit { case folder, rename(URL) }
-    private enum Transfer { case copy(URL), move(URL) }
+    private enum Transfer { case copy([URL]), move([URL]) }
+
+    private var selectedItems: [URL] { visibleItems.filter { selection.contains($0) } }
 
     private var visibleItems: [URL] {
         let filtered = items.filter { search.isEmpty || $0.lastPathComponent.localizedCaseInsensitiveContains(search) }
@@ -94,14 +90,19 @@ struct FolderView: View {
             ForEach(visibleItems, id: \.self) { url in
                 itemView(url)
                     .contextMenu {
-                        Button("重命名", systemImage: "pencil") {
-                            editName = url.lastPathComponent
-                            edit = .rename(url)
+                        if !selecting {
+                            Button("重命名", systemImage: "pencil") {
+                                editName = url.lastPathComponent
+                                edit = .rename(url)
+                            }
+                            Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy([url]) }
+                            Button("移动到…", systemImage: "folder") { transfer = .move([url]) }
+                            if !isFolder(url) {
+                                Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: [url]) }
+                            }
+                            ShareLink(item: url) { Label("分享", systemImage: "square.and.arrow.up") }
+                            Button("删除", systemImage: "trash", role: .destructive) { toDelete = [url] }
                         }
-                        Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy(url) }
-                        Button("移动到…", systemImage: "folder") { transfer = .move(url) }
-                        ShareLink(item: url) { Label("分享", systemImage: "square.and.arrow.up") }
-                        Button("删除", systemImage: "trash", role: .destructive) { toDelete = url }
                     }
             }
         }
@@ -115,6 +116,13 @@ struct FolderView: View {
         .navigationBarTitleDisplayMode(folder == store.root ? .large : .inline)
         .searchable(text: $search, prompt: "搜索当前文件夹")
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button(selecting ? "完成" : "编辑") {
+                    selecting.toggle()
+                    selection.removeAll()
+                }
+                .accessibilityLabel(selecting ? "完成" : "编辑")
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button("导入文件", systemImage: "square.and.arrow.down") { importing = true }
@@ -122,14 +130,37 @@ struct FolderView: View {
                         editName = ""
                         edit = .folder
                     }
-                } label: { Image(systemName: "plus") }
+                } label: { Image(systemName: "plus").accessibilityLabel("新增") }
+            }
+            if selecting {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("全选") { selection.formUnion(visibleItems) }
+                        Button("反选") { selection = Set(visibleItems).subtracting(selection) }
+                        Button("取消选择") { selection.removeAll() }
+                    } label: { Label("选择", systemImage: "checkmark.circle") }
+                    .accessibilityLabel("选择")
+                }
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Text("已选 \(selection.count) 项")
+                    Spacer()
+                    Menu {
+                        Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy(selectedItems) }
+                        Button("移动到…", systemImage: "folder") { transfer = .move(selectedItems) }
+                        Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: selectedItems) }
+                        ShareLink(items: selectedItems) { Label("分享", systemImage: "square.and.arrow.up") }
+                        Button("删除", systemImage: "trash", role: .destructive) { toDelete = selectedItems }
+                    } label: { Label("操作", systemImage: "ellipsis.circle") }
+                    .disabled(selection.isEmpty)
+                    .accessibilityLabel("批量操作")
+                }
             }
         }
         .onAppear(perform: reload)
         .quickLookPreview($preview)
         .fileImporter(isPresented: $importing, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
             do {
-                for url in try result.get() { _ = try store.importFile(url, into: folder) }
+                self.result = store.importFiles(try result.get(), into: folder)
                 reload()
             } catch { errorMessage = error.localizedDescription }
         }
@@ -138,22 +169,20 @@ struct FolderView: View {
             Button("保存") { performEdit() }
             Button("取消", role: .cancel) { edit = nil }
         }
-        .confirmationDialog("删除“\(toDelete?.lastPathComponent ?? "")”？", isPresented: Binding(
-            get: { toDelete != nil }, set: { if !$0 { toDelete = nil } }
+        .confirmationDialog("删除所选 \(toDelete.count) 项？", isPresented: Binding(
+            get: { !toDelete.isEmpty }, set: { if !$0 { toDelete = [] } }
         )) {
             Button("删除", role: .destructive) {
-                if let url = toDelete { perform { try store.delete(url) } }
-                toDelete = nil
+                perform(.delete, on: toDelete)
+                toDelete = []
             }
         }
         .sheet(isPresented: Binding(get: { transfer != nil }, set: { if !$0 { transfer = nil } })) {
             FolderPicker(store: store) { destination in
                 if let transfer {
-                    perform {
-                        switch transfer {
-                        case .copy(let url): _ = try store.copy(url, to: destination)
-                        case .move(let url): _ = try store.move(url, to: destination)
-                        }
+                    switch transfer {
+                    case .copy(let urls): perform(.copy(to: destination), on: urls)
+                    case .move(let urls): perform(.move(to: destination), on: urls)
                     }
                 }
                 transfer = nil
@@ -162,11 +191,27 @@ struct FolderView: View {
         .alert("操作失败", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好") { errorMessage = nil }
         } message: { Text(errorMessage ?? "") }
+        .alert("操作结果", isPresented: Binding(get: { result != nil }, set: { if !$0 { result = nil } })) {
+            Button("好") { result = nil }
+        } message: { Text(result?.message ?? "") }
     }
 
     @ViewBuilder
     private func itemView(_ url: URL) -> some View {
-        if isFolder(url) {
+        if selecting {
+            Button {
+                if !selection.insert(url).inserted { selection.remove(url) }
+            } label: {
+                HStack {
+                    Image(systemName: selection.contains(url) ? "checkmark.circle.fill" : "circle")
+                        .foregroundStyle(.blue)
+                    row(url)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(url.lastPathComponent)
+            .accessibilityValue(selection.contains(url) ? "已选择" : "未选择")
+        } else if isFolder(url) {
             NavigationLink { FolderView(store: store, folder: url) } label: { row(url) }
         } else {
             Button { preview = url } label: { row(url) }
@@ -218,9 +263,26 @@ struct FolderView: View {
         catch { errorMessage = error.localizedDescription }
     }
 
+    private func perform(_ action: FileBatchAction, on urls: [URL]) {
+        result = store.perform(action, on: urls)
+        selection.removeAll()
+        reload()
+    }
+
     private func reload() {
-        do { items = try store.contents(of: folder) }
+        do {
+            items = try store.contents(of: folder)
+            selection.formIntersection(items)
+        }
         catch { errorMessage = error.localizedDescription }
+    }
+}
+
+private extension FileBatchResult {
+    var message: String {
+        var lines = ["成功 \(succeeded.count) 项，跳过 \(skipped.count) 项，失败 \(failures.count) 项。"]
+        lines += failures.map { "\($0.url.lastPathComponent)：\($0.message)" }
+        return lines.joined(separator: "\n")
     }
 }
 
