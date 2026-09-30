@@ -71,6 +71,8 @@ struct FolderView: View {
     @State private var selecting = false
     @State private var selection: Set<URL> = []
     @State private var shareRequest: FileShareRequest?
+    @State private var archiveRequest: ArchiveRequest?
+    @State private var archiveRunning = false
 
     private enum Edit { case folder, rename(URL) }
     private enum Transfer { case copy([URL]), move([URL]) }
@@ -99,6 +101,19 @@ struct FolderView: View {
                             }
                             Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy([url]) }
                             Button("移动到…", systemImage: "folder") { transfer = .move([url]) }
+                            Button("打包为 ZIP", systemImage: "archivebox") { openArchive(.create([url])) }
+                                .disabled(archiveRunning)
+                            if !isFolder(url), url.pathExtension.lowercased() == "zip" {
+                                Button("解压", systemImage: "archivebox") { openArchive(.extract(url)) }
+                                    .disabled(archiveRunning)
+                                Button("解压到…", systemImage: "folder") { openArchive(.extract(url), chooseDestination: true) }
+                                    .disabled(archiveRunning)
+                            } else if !isFolder(url), let category = WorkspaceCategory.forFile(url),
+                                      [.archive, .diskImage].contains(category) {
+                                Button("解压（当前格式不支持）", systemImage: "archivebox") {
+                                    errorMessage = "当前格式不支持解压，仅支持 ZIP。"
+                                }
+                            }
                             if store.canGroup(url) {
                                 Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: [url]) }
                             }
@@ -149,6 +164,8 @@ struct FolderView: View {
                     Menu {
                         Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy(selectedItems) }
                         Button("移动到…", systemImage: "folder") { transfer = .move(selectedItems) }
+                        Button("打包为 ZIP", systemImage: "archivebox") { openArchive(.create(selectedItems)) }
+                            .disabled(archiveRunning)
                         Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: selectedItems) }
                             .disabled(selectedItems.isEmpty || !selectedItems.allSatisfy { store.canGroup($0) })
                         Button("分享", systemImage: "square.and.arrow.up") {
@@ -195,6 +212,14 @@ struct FolderView: View {
         }
         .sheet(item: $shareRequest, onDismiss: finishSharing) { request in
             FileShareSheet(items: request.items) { shareRequest = nil }
+        }
+        .sheet(item: $archiveRequest) { request in
+            ArchiveOperationView(store: store, request: request, onStart: { archiveRunning = true }) {
+                archiveRunning = false
+                selection.removeAll()
+                reload()
+            }
+            .id(request.id)
         }
         .alert("操作失败", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好") { errorMessage = nil }
@@ -282,6 +307,11 @@ struct FolderView: View {
         reload()
     }
 
+    private func openArchive(_ action: ArchiveRequest.Action, chooseDestination: Bool = false) {
+        guard !archiveRunning, archiveRequest == nil else { return }
+        archiveRequest = ArchiveRequest(action: action, folder: folder, chooseDestination: chooseDestination)
+    }
+
     private func reload() {
         do {
             items = try store.contents(of: folder)
@@ -319,8 +349,9 @@ private extension FileBatchResult {
     }
 }
 
-private struct FolderPicker: View {
+struct FolderPicker: View {
     let store: FileStore
+    var selectionTitle = "移到这里 / 复制到这里"
     let onSelect: (URL) -> Void
 
     var body: some View {
@@ -333,7 +364,7 @@ private struct FolderPicker: View {
 
     private func folderList(_ folder: URL) -> AnyView {
         AnyView(List {
-            Button("移到这里 / 复制到这里") { onSelect(folder) }
+            Button(selectionTitle) { onSelect(folder) }
                 .fontWeight(.semibold)
             ForEach((try? store.contents(of: folder))?.filter {
                 (try? $0.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true

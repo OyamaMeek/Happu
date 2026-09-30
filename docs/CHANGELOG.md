@@ -144,3 +144,20 @@
 - **Git 提交**：待提交。
 
 ---
+
+## [2026-09-30 22:03] ZIP 文件菜单与后台处理页
+
+- **需求/问题描述**：
+  > 单项及批量文件菜单提供 ZIP 打包，ZIP 可解压到当前或所选工作区目录，处理页显示进度、取消、失败重试及成功结果。
+- **实际实现的功能与改动**：
+  - 新增独立请求的 ArchiveOperationView，复用 FolderPicker、系统分享和 QuickLook；支持命名、可空密码、目录选择，其他归档和镜像明确提示不支持解压。
+  - 同步服务在后台 Task 执行，每次使用新 Progress；关闭请求取消并等待真实终止，完成回调在 MainActor 刷新列表与清除选择，处理中阻止重复发起，不保存密码。
+  - [测试/验证]：先新增真实 UI 入口测试，旧 XCTest runner 两次启动挂起，本轮按要求不重试，因此无 UI RED/GREEN 执行结果；测试目标已编译，触控及视觉未验证。
+  - [测试/验证]：ArchiveSmoke 与五项原有 Swift 自检退出 0，下载自检使用真实本机 HTTP 服务；generic Simulator、Device 构建退出 0。build-for-testing 首次因并发 build.db 锁定退出 65，顺序重跑退出 0；iPhone 18 Pro 安装及安装完成后启动均退出 0。构建保留 supported-platforms 提示。
+- **涉及文件**：
+  - `ShuReplica/ArchiveOperationView.swift`、`ShuReplica/FilesView.swift`
+  - `ShuReplica.xcodeproj/project.pbxproj`、`Package.swift`
+  - `Tests/ShuReplicaUITests.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
