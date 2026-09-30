@@ -76,14 +76,36 @@ struct ArchiveSmoke {
         _ = try run("/usr/bin/python3", ["Tests/make_archive_fixtures.py", fixtures.path, zip.path])
         let independent = try service.extract(fixtures.appendingPathComponent("ordinary.zip"), in: folder, password: nil, progress: Progress())
         check(try Data(contentsOf: independent.appendingPathComponent("independent.txt")) == Data("independent bytes".utf8))
+        func macOSXRoundtrip(empty: Bool) throws {
+            let directory = folder.appendingPathComponent("__MACOSX", isDirectory: true)
+            try manager.createDirectory(at: directory.appendingPathComponent("empty"), withIntermediateDirectories: true)
+            if !empty { try Data("ordinary bytes".utf8).write(to: directory.appendingPathComponent("file.txt")) }
+            let result = try service.create(items: [directory], in: folder, named: empty ? "macEmpty" : "macContent", progress: Progress())
+            let restored = try service.extract(result, in: folder, password: nil, progress: Progress())
+            precondition(manager.fileExists(atPath: restored.appendingPathComponent("__MACOSX/empty").path), "Ordinary __MACOSX empty directory was dropped")
+            if !empty { check(try Data(contentsOf: restored.appendingPathComponent("__MACOSX/file.txt")) == Data("ordinary bytes".utf8)) }
+            try manager.removeItem(at: directory)
+        }
+        if CommandLine.arguments.contains("macosx") { try macOSXRoundtrip(empty: false) }
+        if CommandLine.arguments.contains("macosx-empty") { try macOSXRoundtrip(empty: true) }
+        for fixture in ["duplicate.zip", "normalized-collision.zip", "file-directory-conflict.zip", "directory-file-conflict.zip"] {
+            try reject { try service.extract(fixtures.appendingPathComponent(fixture), in: folder, password: nil, progress: Progress()) }
+        }
+        try macOSXRoundtrip(empty: false)
+        try macOSXRoundtrip(empty: true)
+        let independentMac = try service.extract(fixtures.appendingPathComponent("macosx.zip"), in: folder, password: nil, progress: Progress())
+        check(try Data(contentsOf: independentMac.appendingPathComponent("__MACOSX/file.txt")) == Data("ordinary bytes".utf8))
+        precondition(manager.fileExists(atPath: independentMac.appendingPathComponent("__MACOSX/empty").path))
         _ = try run("/usr/bin/zip", ["-q", "-P", "secret", fixtures.appendingPathComponent("password.zip").path, "子目录/文本.txt"], in: source)
         try reject { try service.extract(fixtures.appendingPathComponent("password.zip"), in: folder, password: "wrong", progress: Progress()) }
         let passwordResult = try service.extract(fixtures.appendingPathComponent("password.zip"), in: folder, password: "secret", progress: Progress())
         check(try Data(contentsOf: passwordResult.appendingPathComponent("子目录/文本.txt")) == bytes)
         try Data("broken ZIP".utf8).write(to: fixtures.appendingPathComponent("broken.zip"))
         try reject { try service.extract(fixtures.appendingPathComponent("broken.zip"), in: folder, password: nil, progress: Progress()) }
+        try reject { try service.extract(fixtures.appendingPathComponent("crc-corrupt.zip"), in: folder, password: nil, progress: Progress()) }
 
-        for fixture in ["traversal.zip", "absolute.zip", "symlink.zip"] {
+        for fixture in ["traversal.zip", "outside-traversal.zip", "absolute.zip", "symlink.zip"] {
+            precondition(root.appendingPathComponent(".archive-placeholder/output/../../../sentinel.txt").standardizedFileURL == sentinel)
             do { _ = try service.extract(fixtures.appendingPathComponent(fixture), in: folder, password: nil, progress: Progress()) } catch {}
             precondition(!manager.fileExists(atPath: root.appendingPathComponent("escaped.txt").path))
             precondition(!manager.fileExists(atPath: folder.appendingPathComponent("absolute-escaped.txt").path))
@@ -145,6 +167,6 @@ struct ArchiveSmoke {
             precondition(last.completedUnitCount == last.totalUnitCount, "Last-entry cancellation never reached final entry")
         }
         try checkClean()
-        print("ArchiveSmoke passed: roundtrip, interoperability, password, collision, boundaries, malicious paths, cancellation, cleanup")
+        print("ArchiveSmoke passed: roundtrip, interoperability, password, collisions, __MACOSX, CRC, boundaries, malicious paths, cancellation, cleanup")
     }
 }

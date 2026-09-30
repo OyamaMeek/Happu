@@ -1,5 +1,8 @@
 import Foundation
 import ZipArchive
+#if SWIFT_PACKAGE
+import ArchiveBridge
+#endif
 
 struct ArchiveService {
     let root: URL
@@ -65,7 +68,8 @@ struct ArchiveService {
             for entry in entries {
                 try checkCancellation(progress)
                 let restored = verification.appendingPathComponent(entry.name)
-                guard entry.directory || manager.contentsEqual(atPath: entry.url.path, andPath: restored.path) else {
+                let restoredValues = try restored.resourceValues(forKeys: [.isDirectoryKey])
+                guard entry.directory ? restoredValues.isDirectory == true : manager.contentsEqual(atPath: entry.url.path, andPath: restored.path) else {
                     throw ArchiveError("归档内容核对失败：\(entry.name)")
                 }
             }
@@ -91,34 +95,93 @@ struct ArchiveService {
     }
 
     private func unzip(_ archive: URL, to output: URL, password: String?, progress: Progress, updateProgress: Bool) throws {
-        let delegate = ArchiveExtractionDelegate(progress: progress)
-        var libraryError: NSError?
-        let succeeded = SSZipArchive.unzipFile(atPath: archive.path, toDestination: output.path, preserveAttributes: false, overwrite: false, nestedZipLevel: 0, password: password, error: &libraryError, delegate: delegate, progressHandler: { entry, info, index, total in
-            do {
-                let target = output.appendingPathComponent(entry)
-                let values = try target.resourceValues(forKeys: [.isSymbolicLinkKey, .isRegularFileKey, .isDirectoryKey, .fileSizeKey])
-                guard values.isSymbolicLink != true,
-                      target.resolvingSymlinksInPath().path.hasPrefix(output.path + "/"),
-                      values.isDirectory == true || (values.isRegularFile == true && values.fileSize.map { $0 >= 0 && UInt64($0) == UInt64(info.uncompressed_size) } == true) else {
-                    throw ArchiveError("解压条目写入不完整或包含不安全路径：\(entry)")
-                }
-            } catch { delegate.failure = error }
-            if updateProgress {
-                progress.totalUnitCount = Int64(total)
-                progress.completedUnitCount = Int64(index + 1)
-            }
-        }, completionHandler: nil)
+        guard let reader = archive.withUnsafeFileSystemRepresentation({ unzOpen($0) }) else {
+            throw ArchiveError("无法打开 ZIP 归档。")
+        }
+        do { try readEntries(reader, to: output, password: password, progress: progress, updateProgress: updateProgress) }
+        catch {
+            guard unzClose(reader) == 0 else { throw ArchiveError("关闭 ZIP 归档失败。") }
+            throw error
+        }
+        guard unzClose(reader) == 0 else { throw ArchiveError("关闭 ZIP 归档失败。") }
         try checkCancellation(progress)
-        if let failure = delegate.failure { throw failure }
-        guard succeeded else { throw ArchiveError("解压失败，请检查密码及归档完整性。\(libraryError.map { " " + $0.localizedDescription } ?? "")") }
-        guard let enumerator = manager.enumerator(at: output, includingPropertiesForKeys: [.isSymbolicLinkKey], options: [], errorHandler: { _, error in delegate.failure = error; return false }) else {
-            throw ArchiveError("无法验证解压目录。")
+    }
+
+    private func readEntries(_ reader: UnsafeMutableRawPointer, to output: URL, password: String?, progress: Progress, updateProgress: Bool) throws {
+        var global = unz_global_info64()
+        guard unzGetGlobalInfo64(reader, &global) == 0, global.number_entry <= UInt64(Int64.max) else {
+            throw ArchiveError("无法读取 ZIP 条目数量。")
         }
-        for case let item as URL in enumerator {
+        if updateProgress { progress.totalUnitCount = Int64(global.number_entry) }
+        var status = unzGoToFirstFile(reader)
+        var processed: UInt64 = 0
+        var destinations = Set<String>()
+        while status == 0 {
             try checkCancellation(progress)
-            try checkItem(item)
+            var info = unz_file_info64()
+            guard unzGetCurrentFileInfo64(reader, &info, nil, 0, nil, 0, nil, 0) == 0 else { throw ArchiveError("无法读取 ZIP 条目信息。") }
+            var filename = [CChar](repeating: 0, count: Int(info.size_filename) + 1)
+            guard unzGetCurrentFileInfo64(reader, &info, &filename, UInt(filename.count), nil, 0, nil, 0) == 0 else { throw ArchiveError("无法读取 ZIP 条目名称。") }
+            let data = Data(filename.dropLast().map { UInt8(bitPattern: $0) })
+            let legacy = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.dosLatinUS.rawValue)))
+            let utf8 = String(data: data, encoding: .utf8)
+            let decoded = info.flag & (1 << 11) != 0 ? utf8 : ((info.version >> 8) == 0 ? String(data: data, encoding: legacy) : utf8 ?? String(data: data, encoding: legacy))
+            guard !data.contains(0), let name = decoded else {
+                throw ArchiveError("ZIP 条目名称编码无效。")
+            }
+            let components = name.split(separator: "/", omittingEmptySubsequences: false)
+            guard !name.isEmpty, !name.hasPrefix("/"), !components.contains(".."), !components.contains(".") else {
+                throw ArchiveError("ZIP 包含不安全的条目路径。")
+            }
+            let target = output.appendingPathComponent(name).standardizedFileURL
+            guard target.path.hasPrefix(output.path + "/"), destinations.insert(target.path).inserted else {
+                throw ArchiveError("ZIP 条目路径重复或越界。")
+            }
+            let kind = (info.external_fa >> 16) & 0o170000
+            guard kind == 0 || kind == 0o100000 || kind == 0o040000 else { throw ArchiveError("ZIP 包含符号链接或特殊文件。") }
+            let directory = name.hasSuffix("/") || kind == 0o040000
+            if directory {
+                try manager.createDirectory(at: target, withIntermediateDirectories: true)
+            } else {
+                try manager.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
+                guard !manager.fileExists(atPath: target.path), manager.createFile(atPath: target.path, contents: nil) else {
+                    throw ArchiveError("ZIP 条目与已有文件或目录冲突。")
+                }
+            }
+            let opened = password.map { value in value.withCString { unzOpenCurrentFilePassword(reader, $0) } } ?? unzOpenCurrentFilePassword(reader, nil)
+            guard opened == 0 else { throw ArchiveError("无法读取 ZIP 条目，请检查密码。") }
+            do { try readEntry(reader, to: directory ? nil : target, expectedSize: info.uncompressed_size) }
+            catch {
+                _ = unzCloseCurrentFile(reader)
+                throw error
+            }
+            guard unzCloseCurrentFile(reader) == 0 else { throw ArchiveError("ZIP 条目 CRC 或关闭校验失败。") }
+            processed += 1
+            if updateProgress { progress.completedUnitCount = Int64(processed) }
+            status = unzGoToNextFile(reader)
         }
-        if let failure = delegate.failure { throw failure }
+        guard status == -100, processed == global.number_entry else { throw ArchiveError("ZIP 条目读取不完整。") }
+    }
+
+    private func readEntry(_ reader: UnsafeMutableRawPointer, to target: URL?, expectedSize: UInt64) throws {
+        let file = try target.map { try FileHandle(forWritingTo: $0) }
+        do {
+            var buffer = [UInt8](repeating: 0, count: 64 * 1024)
+            var size: UInt64 = 0
+            while true {
+                let count = buffer.withUnsafeMutableBytes { unzReadCurrentFile(reader, $0.baseAddress, UInt32($0.count)) }
+                guard count >= 0 else { throw ArchiveError("ZIP 条目数据损坏或密码错误。") }
+                if count == 0 { break }
+                size += UInt64(count)
+                guard size <= expectedSize else { throw ArchiveError("ZIP 条目大小与声明不符。") }
+                try file?.write(contentsOf: Data(buffer.prefix(Int(count))))
+            }
+            guard size == expectedSize, target != nil || size == 0 else { throw ArchiveError("ZIP 条目内容不完整。") }
+        } catch {
+            try file?.close()
+            throw error
+        }
+        try file?.close()
     }
 
     private func checkFolder(_ folder: URL) throws {
@@ -205,18 +268,4 @@ struct ArchiveService {
 private struct ArchiveError: LocalizedError {
     let errorDescription: String?
     init(_ message: String) { errorDescription = message }
-}
-
-private final class ArchiveExtractionDelegate: NSObject, SSZipArchiveDelegate {
-    let progress: Progress
-    var failure: Error?
-
-    init(progress: Progress) { self.progress = progress }
-
-    func zipArchiveShouldUnzipFile(at fileIndex: Int, totalFiles: Int, archivePath: String, fileInfo: unz_file_info) -> Bool {
-        if (fileInfo.version >> 8) == 3 && ((fileInfo.external_fa >> 16) & 0o170000) == 0o120000 {
-            failure = ArchiveError("归档包含符号链接，无法解压。")
-        }
-        return !progress.isCancelled && failure == nil
-    }
 }

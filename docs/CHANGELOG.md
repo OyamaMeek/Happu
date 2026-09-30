@@ -127,3 +127,20 @@
 - **Git 提交**：待提交。
 
 ---
+
+## [2026-09-30 21:38] ZIP 条目完整性审查修复
+
+- **需求/问题描述**：
+  > 修复重复条目和文件目录冲突被跳过、合法 __MACOSX 普通文件及空目录不能完整往返，并验证真正越出暂存目录的路径。
+- **实际实现的功能与改动**：
+  - 使用已安装 ZipArchive 2.6.0 的 minizip 64-bit 条目 API 逐项读取，检查数量、大小、CRC 与关闭结果；重复、路径碰撞和文件目录冲突明确失败，普通 __MACOSX 文件及目录完整保留。
+  - 新增仅声明官方 C API 的小型 ArchiveBridge，复用依赖公开 struct；SwiftPM 和 Xcode 均静态接入，create/extract 接口不变。
+  - [测试/验证]：真实重复条目、__MACOSX 文件和空目录三项 RED 均退出 133；完整 ArchiveSmoke 修复及最终复验退出 0，覆盖标准 zipfile 独立归档、CRC 损坏、../../../sentinel.txt 原有 bytes 保护以及原有全部取消和清理断言。
+  - [测试/验证]：最终 generic iOS Simulator 构建退出 0，iOS 18.0 部署目标保持；未截图或重试 XCTest runner。
+- **涉及文件**：
+  - `ArchiveBridge/ArchiveBridge.h`、`ArchiveBridge/ArchiveBridge.m`、`Package.swift`
+  - `ShuReplica/ArchiveService.swift`、`ShuReplica.xcodeproj/project.pbxproj`
+  - `Tests/ArchiveSmoke.swift`、`Tests/make_archive_fixtures.py`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
