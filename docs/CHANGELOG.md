@@ -161,3 +161,17 @@
 - **Git 提交**：待提交。
 
 ---
+
+## [2026-09-30 22:16] ZIP 危险路径发布断言强化
+
+- **需求/问题描述**：
+  > 统一断言危险路径及链接归档必须拒绝发布，防止跳过危险条目后仍返回成功的回归。
+- **实际实现的功能与改动**：
+  - traversal、暂存外 traversal、absolute 和 symlink 四项统一调用现有 reject helper，保留越界文件、已有 sentinel bytes 和暂存清理检查；产品代码不变。
+  - [测试/验证]：真实 ArchiveSmoke 退出 0；本轮为测试强化，现有产品行为已正确拒绝，没有伪造 RED，也未额外构建或重试 XCTest runner。
+- **涉及文件**：
+  - `Tests/ArchiveSmoke.swift`
+  - `docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---

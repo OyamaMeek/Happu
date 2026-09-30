@@ -106,7 +106,7 @@ struct ArchiveSmoke {
 
         for fixture in ["traversal.zip", "outside-traversal.zip", "absolute.zip", "symlink.zip"] {
             precondition(root.appendingPathComponent(".archive-placeholder/output/../../../sentinel.txt").standardizedFileURL == sentinel)
-            do { _ = try service.extract(fixtures.appendingPathComponent(fixture), in: folder, password: nil, progress: Progress()) } catch {}
+            try reject { try service.extract(fixtures.appendingPathComponent(fixture), in: folder, password: nil, progress: Progress()) }
             precondition(!manager.fileExists(atPath: root.appendingPathComponent("escaped.txt").path))
             precondition(!manager.fileExists(atPath: folder.appendingPathComponent("absolute-escaped.txt").path))
             check(try Data(contentsOf: sentinel) == Data("original".utf8))
