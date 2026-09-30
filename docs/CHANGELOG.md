@@ -234,3 +234,18 @@
 - **Git 提交**：`4cc9818f3ee6a89f0750f972dd030a2770c0d897 docs: finalize ZIP push records and archives`；`ba8d9ef71e13b9cb1928fe4eff107a6be9f9962e docs: normalize final conversation archive`；均已普通推送 `origin/main`。
 
 ---
+
+## [2026-09-30 23:00] 继续完整复刻的 PDF 与图片规格
+
+- **需求/问题描述**：
+  > 持续推进完整复刻，核实原版 PDF/图片主要操作并形成可执行步骤。
+- **实际实现的功能与改动**：
+  - 确认 PDF 合并、按页导出、移除密码，图片转换、压缩、合成和单帧提取；写入规格、计划与剩余完整目标。
+  - [测试/验证]：读取原版 plist 本地化及 guide.webarchive，scope gate 退出 0；规格/计划自查覆盖输入输出、动画、安全与验证要求。产品功能尚未实施。
+- **涉及文件**：
+  - `docs/superpowers/specs/2026-09-30-shu-pdf-image-design.md`
+  - `docs/superpowers/plans/2026-09-30-shu-pdf-image.md`
+  - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
