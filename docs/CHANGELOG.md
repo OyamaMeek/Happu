@@ -72,6 +72,6 @@
   - `docs/SHU_ANALYSIS.md`、`memory/plan.md`、`memory/progress.md`、`memory/agents.md`
   - `docs/CHANGELOG.md`、`context/` 中的可见会话归档
 
-- **Git 提交**：待提交。
+- **Git 提交**：`b2d82a4d74289e4e90267c87780753dc49a79d09 docs: update Shu analysis and archive conversation`。
 
 ---
