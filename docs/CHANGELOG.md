@@ -57,3 +57,21 @@
 - **Git 提交**：`c63788d7c27249ad06de5a19dd12d48ce452bd1e fix: keep Shu file actions in sync with selection`。
 
 ---
+
+## [2026-09-30 17:48] 当前分析状态与格式处理调研
+
+- **需求/问题描述**：
+  > 使用可用模拟器，并由子代理分步继续完整 Swift 复刻。
+
+- **实际实现的功能与改动**：
+  - 更新分析报告为当前文件工作区、下载持久化、系统玻璃导航与模拟器验证状态。
+  - 两个只读子代理核对 ZIP 密码解压、PDF、图片、媒体与文本处理的能力边界；ZIP 设计仍待确认，未修改产品代码或安装依赖。
+  - [测试/验证]：`otool -L`、`otool -l` 和 SHA-256 核对样本依赖、`cryptid=0` 与报告一致；本轮未重跑产品测试。当前分支无上游，缺少普通推送的明确目标。
+
+- **涉及文件**：
+  - `docs/SHU_ANALYSIS.md`、`memory/plan.md`、`memory/progress.md`、`memory/agents.md`
+  - `docs/CHANGELOG.md`、`context/` 中的可见会话归档
+
+- **Git 提交**：待提交。
+
+---

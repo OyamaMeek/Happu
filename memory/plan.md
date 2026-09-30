@@ -12,3 +12,11 @@
 4. 后续补齐下载增强、传输与设置，并对各功能运行真实行为检查。
 
 完整目标拆为文件工作区与 Liquid Glass、格式处理、下载增强、传输与设置四个可验证阶段；第一阶段已完成代码与构建复查，UI 交互验收仍待 runner 可运行。
+
+## 格式处理调研（待确认设计）
+
+- 建议分成 ZIP 归档、PDF 与图片、媒体、文本与结构化文档四个独立片段，逐个规格、计划、子代理实施和复查；完整主要操作范围仍保留。
+- 首个片段建议使用 SSZipArchive 2.6.0，接入文件上下文菜单与批量菜单，完成选中项/目录打包为 ZIP、普通与密码 ZIP 解压、目标目录选择和结果分享。库的官方说明支持密码与 AES 解压、SwiftPM：https://github.com/ZipArchive/ZipArchive 。尚未安装依赖或写产品代码。
+- PDF 使用 PDFKit；图片使用 ImageIO；媒体使用 AVFoundation/AudioToolbox。输入与输出能力分别判定，UTType 或文件格式常量不能证明编码器存在。
+- WebP、MP3 是常见格式，输出能力需要实际核实或成熟编码器，不能依据“少见格式可提示”忽略。XML/YAML 与 JSON/plist 的结构映射也需明确规则。
+- 官方依据：https://developer.apple.com/documentation/imageio/cgimagedestinationcopytypeidentifiers%28%29 、https://developer.apple.com/documentation/audiotoolbox/kaudioformatproperty_encodeformatids 、https://developer.apple.com/documentation/pdfkit/pdfdocument 。
