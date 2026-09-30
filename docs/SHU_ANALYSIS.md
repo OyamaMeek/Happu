@@ -35,7 +35,7 @@ shasum -a 256 Payload/Shu.app/Shu
 - **E-001 至 E-004**：来源与复现位置见上表；plist 和 webarchive 使用 Python `plistlib` 读取，内容哈希未单独记录。
 - **E-006**：来源为主可执行文件；上述命令可重现导入库、加密标志和 SHA-256。
 - **F-001**：`severity=n/a_re`，`evidence_ids=[E-002,E-003]`，`confidence=high`，`location=本地化资源`，`status=confirmed`。Shu 的可见栏目和工作区分类可由资源确认。
-- **F-002**：`severity=n/a_re`，`evidence_ids=[E-004,E-006]`，`confidence=high`，`location=内置指南与 Mach-O 加载命令`，`status=confirmed`。指南提及多格式处理与共享，主程序链接相关框架；格式处理和传输尚待实施。
+- **F-002**：`severity=n/a_re`，`evidence_ids=[E-004,E-006]`，`confidence=high`，`location=内置指南与 Mach-O 加载命令`，`status=confirmed`。指南提及多格式处理与共享，主程序链接相关框架；当前已实现 ZIP，其他格式处理和传输尚待实施。
 - **P-001**：`path_type=solve`。读取本地资源（E-001 至 E-004）→ 确认首版栏目与范围（F-001）→ 用 SwiftUI、FileManager、URLSession 实现 → 运行自检与构建。
 - **当前证据**：本次授权、路由、范围校验和资源证据见 `work/payload-liquid-glass/`；实施进度和验证结果见 `memory/progress.md` 与 `memory/verify.md`。
 
@@ -50,6 +50,7 @@ flowchart TD
     E --> L[Documents 文件夹]
     L --> F[导入与文件夹]
     L --> G[预览、搜索与整理]
+    L --> M[ZIP 打包与普通／密码解压]
     C --> H[HTTP(S) 链接及请求头]
     H --> I[URLSession 下载任务]
     I --> J[Documents/Downloads]
@@ -58,14 +59,18 @@ flowchart TD
 
 文件页面使用 SwiftUI `List`、`NavigationStack`、系统文件导入、QuickLook 与分享面板，提供分类目录、归组、批量复制、移动、删除和选择操作。系统 `TabView`、导航栏及工具栏在 iOS 26 及更高版本采用系统玻璃外观。下载页面使用 `URLSessionDownloadTask`，支持进度、暂停、继续、删除及任务持久化；HTTP 非 2xx 响应判为失败。文件写入遇到同名项时自动编号，避免覆盖。
 
+ZIP 使用固定版本 SSZipArchive 2.6.0，提供单项及批量打包、普通／密码解压、目的目录选择、进度、取消、错误重试与系统分享。处理在后台执行，结果在独立暂存目录完成并核对后发布，同名自动编号。取消在条目边界生效；关闭处理中页面等待任务终止。其他归档格式在入口明确提示不支持解压。
+
 ## 验证与界限
 
 - `WorkspaceCategorySmoke`、`FileStoreSmoke`、`FileBatchSmoke`：真实分类目录初始化、导入、重命名、复制、移动、删除和批量归组通过。
 - `DownloadRequestSmoke`：HTTP(S) 链接和请求头校验通过。
 - `DownloadManagerSmoke`：本地 HTTP 服务返回 200、404，暂停后继续及任务恢复的真实请求通过。
+- `ArchiveSmoke`：真实中文／隐藏文件／空目录往返、独立工具兼容、密码、CRC、重复与冲突条目、合法 __MACOSX、恶意路径与链接、同名保护及取消清理通过；未实际诱发磁盘耗尽和系统清理权限故障。
 - `xcodebuild`：generic iOS Simulator 与 generic iOS Device 的 Debug 编译均通过，退出码 0；生成的设备版 `.app` 已核对显示名与包名。
 - 获准提高终端权限后，`simctl` 识别到 iOS 27 的 iPhone 18 Pro。应用安装与启动退出 0；XCTest runner 两次未进入测试方法，UI 交互验收仍未完成。未进行视觉检查。
 - 下载任务跨重启恢复已实现并通过自检；已下载文件保留在 `Documents/Downloads`。
-- 多格式转换、归档处理、局域网传输和设置增强尚待实施，整体复刻未完成。
+- ZIP UI 测试目标编译通过；已有 XCTest runner 启动阻碍，新增菜单、密码和处理页测试未执行到测试方法，未声明触控或视觉验收通过。
+- PDF／图片、媒体、文本与结构化文档转换、下载增强、局域网传输和设置增强尚待实施，整体复刻未完成。
 
 在 Xcode 中打开 `ShuReplica.xcodeproj`，选择 iOS 18 或更高版本的设备运行；实体设备需在 Xcode 配置签名团队。当前使用 Xcode 27，部署目标为 iOS 18。

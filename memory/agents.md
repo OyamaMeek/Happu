@@ -5,4 +5,4 @@
 - 原版样本：`Payload/Shu.app`；无需在线连接目标。
 - Git：用户明确要求直接在 main 开发；已切换 main 并快进合入此前功能分支，已有 upstream `origin/main`；普通自动推送已获授权。
 - 模拟器：iPhone 18 Pro（iOS 27.0）可用；`simctl` 需要提高终端权限。XCTest runner 两次未进入测试方法。
-- 格式处理调研：`archive_feasibility` 与 `format_feasibility` 只读核对原版资源、现有入口、库官方源码和 Apple 文档；未安装产品依赖。后续实施继续由子代理分步执行。
+- 格式处理：已安装 SSZipArchive 2.6.0 精确 SwiftPM 依赖（模块 ZipArchive），minizip 64-bit 公开 API 通过 ArchiveBridge 静态声明接入；ZIP 服务由 zip_service 实施、zip_service_review 独立审查并复查通过，真实文件自检直接编译同一服务。文件入口与处理页由 zip_ui 实施、zip_ui_review 独立审查通过；zip_final_review 完成整体及最终测试强化复查，Ready Yes。所有子代理已完成，保留明确的 UI 运行验证限制。

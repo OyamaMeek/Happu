@@ -106,7 +106,7 @@
   - `docs/superpowers/specs/2026-09-30-shu-zip-design.md`
   - `docs/superpowers/plans/2026-09-30-shu-zip.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`5d66f4a4d45755c9c590a88d0fe8b331f20f7437 docs: plan Shu ZIP archive implementation`，已普通推送 origin/main。本行通过后续文档提交保存。
 
 ---
 
@@ -124,7 +124,7 @@
   - `ShuReplica/ArchiveService.swift`、`ShuReplica.xcodeproj/project.pbxproj`
   - `Package.swift`、`Package.resolved`、`.gitignore`
   - `Tests/ArchiveSmoke.swift`、`Tests/make_archive_fixtures.py`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`4fe7fe8d5292a7ea3fb73ba55ab50dcc699ea985 feat: add transactional ZIP archive operations`；普通推送到 `origin/main` 成功。本行通过后续文档提交保存。
 
 ---
 
@@ -141,7 +141,7 @@
   - `ArchiveBridge/ArchiveBridge.h`、`ArchiveBridge/ArchiveBridge.m`、`Package.swift`
   - `ShuReplica/ArchiveService.swift`、`ShuReplica.xcodeproj/project.pbxproj`
   - `Tests/ArchiveSmoke.swift`、`Tests/make_archive_fixtures.py`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`52c1a4131414150142d9a0ce46fbfdac217e928f fix: preserve and validate every ZIP archive entry`；普通推送 `origin/main` 成功。本行通过后续文档提交保存。
 
 ---
 
@@ -158,7 +158,7 @@
   - `ShuReplica/ArchiveOperationView.swift`、`ShuReplica/FilesView.swift`
   - `ShuReplica.xcodeproj/project.pbxproj`、`Package.swift`
   - `Tests/ShuReplicaUITests.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`4b30df6b139c78b3cb89f8b2f7583f4603c23c7b feat: expose ZIP tools in Shu file menus`；普通推送 `origin/main` 成功。本行通过后续文档提交保存。
 
 ---
 
@@ -172,6 +172,23 @@
 - **涉及文件**：
   - `Tests/ArchiveSmoke.swift`
   - `docs/CHANGELOG.md`
+- **Git 提交**：`2b556f421ef4910bbe0ef767c39f33ea9d206b9d test: assert ZIP path rejection before publication`；普通推送 `origin/main` 成功。本行通过后续文档提交保存。
+
+---
+
+## [2026-09-30 22:23] ZIP 阶段验证与会话归档
+
+- **需求/问题描述**：
+  > 继续完成交接中的 ZIP 阶段，直接在 main 开发并自动推送，保存实际验证、开发记录和可见对话。
+- **实际实现的功能与改动**：
+  - 更新规格、计划和分析报告为已实现的 ZIP 服务与菜单、后台处理页状态，保留完整复刻剩余阶段。
+  - 补记五项已推送计划／产品／修复／测试提交的实际哈希；更新 memory 验证、进度、工具和注意事项，按本地时间归档截至保存时的用户与助手可见消息。
+  - [测试/验证]：两项任务独立审查、整体审查及最终测试强化复查均通过，无严重／重要问题。真实 ArchiveSmoke、五项旧自检、三类构建与模拟器安装启动退出 0，详细命令和实际范围保存在 memory/verify.md。
+  - [验证限制]：UI 进度动态变化、取消等待、关闭重开、分享与 QuickLook 未运行触控验收，未做视觉验证；supported-platforms 提示保留，未证明它与 runner 阻碍存在因果关系。
+- **涉及文件**：
+  - `docs/SHU_ANALYSIS.md`、`docs/superpowers/specs/2026-09-30-shu-zip-design.md`、`docs/superpowers/plans/2026-09-30-shu-zip.md`
+  - `memory/agents.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`、`docs/CHANGELOG.md`
+  - `context/2026/09/30/22-22-33/对话.md`
 - **Git 提交**：待提交。
 
 ---
