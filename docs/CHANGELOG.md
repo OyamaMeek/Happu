@@ -189,7 +189,7 @@
   - `docs/SHU_ANALYSIS.md`、`docs/superpowers/specs/2026-09-30-shu-zip-design.md`、`docs/superpowers/plans/2026-09-30-shu-zip.md`
   - `memory/agents.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`、`docs/CHANGELOG.md`
   - `context/2026/09/30/22-22-33/对话.md`
-- **Git 提交**：`9ba29f662fa1d22908ad29f3202811073e34d1ec docs: record ZIP delivery and verification`；初次推送经自动审批拒绝，用户随后明确授权，最终与 `9f9cc19d9645ee79b7fdd1ac05190287d936a1ec` 一起普通推送到 `origin/main`。
+- **Git 提交**：`9ba29f662fa1d22908ad29f3202811073e34d1ec docs: record ZIP delivery and verification`；初次推送经自动审批拒绝，用户随后明确授权并普通推送至 `origin/main`。后续续档记录在下方条目。
 
 ---
 
@@ -203,7 +203,7 @@
 - **涉及文件**：
   - `docs/CHANGELOG.md`、`memory/progress.md`
   - `context/2026/09/30/22-40-56/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`4cc9818f3ee6a89f0750f972dd030a2770c0d897 docs: finalize ZIP push records and archives`；会话归档格式修正 `ba8d9ef71e13b9cb1928fe4eff107a6be9f9962e docs: normalize final conversation archive`。两项均已普通推送至 `origin/main`。
 
 ---
 
@@ -231,6 +231,6 @@
 - **涉及文件**：
   - `docs/CHANGELOG.md`、`memory/progress.md`
   - `context/2026/09/30/22-40-56/对话.md`、`context/2026/09/30/22-46-03/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`4cc9818f3ee6a89f0750f972dd030a2770c0d897 docs: finalize ZIP push records and archives`；`ba8d9ef71e13b9cb1928fe4eff107a6be9f9962e docs: normalize final conversation archive`；均已普通推送 `origin/main`。
 
 ---
