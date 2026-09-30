@@ -54,6 +54,6 @@
   - `Tests/FileBatchSmoke.swift`、`Tests/ShuReplicaUITests.swift`
   - `memory/verify.md`、`docs/CHANGELOG.md`
 
-- **Git 提交**：待提交。
+- **Git 提交**：`c63788d7c27249ad06de5a19dd12d48ce452bd1e fix: keep Shu file actions in sync with selection`。
 
 ---
