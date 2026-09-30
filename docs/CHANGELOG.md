@@ -199,7 +199,7 @@
   > 用户明确授权将 ZIP 阶段最终文档与可见对话归档推送到已配置的 GitHub 远端。
 - **实际实现的功能与改动**：
   - 按授权普通推送此前本地提交的文档哈希与会话归档至 origin/main；更新本地开发进度，并续存包含授权及最终推送结果的可见消息归档。
-  - [测试/验证]：`git push` 退出 0；origin/main 更新至 `9f9cc19d9645ee79b7fdd1ac05190287d936a1ec`。最终文档提交 `9f9cc19d` 使分支与远端同步；工作区剩余用户 AGENTS.md 修改及 Xcode 未跟踪目录。
+  - [测试/验证]：`git push` 退出 0；origin/main 更新至 `9f9cc19d9645ee79b7fdd1ac05190287d936a1ec`。后续续档提交 `f6b9d703f375e234e3c60a90c8cdc5cef9dd8c01` 与 `8339bb34f5f9b59ead3d147a1b32cf72fe6ac987` 同样普通推送；文档哈希补记已同步。
 - **涉及文件**：
   - `docs/CHANGELOG.md`、`memory/progress.md`
   - `context/2026/09/30/22-40-56/对话.md`
@@ -217,6 +217,20 @@
 - **涉及文件**：
   - `context/2026/09/30/22-42-45/对话.md`
   - `docs/CHANGELOG.md`
+- **Git 提交**：`f6b9d703f375e234e3c60a90c8cdc5cef9dd8c01 docs: archive authorized ZIP push completion`；以及 `8339bb34f5f9b59ead3d147a1b32cf72fe6ac987 docs: normalize archived instruction whitespace`。两次普通推送均成功。
+
+---
+
+## [2026-09-30 22:46] 最终会话归档与哈希补记
+
+- **需求/问题描述**：
+  > 完整保存授权后对话，补记续档提交实际哈希并保持 main 与远端一致。
+- **实际实现的功能与改动**：
+  - 添加截至归档时的 61 条用户与助手消息快照，并提交此前的授权续档快照。开发日志记录三次文档续档的真实哈希。
+  - [测试/验证]：`git diff --check` 退出 0；最终归档非空，包含完整消息顺序。产品与测试验证沿用之前已记录的结果。
+- **涉及文件**：
+  - `docs/CHANGELOG.md`、`memory/progress.md`
+  - `context/2026/09/30/22-40-56/对话.md`、`context/2026/09/30/22-46-03/对话.md`
 - **Git 提交**：待提交。
 
 ---
