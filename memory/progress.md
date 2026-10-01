@@ -14,7 +14,7 @@
 - [x] 第一阶段实施计划已写出并完成需求、接口和验证步骤自查。
 - [x] 用户审阅第一阶段实施计划并选择子代理分步执行。
 - [x] 第一阶段文件工作区界面、批量操作、嵌套普通文件归组和系统导航已实现；五项 Swift 自检、两种 generic 构建及 UI 测试目标编译通过。
-- [ ] 完成 XCUITest 标签切换、文件夹导航、搜索/选择及动态字体验收；独立 iOS 27 设备已进入实际方法，最新完整批次6项失败，前台查询/输入焦点/系统呈现条件正修正，导航最终回归尚未通过。
+- [ ] 完成 XCUITest 标签切换、文件夹导航、搜索/选择及动态字体验收；独立iOS27导航方法32125已真实通过，涵盖搜索/选择及结束选择后标签恢复，动态字体尚未验收。完整六项最终回归仍待完成。
 - [ ] 实现常见格式处理、下载增强、传输与设置；少见格式提供明确不支持提示。
 - [x] 由两个只读子代理核对 ZIP 库及 PDF、图片、媒体、文本处理的官方能力边界。
 - [x] 用户本会话明确直接开发；已写 ZIP 规格与计划、自查边界及测试覆盖，沿用子代理分步执行。
@@ -66,4 +66,12 @@
 - 受控reset85639退出0，仅清理已知测试产物/root副本，原始输入保留。完整六项回归19281已退出65，控制器独立xcresulttool退出0确认Failed/total6/passed2/failed4/skipped0；Archive253.022秒及More277.018秒通过，Cancellation34.984秒/Image32.747秒/PDF83.819秒均在UITests:302工作区入口失败，Navigation77.329秒在UITests:77全选菜单失败。原log document-ui-final-green.log及result DocumentUIFinalGreen.xcresult保留，未only/skip，文件名不代表通过。
 - 控制器与原document_ui复用本批次public.plain-text失败附件，根目录已加载多行但没有DocumentUITests；workspace直接exists查询未包含列表滚动。工作区查询已增加真实列表滚动，针对性测试构建46111退出0。
 - Navigation点前诊断26594退出65、52.069秒；控制器读取log319–351，选择Menu(271,803,42,38)与More标签按钮(240,795,94,54)重叠，点击前isHittable失败，精确ps退出1确认该作业进程已终止。已记录决定：选择状态用原生toolbar visibility隐藏tabBar、完成后恢复，保留底部菜单与搜索文本；document_ui实施并针对导航验证，必须检查筛选反选精确数量、取消归零及标签恢复。不重复未修改完整批次，不改服务或弱化断言；Task3全套输出与独立审查仍待完成。
-- 当前可见对话归档为`context/2026/10/01/18-00-51/对话.md`，110条消息；记录用户询问是否完成与实际回答，排除内部目标控制、推理和工具输出。本次文档核验检查点正在提交。
+- 当前可见对话归档为`context/2026/10/01/18-00-51/对话.md`，110条消息；顺序、角色、排除内部控制及用户提问完整性检查退出0。核验检查点48beb2ec342d1f8aeb5591db5639a23284f70f2b（docs: record native import and selection toolbar diagnosis）提交与普通推送退出0，HEAD=origin/main；只含6项文档/归档，产品与用户已有改动未暂存。Git index/CHANGELOG已释放，Task3 BASE仍3480884。
+- 选择态tabBar visibility一行已由原实施者写入，并补完成后下载标签真实切换断言。代理恢复后旧构建handle39689不可用，未重复构建；控制器独立LogStoreManifest条目31F2D361确认测试构建记录已停止、status=S/errors0，二进制18:01:33生成，不编造shell退出码。设备实际Shutdown后同设备boot60706退出0；install19350及launch46319退出0，新App PID1999由控制器精确ps核实。新数据容器57DBCF89-7334-4F69-AE42-4643CF5C9972的4个PDF和3个图片输入实际存在，导航针对性验证继续，未取得修复GREEN。
+- Nav78062退出65、159.900秒；真实选择Menu与全选及行value断言已通过，随后UITests:87 SearchField未呈现。控制器比较新旧SEARCH文字层级：新根目录首行y168且无搜索入口，旧同位置为SearchField；当前尚无键盘。已按计划Step3记录决定，现有searchable明确原生navigationBarDrawer(displayMode:.always)，保留同一搜索/选择状态与完整断言；原document_ui继续单变量修正与针对性回归，Task3仍未完成。
+- 搜索drawer修正构建92893、显式安装87510及新App启动均退出0，PID2748，最新数据容器BC4879FD-203C-4D5D-AA1A-D9B6B7A03EC2。Nav60042退出65、51.167秒，独立读取.exit=65及完整summary1失败/0跳过；SearchField已显示且真实输入、搜索词/选择数量保持断言通过，随后反选菜单未打开。现有public.plain-text失败树证明选择Menu矩形被Keyboard覆盖，键盘实际Search键可提交查询；仅补真实点击Search、等待键盘消失、再次断言同查询/数量后反选的用户路径，保留完整断言，不改产品或服务。
+- 仅测试构建70633退出0且.exit=0；Nav32125已终止且.exit=0，实际63.327秒。控制器精确ps确认PID3166不存在，独立读取完整终态日志及xcresulttool退出0确认Passed/total1/passed1/failed0/skipped0；全选、搜索词/选择数量保持、真实Search提交后精确反选减1、取消归零、完成后下载标签切换及返回文件夹均通过。下一步原document_ui只跑Image/PDF完整方法；完整六项、全部产物、Task3及阶段独立审查仍待完成。
+- 两项Forms88260已终止65且.exit=65，Image17.937秒/PDF17.905秒均在UITests:446真实列表滚动前提失败，summary2failed/0passed/0skipped。控制器读入口日志和reveal当前代码：导航过渡时枚举出CollectionView index1，随后集合只剩一项，按位置查询失效；没有进入文档处理，不算服务失败。原document_ui给实际List补正常稳定标识workspace-files/destination-folders并按标识定位、等待真实可点击状态，More仍明确File View；build3097后顺序安装启动并重新运行Image/PDF，保留全部输出与内容断言。
+- 稳定列表构建3097退出0；安装35142及启动退出0，新App4040。同批9728/PID4060已正式终止65、.exit65，Image142.283秒/PDF34.276秒，两项失败/零通过/零跳过。两项实际越过目录前提；Image前三项转换、选帧、提取已执行，随后合成批量入口失败。控制器读取PDF失败文字树：所有文件仍未选择、count0、批量Menu Disabled，嵌套TabBar仍显示。没有把部分处理路径当作完整方法通过。
+- 仅加强逐行value/count2/isHittable断言后build41589退出0，单PDF97628退出65、25.959秒；控制器读取完整summary与目标日志，确认首次a.pdf中心tap后value仍为未选择，是实际行点击缺陷RED。原document_ui先仅将选择态HStack扩满行宽并设置Rectangle点击区域，再跑同PDF；若选择成功后仍有TabBar遮挡，第二步将非选择态visibility改为automatic并回归嵌套及根页恢复。不同时混入两处变量，不修改服务或改用坐标点击。Task3完整六项、全部输出、最终Device构建和独立审查仍待完成。
+- 当前可见消息快照`context/2026/10/01/22-15-51/对话.md`共130条/68654bytes，编号、角色、用户问题及内部控制/工具输出排除检查退出0；包括最新“尚未完全复刻”的实际状态回答。待下一记录提交保存，产品Git index/CHANGELOG仍归原实施者。

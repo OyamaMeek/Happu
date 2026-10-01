@@ -16,6 +16,10 @@
 - `DocumentUIMoreNativeCell.xcresult`：成功导入65315退出0、262.278秒，控制器独立xcresulttool1269退出0，Passed/total1/passed1/failed0/skipped0；真实系统选取/Open、工作区复制、共享PDF页处理输出及返回文件列表检查通过。受控reset前控制器cmp退出0，root b.pdf为6236bytes且与原始PDFs/b.pdf逐字节一致。真实两PNG由实施者检查大小1744/1907bytes，全部内容仍需最终`--verify`。
 - 同代码受控reset85639退出0后运行完整六项19281，最终退出65；控制器独立`xcresulttool get test-results summary`退出0确认`DocumentUIFinalGreen.xcresult`为Failed、totalTestCount6、passedTests2、failedTests4、skippedTests0。Archive253.022秒与More277.018秒通过；三个文档方法在UITests:302工作区入口失败，Navigation在UITests:77全选菜单失败。未only/skip，不能因结果包命名判整套通过；全部方法与实际输出验证完成后再进入Task3独立审查。
 - 点前选择菜单诊断`DocumentUISelectionBounds.xcresult`：实施者session26594退出65、52.069秒；控制器读取完整相关文字层级，Menu与TabBar按钮矩形实际重叠且点击前isHittable失败。已据此修正选择态系统工具栏显示，后续必须真实验证全选、搜索词保留、筛选反选精确数量、取消归零和完成后标签恢复；尚未判修复通过，未执行视觉验证。
+- `DocumentUISearchSubmit.xcresult`：Nav32125最终退出0，.exit实际为0，方法63.327秒；控制器独立xcresulttool退出0确认Passed/totalTestCount1/passedTests1/failedTests0/skippedTests0。实际覆盖全选、搜索输入与选择数量保持、Search键提交及键盘收起后保持同查询、筛选反选仅减少目标一项、取消归零、完成后下载标签恢复/切换及回文件夹。没有删除断言或跳过方法；动态字体与布局视觉尚未验收，完整六项及全部实际文档产物仍待最终验证。
+
+- `DocumentUIStableLists.xcresult`：9728退出65/.exit65，Image142.283秒、PDF34.276秒，两项失败/零通过/零跳过；稳定标识已通过真实目录前提。失败文字树证明逐行点击后count0、批量Menu Disabled、嵌套TabBar仍显示，尚无两项完整GREEN。
+- `DocumentUIRowSelectionRed.xcresult`：仅加强逐行断言后build41589退出0，单PDF97628退出65、25.959秒；summary为Failed/total1/passed0/failed1/skipped0，首个a.pdf中心真实tap后仍未选择。行点击区域修复必须保留每行value=已选择、精确count2和批量菜单可点击断言，并完成原完整PDF/Image输出流程；工具栏改动还需覆盖根页及嵌套目录选择完成后标签恢复。
 
 ## 媒体阶段必要检查（尚未实施）
 

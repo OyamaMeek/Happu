@@ -6,9 +6,9 @@
 
 | 页面或操作 | 原版依据 | 当前实现及验收 |
 |---|---|---|
-| 文件、下载、更多三栏与 Liquid Glass | `tab.*` | 已实现系统导航；交互和视觉未完成验收。 |
+| 文件、下载、更多三栏与 Liquid Glass | `tab.*` | 已实现系统导航；iOS27导航单项通过标签切换及选择结束后标签恢复，动态字体和视觉未完成验收。 |
 | 工作区分类、文件夹导航与一键归组 | ShuFile.strings、`file.autogroup.*` | 已实现，真实文件自检有通过记录。 |
-| 创建文件夹、搜索、重命名、复制、移动、删除与选择 | `file.folder.*`、`file.copy/cut/rename.*` | 已实现；真实文件自检有通过记录，系统交互仍待验收。 |
+| 创建文件夹、搜索、重命名、复制、移动、删除与选择 | `file.folder.*`、`file.copy/cut/rename.*` | 已实现，真实文件自检有通过记录；iOS27创建文件夹、搜索词/选择数量保持、筛选反选与取消归零真实交互通过，其余完整交互验收仍待完成。 |
 | 系统文件导入、单项/批量分享、ZIP 导出 | 内置指南、`file.export.*` | 已实现；ZIP真实测试通过，更多PDF入口系统选取/工作区复制/处理输出/返回文件列表已真实通过；一般导入及分享验收待完成。 |
 | 文件简介、媒体属性、MD5/SHA256、原始目录 | `file.detail.*`、`file.folder.parent` | 待实施。 |
 | 外部 App 打开文件、URL scheme、拖放、挂载目录 | Info.plist、`file.folder.mount`、指南 | 待补齐文档接收和授权目录生命周期。 |
@@ -17,7 +17,7 @@
 | Office/电子书等容器内容查看和导出 | 内置指南“显示包内容” | 待实施。 |
 | PDF 合并、分割、按页图片导出、移除密码 | `file.merge.pdf`、`file.split.*`、`public.convert.pdf.page`、`file.remove.pdf.pwd` | 服务与真实文件自检、独立审查及路径修复复查通过；UI 已接入，真实交互仍未通过。 |
 | PDF 内嵌素材提取 | 指南、`file.extract.pdf.fail` | 待实施；按页导出不能替代素材提取。 |
-| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；操作 UI 已接入，真实交互仍未通过。 |
+| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；UI 单图转换、选帧和提取已实际执行，合成所在完整方法仍因批量选择失败，全部输出内容及完整交互仍待验证。 |
 | 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | 服务已实现提取和 GIF/WebP 帧、时长、播放语义保留，真实自检和独立审查通过；选帧/提取操作 UI 已接入但未通过验证，逐帧查看仍待补齐。 |
 | 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | 待实施；原生编码能力核查见 `docs/SHU_MEDIA_CAPABILITIES.md`，Mac 探测不代表 iOS 运行通过。 |
 | 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | 待实施；MP3 属常见格式，需要真实编码能力。 |
@@ -38,6 +38,6 @@
 | 排序、HTML模式、静音、剪贴板、图片/动图设置 | `more.file_order/config/html_view/picture/gif.*` | 当前只有名称/修改时间排序；其余待实施。 |
 | 文件缓存、帮助、关于、反馈/调试日志、隐私、推荐 | `more.cache/faq/about/feedback/privacy/tellFri.*` | 当前仅基础关于；其它页面待实施，不自动发送反馈。 |
 | 重置文件及下载 | `more.reset.*` | 待实施；实际删除必须由用户在应用内确认。 |
-| 全功能交互与布局验收 | 用户完整目标与已批准规格 | 选择菜单已移入底栏；取消重试与更多成功导入两个单项已真实通过，覆盖密码重试、进度、取消/关闭重开、原生文件选取和复制处理。最新完整六项为2通过/4失败/0跳过，Archive和More通过；文档工作区入口及选择菜单问题继续处理。全部实际输出、搜索/选择最终回归和布局验收未完成，视觉尚无授权/证据。 |
+| 全功能交互与布局验收 | 用户完整目标与已批准规格 | 取消重试、更多成功导入及后续导航三个单项已真实通过，覆盖密码重试、进度、取消/关闭重开、原生文件选取和复制处理，以及搜索/精确反选/归零/标签恢复。此前完整六项为2通过/4失败/0跳过；修正后的完整六项、全部实际输出、动态字体和布局验收仍待完成，视觉尚无授权/证据。 |
 
 所有“待实施”项和未完成验收均阻止宣布完整复刻完成。阶段构建成功及服务测试通过不能替代整表验收。
