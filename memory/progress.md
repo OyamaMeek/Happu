@@ -33,7 +33,9 @@
 
 - [x] 再读当前代码、进度与原版资源，确认 PDF/图片具体操作；scope gate 退出 0，main upstream 为 origin/main。
 - [x] 写 PDF/图片规格与三项实施计划，检查原版操作、输入输出、动画、安全边界和验证覆盖。
-- [ ] Task 1 PDFService 与真实 PDFSmoke。
+- [x] Task 1 PDFService 与真实 PDFSmoke，独立审查及修复复查通过。
+- Task 1 实施 3d1ee23、路径修复 e48284b、日志补记 67d6953 / 164ca77 已普通推送。内部链接回归 RED 退出 133，修复后 PDFSmoke 与最终 Simulator 构建退出 0；pdf_path_review 确认全部问题已处理，无新增重要问题。PDF UI 入口仍待 Task 3。
 - [ ] Task 2 ImageService、libwebp 与真实 ImageSmoke。
 - [ ] Task 3 操作页、文件/更多入口、构建运行及独立复查。
 - [ ] 后续补齐常见其它归档、PDF 内嵌素材及包内容、相册/LivePhoto、媒体、文本/结构化文档、下载增强、传输、设置与完整 UI 验收。
+- 完整功能核对表 `docs/SHU_FEATURES.md` 已从原版资源建立，包含 PDF 分割、简介/哈希、外部文件接收、通讯录/扫描/iCloud 等待完成项，不能只按原有四阶段的简略列表判定全部完成。

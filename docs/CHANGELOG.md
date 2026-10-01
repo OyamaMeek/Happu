@@ -281,3 +281,19 @@
 - **Git 提交**：`e48284b2b4138d6556e992a5a0513d3ffc64d1a5 fix: reject noncanonical PDF paths before validation`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
+
+## [2026-10-01 09:39] PDF 阶段审查记录与完整需求核对表
+
+- **需求/问题描述**：
+  > 回答完整复刻进度并继续完整目标，维护已验证功能、剩余范围与可见对话记录。
+- **实际实现的功能与改动**：
+  - 从原版本地资源建立完整功能核对表，明确 PDF 服务已实现与 UI 待接入，以及图片、媒体、其它归档、传输、下载增强、设置和交互验收仍未完成。
+  - 补齐 PDF 分割规格、同工作区无覆盖移动发布和原始路径分量校验；更新计划、进度、工具及验证记录。
+  - [测试/验证]：独立规格/质量审查通过，路径修复复查 Approved，无新增严重或重要问题；真实 PDFSmoke 与最终 Simulator 构建退出 0，记录保留 CoreGraphics 和 supported-platforms 诊断。产品实现/修复与补记提交为 3d1ee23、67d6953、e48284b、164ca77，均已普通推送。
+  - [测试/验证]：截至归档时的 23 条用户与助手可见消息按原顺序保存，文件非空；排除系统/开发者、内部目标消息、环境消息和工具输出。
+- **涉及文件**：
+  - `docs/SHU_FEATURES.md`、PDF/图片规格与计划、`memory/agents.md`、`memory/progress.md`、`memory/verify.md`
+  - `.gitignore`、`docs/CHANGELOG.md`、`context/2026/10/01/09-39-16/对话.md`
+- **Git 提交**：待提交。
+
+---

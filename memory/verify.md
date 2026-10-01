@@ -1,5 +1,11 @@
 # 验证标准
 
+## PDF 服务实施（2026-10-01）
+
+- `swiftc -module-cache-path DerivedData/ModuleCache ShuReplica/WorkspaceCategory.swift ShuReplica/FileStore.swift ShuReplica/PDFService.swift Tests/PDFSmoke.swift -o DerivedData/PDFSmoke && DerivedData/PDFSmoke DerivedData/TestRuns/PDFFinal`：退出 0，真实合并/分割顺序、文字/几何/整页栅格、加密、PNG/JPEG、进度、同名、非法输入/路径边界、只读目标失败、取消与清理断言通过。owner-only 错误密码断言修复前退出 133。坏/零页夹具触发 CoreGraphics 诊断，不宣称输出无警告。
+- 最终 generic Simulator 构建退出 0；2026-09-30 五项既有自检与 ArchiveSmoke 退出 0。完整命令、历史 RED/GREEN 和限制在 `.superpowers/sdd/2026-09-30-shu-pdf-image/task-1-report.md`；实现 3d1ee23、哈希补记 67d6953 已普通推送。独立规格与质量审查通过，PDF UI 尚未接入。
+- 内部符号链接后跟 `..` 回归：PDFInternalLinkRed 退出 133，增加标准化前原路径分量拒绝后 PDFTraversalGreen 退出 0；最终 Simulator build 退出 0。四个入口外部路径及内部输入/目标、原文件与哨兵字节、输出/暂存清理断言通过。e48284b / 164ca77 已普通推送；独立修复复查确认 ADDRESSED，无新增问题。未声称初始无法复现的越界推测成立。
+
 - PDF/图片阶段遵循 `docs/superpowers/plans/2026-09-30-shu-pdf-image.md`：PDFSmoke / ImageSmoke 使用真实编码文件并重读断言内容、页/帧数、尺寸、顺序与时长；generic Simulator/Device、UI target 编译及模拟器安装启动。全目标仍需要其余功能与真实交互验收，阶段自检不证明全部复刻。
 
 - ZIP 本阶段真实自检：`swift run --scratch-path DerivedData/ArchivePackage ArchiveSmoke DerivedData/TestRuns/ArchiveSmoke`；覆盖目录、中文、空目录、密码、错误、同名、越界、取消与清理。服务实现、审查修复和 UI 集成后均有退出 0 记录，见下方阶段结果。
