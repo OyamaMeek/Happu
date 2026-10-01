@@ -329,6 +329,6 @@
   - [测试/验证]：补强后 ImageSmoke、Pillow 独立解析 16 个 GIF 的原始循环字段/帧像素/时长、generic Simulator 构建均退出 0。构建保留既有 supported-platforms 提示；未重复其它 Smoke、Device 构建或运行 UI/截图。
 - **涉及文件**：
   - `ShuReplica/ImageService.swift`、`Tests/ImageSmoke.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`ccf23be1bd681450107e08874fc68cb2ae69b98a fix: default unspecified image animations to one play`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
