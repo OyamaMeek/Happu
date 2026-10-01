@@ -263,6 +263,6 @@
 - **涉及文件**：
   - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`Tests/fixtures/empty.pdf`、`Tests/fixtures/.gitattributes`（PDF 按二进制处理，保留格式所需空格）
   - `ShuReplica.xcodeproj/project.pbxproj`、`Package.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`3d1ee2320a22f631722f7a766531c9a8ae7faa7f feat: add PDF processing services and real file checks`；已普通推送 `origin/main`，提交信息通过后续文档提交保存。
 
 ---
