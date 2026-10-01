@@ -367,6 +367,24 @@
 - **涉及文件**：
   - `docs/superpowers/plans/2026-10-01-shu-media.md`、`docs/superpowers/specs/2026-10-01-shu-media-design.md`、`docs/SHU_MEDIA_CAPABILITIES.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`、`context/2026/10/01/14-54-03/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`29cff2e46ab593e0ed1231ee79534b7ab9e72eaf docs: plan audio video and animation replica tasks`；已普通推送origin/main，退出0。
+
+---
+
+## [2026-10-01 16:02] 文档页面核验与真实 UI 失败记录
+
+- **需求/问题描述**：
+  > 持续完整复刻 Payload Shu，核对实际完成范围与真实交互结果。
+- **实际实现的功能与改动**：
+  - 更新功能矩阵和持久记录，区分服务完成、页面已接入与交互尚未通过；完整功能范围保持不变。
+  - 记录搜索激活时顶部菜单隐藏的真实失败及将既有选择菜单移入底栏的决定；保留筛选后精确反选和取消归零的回归要求。
+  - [测试/验证]：已读最终Simulator/Device/UI目标构建及ImageSmoke/ArchiveSmoke输出，实施者记录均退出0；平台提示保留。完整UI批次实际6项失败、0通过、0跳过，退出65；单Image因输入焦点失败，未取得GREEN。
+  - [测试/验证]：只读检查真实归档输出，zipfile重读202bytes空目录归档且CRC正常；目录查询命中底层BackButton，原生提供器呈现延迟均有诊断，不以这些失败推断文件未生成或提供器不存在。
+  - 实施者发生usage-limit错误后，账户工具显示普通使用仍允许；恢复同一代理后，针对性UI目标构建退出0，单Image条件修正测试退出65：实际质量输入已执行，目标文件夹查询仍未通过。
+  - 保存截至各自归档时66、71、74条可见用户/助手消息；排除内部控制、推理和工具输出。未执行视觉验证。
+- **涉及文件**：
+  - `docs/SHU_FEATURES.md`、`memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+  - `context/2026/10/01/15-35-21/对话.md`、`context/2026/10/01/15-56-24/对话.md`、`context/2026/10/01/16-02-07/对话.md`
+- **Git 提交**：待提交；本次仅保存核验记录，产品与测试改动仍在实施。
 
 ---

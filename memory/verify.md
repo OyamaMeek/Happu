@@ -1,5 +1,15 @@
 # 验证标准
 
+## PDF／图片操作页面当前证据（2026-10-01）
+
+- `DocumentUITargetRed.xcresult` 的真实 `testDocumentCancellationAndRetry` 已从工作区进入 PDFs 并长按 locked.pdf，因缺“PDF 处理”入口失败；方法132.466秒，session11501退出65，结构化total1/failed1/passed0/skipped0。前一轮三项文件标签/启动前提失败不记为目标RED。
+- `DocumentNavigationActivation.xcresult` 的真实导航方法382.118秒，session71050退出65，total1/failed1/passed0/skipped0。下拉显示SearchField、输入筛选、选择数量保持已执行；失败为顶部选择菜单在激活搜索时隐藏。原始log 384–423行及完整summary已核实，不声称导航通过。
+- 菜单移动后的generic Simulator session30068、generic Device session1761、UI build-for-testing session5349最终退出0；控制器已读完整短日志 `DerivedData/document-ui-final-simulator.log`、`DerivedData/document-ui-final-device.log` 与 `DerivedData/document-ui-final-testing-build.log`，仅既有supported-platforms提示。ImageSmoke session34841及ArchiveSmoke session43411退出0，控制器已读完整通过输出，无unhandled-source警告。安装session19864退出0；真实UI GREEN尚未完成，构建和安装不能证明最终交互通过。
+- 系统文件导入成功路径、操作输出独立重读、取消/等待/关闭重开与新旧方法均由同一document_ui实施者顺序验证；没有截图或图像查看授权。
+- `DocumentUIComplete.xcresult`：session38495退出65，方法总耗时439.367秒，结构化total6/failed6/passed0/skipped0；控制器已读完整summary和失败日志、确认PID80563终止。归档行查询、目录误选底层BackButton、后续批量入口及原生导入/导航前提失败；没有判为UI GREEN。
+- 独立检查实际归档输出 `归档测试-4BBA70.zip`：202bytes，Python zipfile条目为该空目录，testzip=None；只能证明该输出成功，不能证明原归档方法通过。前台查询修正后的单Image session62947退出65、200.068秒，失败于质量字段没有键盘焦点；目录修正尚未触达，后续条件修正需实际运行。
+- 单Image条件修正session47018退出65、101.799秒，实际键盘条件通过并输入质量0.6；随后目标DocumentUITests未查询到，目录选择和最终输出仍未通过。原始日志为 `DerivedData/document-ui-input-condition.log`，未视为单方法GREEN。
+
 ## 媒体阶段必要检查（尚未实施）
 
 - 精确LAME3.100.3包由SwiftPM校验下载，核对实际头文件和Mac/Simulator/Device slices；tag与manifest存在仅是前置证据。

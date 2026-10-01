@@ -14,7 +14,7 @@
 - [x] 第一阶段实施计划已写出并完成需求、接口和验证步骤自查。
 - [x] 用户审阅第一阶段实施计划并选择子代理分步执行。
 - [x] 第一阶段文件工作区界面、批量操作、嵌套普通文件归组和系统导航已实现；五项 Swift 自检、两种 generic 构建及 UI 测试目标编译通过。
-- [ ] 完成 XCUITest 标签切换、文件夹导航、搜索/选择及动态字体验收；独立 iOS 27 设备已进入导航方法，当前失败于搜索控件无匹配，修改后需回归。
+- [ ] 完成 XCUITest 标签切换、文件夹导航、搜索/选择及动态字体验收；独立 iOS 27 设备已进入实际方法，最新完整批次6项失败，前台查询/输入焦点/系统呈现条件正修正，导航最终回归尚未通过。
 - [ ] 实现常见格式处理、下载增强、传输与设置；少见格式提供明确不支持提示。
 - [x] 由两个只读子代理核对 ZIP 库及 PDF、图片、媒体、文本处理的官方能力边界。
 - [x] 用户本会话明确直接开发；已写 ZIP 规格与计划、自查边界及测试覆盖，沿用子代理分步执行。
@@ -45,3 +45,10 @@
 - 主代理 UI 诊断：独立 ShuReplicaFunctional（4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD）bootstatus、安装成功，同一次 test-without-building 真正进入导航方法。session56245已退出65；结构化xcresult为total=1/failed=1/passed=0，10:55在 Tests/ShuReplicaUITests.swift:79 找不到SearchField失败，前段标签切换、新建文件夹、全选已执行。诊断采集另超时600秒。搜索显示/激活条件需在Task3查明并用该方法回归；未查看图片或截图。
 - 图片阶段完成记录及当前可见消息快照：`context/2026/10/01/14-31-40/对话.md`，47条消息，不含内部推理、工具输出或目标继续控制消息；阶段文档3480884已普通推送origin/main，退出0。
 - 媒体实施计划已完成自查，四任务及精确服务接口、hosted iOS编码验证和真实页面路径已写；固定LAME3.100.3 tag/manifest核实，但没有下载二进制或实现媒体。待PDF/图片Task3及阶段整体审查完成后执行。当前控制器可见消息归档为 `context/2026/10/01/14-54-03/对话.md`（53条，编号/角色验证退出0）。
+- 媒体计划/记录29cff2e46ab593e0ed1231ee79534b7ab9e72eaf已普通推送，HEAD与origin/main核对一致；计划独立SDD准备账本为`.superpowers/sdd/2026-10-01-shu-media/progress.md`，媒体任务未派发。
+- Task3 首轮3个方法失败于文件行exact标签/launch自动terminate(pid0)前提，原session71263已正式退出65，主代理ps确认PID74793不存在；summary total3/failed3/passed0/skipped0。该批次不算功能RED。修改真实label前缀查询与app.activate返回导航后，single session11501实际长按locked.pdf（7KB），132.466秒方法在Tests/ShuReplicaUITests.swift:276因“PDF 处理”入口缺失失败，退出65，summary total1/failed1/passed0/skipped0；主代理读完整summary和关键log确认有效入口RED。document_ui已实现DocumentOperationView及文件/更多接入，产品、注册和测试尚未提交/验证GREEN。不得重复派发Task3。
+- 导航activation session71050已退出65，summary total1/failed1/passed0/skipped0；下拉显示搜索框、输入筛选和选择数量保持断言已执行，实际失败是搜索激活时顶部“选择”菜单无匹配。控制器已读取完整summary及关键log；底部批量操作仍可用。规格未限定选择菜单位置，已将既有唯一菜单移入现有底部操作栏，保留筛选文本，并增加反选仅影响筛选结果及取消选择归零断言；GREEN尚未取得。
+- 菜单移动后Simulator session30068、Device session1761、UI build-for-testing session5349最终退出0；控制器读三份完整短日志，仅既有supported-platforms提示。ImageSmoke session34841及ArchiveSmoke session43411退出0，控制器读完整真实通过输出，无unhandled-source警告。安装19864/启动51572退出0，实际PID80489。完整UI session38495已终止65，实际6方法均失败，summary total6/failed6/passed0/skipped0；控制器读完整summary及失败log、确认PID80563不存在。尚无UI GREEN，未开始独立审查。
+- 失败诊断：目录查询实际点中了被上层遮挡的BackButton，后续批量菜单也出现hitpoint{-1,-1}；真实归档测试ZIP202bytes，zipfile重读条目及CRC正常。最小单Image session62947退出65，200.068秒在质量字段无键盘焦点处失败，尚未验证目录查询修正。native呈现日志显示DocumentManager接到请求后scene handshake延迟，不能判定provider不存在。下一步使用前台且可点击控件和公共键盘/原生呈现条件，先走通单方法，再扩展其余失败项，不跳过断言。
+- document_ui因usage-limit错误终止；账户工具随后显示ordinaryUsageAllowed=true，与子代理错误不一致。已通过followup_task恢复同一代理，沿用原报告/BASE，不重新派发整个任务；未购买额度或执行重置。恢复后针对性build-for-testing session77522退出0；单Image条件修正session47018已退出65，101.799秒，键盘条件及质量0.6输入已执行，当前失败是排除BackButton后目标DocumentUITests尚不可见；需核对前台List懒加载与真实滚动，不修改服务或删除断言。
+- 可见消息快照已保存 `context/2026/10/01/15-35-21/对话.md`（66条）、`context/2026/10/01/15-56-24/对话.md`（71条）与 `context/2026/10/01/16-02-07/对话.md`（74条），排除内部控制与工具输出；本次记录正在提交。
