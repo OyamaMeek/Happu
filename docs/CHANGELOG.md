@@ -314,6 +314,6 @@
   - `Package.swift`、`Package.resolved`、`ShuReplica.xcodeproj/project.pbxproj`
   - `ShuReplica.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`（Xcode 合法解析生成）
   - `docs/CHANGELOG.md`
-- **Git 提交**：待提交；完成后通过后续文档提交补记实际哈希。
+- **Git 提交**：`27cc40edaaddc892469452f3eb0edce04be80cc9 feat: add image conversion animation and composition services`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
