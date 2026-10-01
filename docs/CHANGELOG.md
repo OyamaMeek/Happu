@@ -249,3 +249,20 @@
 - **Git 提交**：待提交。
 
 ---
+
+## [2026-10-01 09:17] PDF 服务：合并、分割、页面导出与移除密码
+
+- **需求/问题描述**：
+  > 按已授权 PDF/图片计划完成 PDF 服务及真实文件自检，保留页面内容与顺序，处理密码、取消、边界与输出清理。
+- **实际实现的功能与改动**：
+  - PDFKit 合并、按每份页数分割及去密码；PNG/JPEG 页面导出支持 36–300 dpi，单页限制 4000 万像素。输出重新读取核对，页边界使用真实 Progress。
+  - 仅接受工作区普通文件，拒绝路径符号链接、非法名称/目标与损坏/零页 PDF。同一磁盘内通过 FileStore.rename + move 无覆盖发布，跨磁盘目标明确失败；失败与取消清理暂存。
+  - owner-only 加密文档接受空 user 密码或经 PDFKit 确认的 owner 密码，拒绝任意错误非空密码。重建后的媒体框原点可归零；来源/输出完整页面 RGBA 数据一致，尺寸与旋转保留。
+  - [测试/验证]：2026-09-30 初始缺失接口编译退出 1；最小未实现接口与 split 的真实夹具运行分别退出 133。2026-10-01 owner-only 错误密码用例 RED 退出 133，修复后 `swiftc -module-cache-path DerivedData/ModuleCache ShuReplica/WorkspaceCategory.swift ShuReplica/FileStore.swift ShuReplica/PDFService.swift Tests/PDFSmoke.swift -o DerivedData/PDFSmoke && DerivedData/PDFSmoke DerivedData/TestRuns/PDFFinal` 退出 0，覆盖内容/顺序、余页、密码、导出尺寸/像素、进度、同名、只读目标、非法输入/边界、取消与清理。
+  - [测试/验证]：2026-09-30 既有 FileStoreSmoke、FileBatchSmoke、WorkspaceCategorySmoke、DownloadRequestSmoke、DownloadManagerSmoke（真实 localhost HTTP）、ArchiveSmoke 均退出 0。2026-10-01 最终 generic iOS Simulator `xcodebuild ... CODE_SIGNING_ALLOWED=NO build` 退出 0，iOS 18 目标保持；未重复启动失败的 UI runner，未截图。
+- **涉及文件**：
+  - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`Tests/fixtures/empty.pdf`、`Tests/fixtures/.gitattributes`（PDF 按二进制处理，保留格式所需空格）
+  - `ShuReplica.xcodeproj/project.pbxproj`、`Package.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
