@@ -20,7 +20,9 @@
 
 ## MP3 依赖核查
 
-MP3 输出需要实际编码器。已读取 LAME 的 Apple SwiftPM 包注册：`BB9z/LAME-xcframework` 的 3.100.3 提供 LAME binary target，声明 macOS 10.13+、iOS 12+，包含下载校验和；项目尚未安装或验证该依赖。[项目说明](https://github.com/BB9z/LAME-xcframework)、[Package.swift](https://github.com/BB9z/LAME-xcframework/blob/main/Package.swift)
+MP3 输出需要实际编码器。已读取 LAME 的 Apple SwiftPM 固定版本 manifest：`BB9z/LAME-xcframework` 3.100.3 提供 LAME binary target，声明 macOS 10.13+、iOS 12+。[固定版本 Package.swift](https://github.com/BB9z/LAME-xcframework/blob/3.100.3/Package.swift)、[项目说明](https://github.com/BB9z/LAME-xcframework)
+
+只读 `git ls-remote` 退出0，tag对应 `3f906714cf8a8cf2a82a8cf5bc760e639febf7b2`；manifest下载校验和为 `bcc33a8311c80993a06d363a29f631d74420cf954be8e8ee9e13450a525944ab`。尚未下载二进制、核对其实际头文件或安装产品依赖；包存在和manifest正确不能证明产品编码运行通过。
 
 后续选择需固定版本、核对公开头文件和实际 Mac/iOS 构建，并用真实音频编码与重读测试证明输出。MP3 不能按“少见格式可明确不支持”的例外跳过。
 

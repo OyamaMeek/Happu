@@ -1,5 +1,12 @@
 # 验证标准
 
+## 媒体阶段必要检查（尚未实施）
+
+- 精确LAME3.100.3包由SwiftPM校验下载，核对实际头文件和Mac/Simulator/Device slices；tag与manifest存在仅是前置证据。
+- AudioSmoke/VideoSmoke/VideoAnimationSmoke真实生成输入并重读PCM/帧内容、时长、采样率/声道、轨道/方向及GIF/WebP时长/循环，覆盖原文件保护、边界、同名、取消与清理。
+- 新hosted ShuReplicaRuntimeTests直接调用相同产品服务，实际运行testAudioCodecs/testVideoContainersAndEdits/testVideoAnimations；Mac通过或iOS编译不能替代iOS方法通过。当前目标尚未配置或执行。
+- Media UI方法从真实Documents输入验证表单、参数/轨道、输出、错误重试与取消/关闭重开；统计实际总数、通过、失败、跳过，未经授权不做视觉验收。
+
 ## 图片服务实施（2026-10-01）
 
 - `swift run --scratch-path DerivedData/ImagePackage ImageSmoke DerivedData/TestRuns/ImageComplete` 退出 0；主代理读取完整 `DerivedData/image-complete.log`，最终通过输出包含六 codec、帧内容/时长/循环、选帧、提取、方向、白底、合成、冲突、校验、边界、取消与清理。实际测试及历史 RED 命令详见本阶段 task-2-report.md。

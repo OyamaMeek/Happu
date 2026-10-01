@@ -349,6 +349,24 @@
   - `docs/superpowers/specs/2026-10-01-shu-media-design.md`、`docs/superpowers/plans/2026-09-30-shu-pdf-image.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
   - `context/2026/10/01/14-31-40/对话.md`、`docs/CHANGELOG.md`
+- **Git 提交**：`34808842255a85f65c4c4bf22791cce47983c46e docs: record image verification and media replica scope`；已普通推送origin/main，退出0。
+
+---
+
+## [2026-10-01 14:50] 后续媒体实施计划与文档页面任务派发
+
+- **需求/问题描述**：
+  > 持续完成 Payload Shu 完整复刻，按完整功能矩阵顺序实施并验证。
+- **实际实现的功能与改动**：
+  - PDF/图片 Task3 派发给 document_ui，从真实测试文件入口验证处理表单、取消/重试和搜索回归；当前仍在实施，未声称交互通过。
+  - 媒体计划明确音频转换、视频转换/编辑、逐帧动图与媒体页面四项任务，登记准确服务接口、编码参数、边界和真实 hosted XCTest 路径。
+  - 核对固定 LAME3.100.3 tag、manifest与校验和；未安装依赖、核对二进制头文件或实施产品媒体服务。
+  - 明确动图累计时间量化与末帧无法表达时的显式错误，避免零时长或删除帧掩盖结果；规格与计划保持一致。
+  - [测试/验证]：只读git ls-remote退出0；计划自查覆盖规格、接口、共享文件顺序和五类失败风险。当前文档改动不需要重新运行产品测试；页面实现的运行结果由其任务报告记录。
+  - 保存截至归档时53条可见用户/助手消息，编号与角色检查退出0，排除内部目标控制和工具输出。
+- **涉及文件**：
+  - `docs/superpowers/plans/2026-10-01-shu-media.md`、`docs/superpowers/specs/2026-10-01-shu-media-design.md`、`docs/SHU_MEDIA_CAPABILITIES.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`、`context/2026/10/01/14-54-03/对话.md`
 - **Git 提交**：待提交。
 
 ---

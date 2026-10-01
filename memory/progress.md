@@ -38,9 +38,10 @@
 - [x] Task 2 ImageService、libwebp 与真实 ImageSmoke，独立审查及最终补强复查通过。
 - Task 2 实施 27cc40e / 939f672、兼容补强 ccf23be / 12265da 已普通推送；ImageComplete、PDFSmoke、ArchiveSmoke、五项既有自检及 Simulator/Device 顺序构建退出0。最终 ImageLoopGreen、Pillow16件独立解码与 Simulator 构建退出0；image_review spec✅/Approved，image_loop_review 补强复查 Approved、无新增问题。UI 入口待 Task3，设备 codec 运行尚未验证。
 - [ ] Task 3 操作页、文件/更多入口、构建运行及独立复查。
-- Task2 保留总播放次数语义，真正缺全局属性时默认一次；没有把错误样本前置断言当服务RED。Task3已补充真实fixture生成器、文档交互测试及搜索失败回归，下一步顺序派发实现。
+- Task2 保留总播放次数语义，真正缺全局属性时默认一次；没有把错误样本前置断言当服务RED。Task3已补充真实fixture生成器、文档交互测试及搜索失败回归，document_ui 正在顺序实施，BASE为34808842255a85f65c4c4bf22791cce47983c46e。
 - [ ] 后续补齐常见其它归档、PDF 内嵌素材及包内容、相册/LivePhoto、媒体、文本/结构化文档、下载增强、传输、设置与完整 UI 验收。
 - 完整功能核对表 `docs/SHU_FEATURES.md` 已从原版资源建立，包含 PDF 分割、简介/哈希、外部文件接收、通讯录/扫描/iCloud 等待完成项，不能只按原有四阶段的简略列表判定全部完成。
 - 后续媒体能力证据见 `docs/SHU_MEDIA_CAPABILITIES.md`：Mac 原生 MP4/MOV/M4V/3GP 三帧 H.264 写读成功，FLAC 编码存在且 MP3 需库；尚未实现产品媒体功能，iOS Simulator 独立 CLI 探测终止、未验证运行能力。
 - 主代理 UI 诊断：独立 ShuReplicaFunctional（4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD）bootstatus、安装成功，同一次 test-without-building 真正进入导航方法。session56245已退出65；结构化xcresult为total=1/failed=1/passed=0，10:55在 Tests/ShuReplicaUITests.swift:79 找不到SearchField失败，前段标签切换、新建文件夹、全选已执行。诊断采集另超时600秒。搜索显示/激活条件需在Task3查明并用该方法回归；未查看图片或截图。
-- 图片阶段完成记录及当前可见消息快照：`context/2026/10/01/14-31-40/对话.md`，47条消息，不含内部推理、工具输出或目标继续控制消息；阶段文档提交与普通推送待实际执行。
+- 图片阶段完成记录及当前可见消息快照：`context/2026/10/01/14-31-40/对话.md`，47条消息，不含内部推理、工具输出或目标继续控制消息；阶段文档3480884已普通推送origin/main，退出0。
+- 媒体实施计划已完成自查，四任务及精确服务接口、hosted iOS编码验证和真实页面路径已写；固定LAME3.100.3 tag/manifest核实，但没有下载二进制或实现媒体。待PDF/图片Task3及阶段整体审查完成后执行。当前控制器可见消息归档为 `context/2026/10/01/14-54-03/对话.md`（53条，编号/角色验证退出0）。
