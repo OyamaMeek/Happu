@@ -9,6 +9,10 @@
 - `DocumentUIComplete.xcresult`：session38495退出65，方法总耗时439.367秒，结构化total6/failed6/passed0/skipped0；控制器已读完整summary和失败日志、确认PID80563终止。归档行查询、目录误选底层BackButton、后续批量入口及原生导入/导航前提失败；没有判为UI GREEN。
 - 独立检查实际归档输出 `归档测试-4BBA70.zip`：202bytes，Python zipfile条目为该空目录，testzip=None；只能证明该输出成功，不能证明原归档方法通过。前台查询修正后的单Image session62947退出65、200.068秒，失败于质量字段没有键盘焦点；目录修正尚未触达，后续条件修正需实际运行。
 - 单Image条件修正session47018退出65、101.799秒，实际键盘条件通过并输入质量0.6；随后目标DocumentUITests未查询到，目录选择和最终输出仍未通过。原始日志为 `DerivedData/document-ui-input-condition.log`，未视为单方法GREEN。
+- `DocumentUISheetList.xcresult`：单Image32884退出65、314.791秒；第一项生成真实JPEG795bytes，独立sips读取jpeg24×32。第二项进入Output后保存按钮即时isHittable失败，整项未通过；仅改为前台候选条件等待，保留实际点击与失败文字树，build47185退出0。
+- `DocumentUICancellationAction.xcresult`：取消重试session98419退出0，方法422.970秒；控制器独立xcresulttool session81353退出0，result=Passed、totalTestCount=1、passedTests=1、failedTests=0、skippedTests=0。覆盖错误密码、正确密码重试、真实进度变化、取消处理、运行中关闭并重开、更多PDF/图片系统导入取消返回。其余方法及成功系统导入尚未通过。
+- 控制器独立PDFKit session92896退出0：真实Output/ui-retry.pdf为2页、未加密且未锁定、第一页LOCKED1文字保留。随后实际根目录没有.pdf-/.image-暂存；PDFs只保留四个原始输入，Output仅ui-quality.jpeg/ui-retry.pdf，无两项取消输出。全套实际输出仍须完成生成器`--verify`。
+- 运行环境完整JSON核对仅iOS27.0（24A434）可用；当前真实UI结果仅覆盖该Simulator，不证明iOS26运行通过；部署目标仍为iOS18。
 
 ## 媒体阶段必要检查（尚未实施）
 

@@ -52,3 +52,8 @@
 - 失败诊断：目录查询实际点中了被上层遮挡的BackButton，后续批量菜单也出现hitpoint{-1,-1}；真实归档测试ZIP202bytes，zipfile重读条目及CRC正常。最小单Image session62947退出65，200.068秒在质量字段无键盘焦点处失败，尚未验证目录查询修正。native呈现日志显示DocumentManager接到请求后scene handshake延迟，不能判定provider不存在。下一步使用前台且可点击控件和公共键盘/原生呈现条件，先走通单方法，再扩展其余失败项，不跳过断言。
 - document_ui因usage-limit错误终止；账户工具随后显示ordinaryUsageAllowed=true，与子代理错误不一致。已通过followup_task恢复同一代理，沿用原报告/BASE，不重新派发整个任务；未购买额度或执行重置。恢复后针对性build-for-testing session77522退出0；单Image条件修正session47018已退出65，101.799秒，键盘条件及质量0.6输入已执行，当前失败是排除BackButton后目标DocumentUITests尚不可见；需核对前台List懒加载与真实滚动，不修改服务或删除断言。
 - 可见消息快照已保存 `context/2026/10/01/15-35-21/对话.md`（66条）、`context/2026/10/01/15-56-24/对话.md`（71条）与 `context/2026/10/01/16-02-07/对话.md`（74条），排除内部控制与工具输出；本次记录正在提交。
+- 核验记录eaca1dfe3cfe87dd4bfad556ea31e0929476085b已提交及普通推送，均退出0，HEAD=origin/main核对一致；仅9项文档/归档，产品WIP及用户已有文件保留，Task3原BASE3480884不变。
+- 后续ListScope单Image28139退出65、223.200秒；最终文字树确认测试reveal的swipeDown关闭了FolderPicker，导致继续查询底层页面。已删除该单个测试动作，产品手势及目标断言保留；sheet-list build session99526与随后同单方法验证由同一document_ui顺序执行，尚无GREEN。不重派Task3或跳过待完成的完整交互/独立审查。
+- sheet-list单Image32884已终止65、314.791秒；第一项真实生成Output/ui-quality.jpeg（795bytes），控制器独立读取format=jpeg、24×32。第二项显式帧也走通DocumentUITests→Output，失败于保存按钮即时isHittable断言，整项未通过。仅补前台同名候选条件等待及完整文字树，保留最终真实点击断言；destination-action build47185退出0。
+- 独立取消重试session98419最终退出0，实际422.970秒；控制器独立xcresulttool81353退出0，Passed/total1/passed1/failed0/skipped0。错误密码、成功重试、600页真实进度变化与取消、处理时关闭等待并重开、更多两入口系统选择器取消返回均通过。独立PDFKit92896读取ui-retry.pdf退出0，确认两页、无加密/锁定、首段LOCKED1文字保留；实际目录检查没有.pdf-/.image-或取消输出残留。其它5方法、完整6项回归、全部输出验证与独立审查仍待完成，同一document_ui继续实施。
+- 实际运行环境完整结构化核对仅iOS27.0（24A434）可用；iOS18部署目标与iOS26 Liquid Glass设计目标继续保留，不能声称已在iOS26运行验收。

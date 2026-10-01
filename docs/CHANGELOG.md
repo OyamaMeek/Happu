@@ -385,6 +385,23 @@
 - **涉及文件**：
   - `docs/SHU_FEATURES.md`、`memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
   - `context/2026/10/01/15-35-21/对话.md`、`context/2026/10/01/15-56-24/对话.md`、`context/2026/10/01/16-02-07/对话.md`
-- **Git 提交**：待提交；本次仅保存核验记录，产品与测试改动仍在实施。
+- **Git 提交**：`eaca1dfe3cfe87dd4bfad556ea31e0929476085b docs: record document UI verification and failures`；已普通推送origin/main，退出0；该提交只含核验文档和消息归档，产品与测试仍在实施。
+
+---
+
+## [2026-10-01 16:40] 文档取消重试交互通过与独立输出核验
+
+- **需求/问题描述**：
+  > 持续完整复刻 Payload Shu，并根据实际实现与测试结果回答是否已经完成。
+- **实际实现的功能与改动**：
+  - 保持完整功能范围，明确目前未完成；更新功能核对表与持久记录，记录第一个通过的完整文档交互方法。
+  - [测试/验证]：取消重试session98419退出0，真实方法422.970秒；控制器独立读取完整xcresult，Passed/total1/passed1/failed0/skipped0，覆盖错误密码与成功重试、真实进度变化、取消、处理时关闭等待并重开，以及更多两个原生导入入口取消返回。
+  - [测试/验证]：控制器独立PDFKit重读ui-retry.pdf退出0，确认两页、未加密/锁定、第一页文字保留；实际目录没有隐藏暂存或两项取消输出。先前图片方法314.791秒仍失败，但真实生成JPEG795bytes，独立读取jpeg24×32；没有把该单件输出计为整项通过。
+  - [测试/验证]：实际运行环境完整JSON只有iOS27.0可用；保留iOS18部署目标及iOS26 Liquid Glass设计目标，没有声称iOS26运行通过。其它方法、成功导入、完整回归与全套输出验收继续实施。
+  - 保存截至归档时88条用户/助手可见消息，保留原顺序，排除内部目标控制、推理与工具输出；未执行视觉验证。
+- **涉及文件**：
+  - `docs/SHU_FEATURES.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+  - `context/2026/10/01/16-41-02/对话.md`
+- **Git 提交**：待提交；本次保存实际交互与独立核验记录，产品与测试改动继续由原实施者完成。
 
 ---
