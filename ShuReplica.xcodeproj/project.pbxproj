@@ -20,6 +20,8 @@
         A1000000000000000000000F = {isa = PBXBuildFile; fileRef = A2000000000000000000000F; };
         A10000000000000000000010 = {isa = PBXBuildFile; fileRef = A20000000000000000000010; };
         A10000000000000000000011 = {isa = PBXBuildFile; fileRef = A20000000000000000000011; };
+        A10000000000000000000012 = {isa = PBXBuildFile; fileRef = A20000000000000000000012; };
+        A10000000000000000000013 = {isa = PBXBuildFile; productRef = AA0000000000000000000004; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,22 +42,23 @@
         A2000000000000000000000F = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArchiveBridge.m; sourceTree = "<group>"; };
         A20000000000000000000010 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveOperationView.swift; sourceTree = "<group>"; };
         A20000000000000000000011 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFService.swift; sourceTree = "<group>"; };
+        A20000000000000000000012 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-        A30000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000E); runOnlyForDeploymentPostprocessing = 0; };
+        A30000000000000000000001 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000E, A10000000000000000000013); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
         A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002, A40000000000000000000004, A40000000000000000000003, A40000000000000000000005); sourceTree = "<group>"; };
-        A40000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000004, A20000000000000000000005, A20000000000000000000006, A20000000000000000000007, A2000000000000000000000A, A2000000000000000000000D, A20000000000000000000010, A20000000000000000000011, A20000000000000000000008); path = ShuReplica; sourceTree = "<group>"; };
+        A40000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000004, A20000000000000000000005, A20000000000000000000006, A20000000000000000000007, A2000000000000000000000A, A2000000000000000000000D, A20000000000000000000010, A20000000000000000000011, A20000000000000000000012, A20000000000000000000008); path = ShuReplica; sourceTree = "<group>"; };
         A40000000000000000000003 = {isa = PBXGroup; children = (A20000000000000000000009, A2000000000000000000000C); name = Products; sourceTree = "<group>"; };
         A40000000000000000000004 = {isa = PBXGroup; children = (A2000000000000000000000B); path = Tests; sourceTree = "<group>"; };
         A40000000000000000000005 = {isa = PBXGroup; children = (A2000000000000000000000E, A2000000000000000000000F); path = ArchiveBridge; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-        A50000000000000000000001 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000002; buildPhases = (A30000000000000000000002, A30000000000000000000001); buildRules = (); dependencies = (); name = ShuReplica; packageProductDependencies = (AA0000000000000000000002); productName = ShuReplica; productReference = A20000000000000000000009; productType = "com.apple.product-type.application"; };
+        A50000000000000000000001 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000002; buildPhases = (A30000000000000000000002, A30000000000000000000001); buildRules = (); dependencies = (); name = ShuReplica; packageProductDependencies = (AA0000000000000000000002, AA0000000000000000000004); productName = ShuReplica; productReference = A20000000000000000000009; productType = "com.apple.product-type.application"; };
         A50000000000000000000002 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000003; buildPhases = (A30000000000000000000004, A30000000000000000000003); buildRules = (); dependencies = (A90000000000000000000001); name = ShuReplicaUITests; productName = ShuReplicaUITests; productReference = A2000000000000000000000C; productType = "com.apple.product-type.bundle.ui-testing"; };
 /* End PBXNativeTarget section */
 
@@ -68,11 +71,11 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
-        A60000000000000000000001 = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastUpgradeCheck = 1640; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 16.4; }; A50000000000000000000002 = {CreatedOnToolsVersion = 16.4; TestTargetID = A50000000000000000000001; }; }; }; buildConfigurationList = A80000000000000000000001; compatibilityVersion = "Xcode 14.0"; developmentRegion = zh_CN; hasScannedForEncodings = 0; knownRegions = (zh_CN, en, Base); mainGroup = A40000000000000000000001; packageReferences = (AA0000000000000000000001); productRefGroup = A40000000000000000000003; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001, A50000000000000000000002); };
+        A60000000000000000000001 = {isa = PBXProject; attributes = {BuildIndependentTargetsInParallel = 1; LastUpgradeCheck = 1640; TargetAttributes = {A50000000000000000000001 = {CreatedOnToolsVersion = 16.4; }; A50000000000000000000002 = {CreatedOnToolsVersion = 16.4; TestTargetID = A50000000000000000000001; }; }; }; buildConfigurationList = A80000000000000000000001; compatibilityVersion = "Xcode 14.0"; developmentRegion = zh_CN; hasScannedForEncodings = 0; knownRegions = (zh_CN, en, Base); mainGroup = A40000000000000000000001; packageReferences = (AA0000000000000000000001, AA0000000000000000000003); productRefGroup = A40000000000000000000003; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001, A50000000000000000000002); };
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-        A30000000000000000000002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000004, A10000000000000000000005, A10000000000000000000006, A10000000000000000000007, A1000000000000000000000A, A1000000000000000000000D, A1000000000000000000000F, A10000000000000000000010, A10000000000000000000011); runOnlyForDeploymentPostprocessing = 0; };
+        A30000000000000000000002 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001, A10000000000000000000002, A10000000000000000000003, A10000000000000000000004, A10000000000000000000005, A10000000000000000000006, A10000000000000000000007, A1000000000000000000000A, A1000000000000000000000D, A1000000000000000000000F, A10000000000000000000010, A10000000000000000000011, A10000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
         A30000000000000000000003 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
         A30000000000000000000004 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A1000000000000000000000B); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
@@ -94,10 +97,12 @@
 
 /* Begin XCRemoteSwiftPackageReference section */
         AA0000000000000000000001 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/ZipArchive/ZipArchive.git"; requirement = {kind = exactVersion; version = 2.6.0; }; };
+        AA0000000000000000000003 = {isa = XCRemoteSwiftPackageReference; repositoryURL = "https://github.com/SDWebImage/libwebp-Xcode.git"; requirement = {kind = exactVersion; version = 1.6.0; }; };
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
         AA0000000000000000000002 = {isa = XCSwiftPackageProductDependency; package = AA0000000000000000000001; productName = ZipArchive; };
+        AA0000000000000000000004 = {isa = XCSwiftPackageProductDependency; package = AA0000000000000000000003; productName = libwebp; };
 /* End XCSwiftPackageProductDependency section */
     };
     rootObject = A60000000000000000000001;

@@ -1,4 +1,5 @@
 {
+  "originHash" : "63223ebd52b065422ba44bb8215fef877aaa92c6e99a718898fd403f9f312ab8",
   "pins" : [
     {
       "identity" : "libwebp-xcode",
@@ -19,5 +20,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

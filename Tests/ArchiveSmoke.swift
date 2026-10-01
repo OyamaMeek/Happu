@@ -1,4 +1,5 @@
 import Foundation
+@testable import ShuServices
 
 @main
 struct ArchiveSmoke {

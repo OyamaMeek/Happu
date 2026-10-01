@@ -294,6 +294,26 @@
 - **涉及文件**：
   - `docs/SHU_FEATURES.md`、PDF/图片规格与计划、`memory/agents.md`、`memory/progress.md`、`memory/verify.md`
   - `.gitignore`、`docs/CHANGELOG.md`、`context/2026/10/01/09-39-16/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`5c2a3aa0f7d50c40caaffa017c05a6fad4b01ea0 docs: record PDF verification and complete replica scope`；已普通推送 `origin/main`。
+
+---
+
+## [2026-10-01 10:14] 图片服务：六种编码、动画、提取与合成
+
+- **需求/问题描述**：
+  > 按已授权 PDF/图片计划完成图片转换、质量设置、按帧提取与纵向合成，保留动画内容和参数，并验证取消、安全边界及输出清理。
+- **实际实现的功能与改动**：
+  - ImageIO 编码 TIFF/GIF/PNG/JPEG/BMP，fixed libwebp 1.6.0 标准编码、mux 与动画解码 API 处理静态/动画 WebP；每个输出重新解码核对帧数、尺寸及 GIF/WebP 时长和循环数。
+  - TIFF/GIF/WebP 保留全部帧，PNG/JPEG/BMP 对多帧输入要求显式零开始帧序号。JPEG/BMP 使用白底，CoreImage 正常化 EXIF 方向，PNG 按帧提取和白底纵向合成保持输入顺序。
+  - 单帧限制 4000 万像素，所有帧合计 8000 万像素，帧数限制 1–1000；质量接受 0.1–1.0。拒绝工作区越界、符号链接祖先、原始 `.`/`..` 路径、非法名称、坏输入及非目录目标。隐藏独立暂存中完成处理，再通过同磁盘 FileStore.rename + move 无覆盖发布。
+  - SwiftPM 共用 ShuServices 检查目标，两个 Smoke 仅编译各自入口；既有 ArchiveSmoke 只增加模块 import，不改产品服务可见性。Xcode 接入 fixed libwebp 和 ImageService，保持 iOS 18 部署目标。
+  - [测试/验证]：真实 ImageSmoke 未实现接口 RED 构建成功后退出 133；实现后的完整 `swift run --scratch-path DerivedData/ImagePackage ImageSmoke DerivedData/TestRuns/ImageComplete` 退出 0，涵盖六种格式类型/像素、GIF/WebP/TIFF 往返、0.1/0.3 秒与循环 3、重复帧、八种 EXIF 角点、WebP 实际 EXIF 块与半透明、选帧/提取/合成、文件/目录同名、超限、坏输入、外部哨兵、真实帧边界取消、只读发布失败及权限导致的暂存清理失败。失败清理被明确报告，测试恢复权限并移除受控残留后核对工作区清洁。
+  - [测试/验证]：PDFSmoke、ArchiveSmoke、FileStoreSmoke、FileBatchSmoke、WorkspaceCategorySmoke、DownloadRequestSmoke 和真实 localhost HTTP 下 DownloadManagerSmoke 均退出 0；generic Simulator 与 Device 共用 DerivedData 顺序构建均退出 0，项目 plist 与 diff 检查退出 0。PDF 坏输入仍产生 CoreGraphics 诊断，两种构建仍有 supported-platforms 提示；本任务未启动 UI runner、截图或视觉检查。
+- **涉及文件**：
+  - `ShuReplica/ImageService.swift`、`Tests/ImageSmoke.swift`、`Tests/ArchiveSmoke.swift`
+  - `Package.swift`、`Package.resolved`、`ShuReplica.xcodeproj/project.pbxproj`
+  - `ShuReplica.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`（Xcode 合法解析生成）
+  - `docs/CHANGELOG.md`
+- **Git 提交**：待提交；完成后通过后续文档提交补记实际哈希。
 
 ---
