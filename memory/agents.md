@@ -7,3 +7,5 @@
 - 模拟器：iPhone 18 Pro（iOS 27.0）可用；`simctl` 需要提高终端权限。XCTest runner 两次未进入测试方法。
 - 格式处理：已安装 SSZipArchive 2.6.0 精确 SwiftPM 依赖（模块 ZipArchive），minizip 64-bit 公开 API 通过 ArchiveBridge 静态声明接入；ZIP 服务由 zip_service 实施、zip_service_review 独立审查并复查通过，真实文件自检直接编译同一服务。文件入口与处理页由 zip_ui 实施、zip_ui_review 独立审查通过；zip_final_review 完成整体及最终测试强化复查，Ready Yes。所有子代理已完成，保留明确的 UI 运行验证限制。
 - 持续完整复刻：PDF/图片阶段计划与账本 `.superpowers/sdd/2026-09-30-shu-pdf-image/`；pdf_service 实施 Task 1，pdf_review 独立审查、pdf_path_review 修复复查通过。使用 PDFKit/CoreGraphics/ImageIO，同一服务由 macOS 真实自检验证。完整需求矩阵见 `docs/SHU_FEATURES.md`。子代理按计划顺序实施，每项独立复查。
+- 图片 Task2：ImageIO/CoreGraphics/libwebp1.6.0，共享SwiftPM ShuServices target；image_service 实施、image_review独立审查、image_loop_review最终补强复查均完成。27cc40e/939f672/ccf23be/12265da 已普通推送；真实服务自检通过，设备 codec 运行与 UI 接入尚待后续验证。
+- 独立功能测试设备：ShuReplicaFunctional，iPhone 18 Pro / iOS 27.0，UDID `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`。runner 已真正执行导航方法，session56245终止退出65，搜索控件无匹配导致1项失败；当前没有本任务活动XCTest命令。后续针对真实失败修正并回归，未完成视觉验收。

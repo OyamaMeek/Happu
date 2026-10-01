@@ -14,7 +14,7 @@
 - [x] 第一阶段实施计划已写出并完成需求、接口和验证步骤自查。
 - [x] 用户审阅第一阶段实施计划并选择子代理分步执行。
 - [x] 第一阶段文件工作区界面、批量操作、嵌套普通文件归组和系统导航已实现；五项 Swift 自检、两种 generic 构建及 UI 测试目标编译通过。
-- [ ] XCUITest 真正进入测试方法后验证标签切换、文件夹导航、选择及动态字体；当前 runner 在 iOS 27 模拟器启动阶段停滞，未产生测试事件。
+- [ ] 完成 XCUITest 标签切换、文件夹导航、搜索/选择及动态字体验收；独立 iOS 27 设备已进入导航方法，当前失败于搜索控件无匹配，修改后需回归。
 - [ ] 实现常见格式处理、下载增强、传输与设置；少见格式提供明确不支持提示。
 - [x] 由两个只读子代理核对 ZIP 库及 PDF、图片、媒体、文本处理的官方能力边界。
 - [x] 用户本会话明确直接开发；已写 ZIP 规格与计划、自查边界及测试覆盖，沿用子代理分步执行。
@@ -35,7 +35,12 @@
 - [x] 写 PDF/图片规格与三项实施计划，检查原版操作、输入输出、动画、安全边界和验证覆盖。
 - [x] Task 1 PDFService 与真实 PDFSmoke，独立审查及修复复查通过。
 - Task 1 实施 3d1ee23、路径修复 e48284b、日志补记 67d6953 / 164ca77 已普通推送。内部链接回归 RED 退出 133，修复后 PDFSmoke 与最终 Simulator 构建退出 0；pdf_path_review 确认全部问题已处理，无新增重要问题。PDF UI 入口仍待 Task 3。
-- [ ] Task 2 ImageService、libwebp 与真实 ImageSmoke。
+- [x] Task 2 ImageService、libwebp 与真实 ImageSmoke，独立审查及最终补强复查通过。
+- Task 2 实施 27cc40e / 939f672、兼容补强 ccf23be / 12265da 已普通推送；ImageComplete、PDFSmoke、ArchiveSmoke、五项既有自检及 Simulator/Device 顺序构建退出0。最终 ImageLoopGreen、Pillow16件独立解码与 Simulator 构建退出0；image_review spec✅/Approved，image_loop_review 补强复查 Approved、无新增问题。UI 入口待 Task3，设备 codec 运行尚未验证。
 - [ ] Task 3 操作页、文件/更多入口、构建运行及独立复查。
+- Task2 保留总播放次数语义，真正缺全局属性时默认一次；没有把错误样本前置断言当服务RED。Task3已补充真实fixture生成器、文档交互测试及搜索失败回归，下一步顺序派发实现。
 - [ ] 后续补齐常见其它归档、PDF 内嵌素材及包内容、相册/LivePhoto、媒体、文本/结构化文档、下载增强、传输、设置与完整 UI 验收。
 - 完整功能核对表 `docs/SHU_FEATURES.md` 已从原版资源建立，包含 PDF 分割、简介/哈希、外部文件接收、通讯录/扫描/iCloud 等待完成项，不能只按原有四阶段的简略列表判定全部完成。
+- 后续媒体能力证据见 `docs/SHU_MEDIA_CAPABILITIES.md`：Mac 原生 MP4/MOV/M4V/3GP 三帧 H.264 写读成功，FLAC 编码存在且 MP3 需库；尚未实现产品媒体功能，iOS Simulator 独立 CLI 探测终止、未验证运行能力。
+- 主代理 UI 诊断：独立 ShuReplicaFunctional（4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD）bootstatus、安装成功，同一次 test-without-building 真正进入导航方法。session56245已退出65；结构化xcresult为total=1/failed=1/passed=0，10:55在 Tests/ShuReplicaUITests.swift:79 找不到SearchField失败，前段标签切换、新建文件夹、全选已执行。诊断采集另超时600秒。搜索显示/激活条件需在Task3查明并用该方法回归；未查看图片或截图。
+- 图片阶段完成记录及当前可见消息快照：`context/2026/10/01/14-31-40/对话.md`，47条消息，不含内部推理、工具输出或目标继续控制消息；阶段文档提交与普通推送待实际执行。

@@ -36,21 +36,21 @@
 
 ### Task 2: 图片服务
 
-**Files:** Create `ShuReplica/ImageService.swift`, `Tests/ImageSmoke.swift`; update `Package.swift`, Xcode project dependency/source registration, `docs/CHANGELOG.md`。
+**Files:** Create `ShuReplica/ImageService.swift`, `Tests/ImageSmoke.swift`; update `Package.swift`, `Tests/ArchiveSmoke.swift`（仅共享服务模块 import）, Xcode project dependency/source registration, `docs/CHANGELOG.md`。SwiftPM 两个 executable 不得重叠源文件，将实际服务注册为共同 ShuServices target，由两个 Smoke 使用 @testable import 验证相同内部服务；不改变 iOS 项目中的 API 可见性。
 **Interfaces:** `ImageFormat: String, CaseIterable` 的 cases `tiff, gif, webp, png, jpeg, bmp`；`ImageService(root: URL)`；`convert(_ input: URL, to format: ImageFormat, quality: Double, frame: Int?, in folder: URL, named name: String, progress: Progress) throws -> URL`；`extractFrames(_ input: URL, in folder: URL, named name: String, progress: Progress) throws -> URL`；`compose(_ inputs: [URL], in folder: URL, named name: String, progress: Progress) throws -> URL`；`frameCount(_ input: URL) throws -> Int`。frame 为零开始，nil 表示保留所有帧；多帧到单帧编码格式必须给 frame。JPEG/BMP 白底，纵向合成 PNG，EXIF 方向正常化。
 
-- [ ] Step 1: 写真实 ImageSmoke（同服务在 SwiftPM 可执行 target），CGImage 生成颜色/透明/方向样本，ImageIO 生成两帧 GIF（0.1/0.3 秒，循环 3）；断言六格式实际解码、方向尺寸/像素、动画 GIF/WebP/TIFF 往返帧数与可表达的时长/循环、显式选帧、提取、合成、同名保留、超限/坏输入/边界/取消/清理。
-- [ ] Step 2: 接入 fixed libwebp 1.6.0 和 ImageSmoke SwiftPM target，执行 `swift run --scratch-path DerivedData/ImagePackage ImageSmoke DerivedData/TestRuns/ImageRed`，记录因服务缺失或未实现行为 RED。
-- [ ] Step 3: 使用 ImageIO 与 libwebp 标准编码/解码/动画 API 实施，限制单帧 4000 万像素和所有帧合计 8000 万像素；质量验证 0.1–1.0，失败信息清楚。
-- [ ] Step 4: 运行 ImageSmoke、PDFSmoke、ArchiveSmoke 与既有自检；generic Simulator/Device 顺序构建，重新读取输出核实。
-- [ ] Step 5: diff/check、changelog、原子提交与普通推送，Task 2 报告。
+- [x] Step 1: 写真实 ImageSmoke（同服务在 SwiftPM 可执行 target），CGImage 生成颜色/透明/方向样本，ImageIO 生成两帧 GIF（0.1/0.3 秒，循环 3）；断言六格式实际解码、方向尺寸/像素、动画 GIF/WebP/TIFF 往返帧数与可表达的时长/循环、显式选帧、提取、合成、同名保留、超限/坏输入/边界/取消/清理。
+- [x] Step 2: 接入 fixed libwebp 1.6.0 和 ImageSmoke SwiftPM target，执行 `swift run --scratch-path DerivedData/ImagePackage ImageSmoke DerivedData/TestRuns/ImageRed`，记录因服务缺失或未实现行为 RED。
+- [x] Step 3: 使用 ImageIO 与 libwebp 标准编码/解码/动画 API 实施，限制单帧 4000 万像素和所有帧合计 8000 万像素；质量验证 0.1–1.0，失败信息清楚。
+- [x] Step 4: 运行 ImageSmoke、PDFSmoke、ArchiveSmoke 与既有自检；generic Simulator/Device 顺序构建，重新读取输出核实。
+- [x] Step 5: diff/check、changelog、原子提交与普通推送，Task 2 报告。
 
 ### Task 3: 操作页与入口
 
-**Files:** Create `ShuReplica/DocumentOperationView.swift`; modify `ShuReplica/FilesView.swift`, `ShuReplica/MoreView.swift`, `ShuReplica/ShuReplicaApp.swift`（传入 store 给更多页面）, `Tests/ShuReplicaUITests.swift`, Xcode source registration and changelog。
+**Files:** Create `ShuReplica/DocumentOperationView.swift`, `Tests/prepare_document_ui_fixtures.swift`（仅测试用真实 PDF/图片生成器，不编入产品）；modify `ShuReplica/FilesView.swift`, `ShuReplica/MoreView.swift`, `ShuReplica/ShuReplicaApp.swift`（传入 store 给更多页面）, `Tests/ShuReplicaUITests.swift`, Xcode source registration and changelog。
 **Interfaces:** `DocumentOperationRequest` 使用 `[URL]` 和 PDF/image 模式，`DocumentOperationView(store: FileStore, request: DocumentOperationRequest, onFinish: () -> Void)`。消费 Task 1/2 接口及已有 FolderPicker。
 
-- [ ] Step 1: 添加 UI 用例：导入/选中文件后进入 PDF 或图片表单、PDF 合并至少两项且可排序、图片转换选格式/质量/选帧、目标选择、错误和取消重试；记录 runner 尚无执行证据，不用源码匹配测试冒充 RED。
+- [ ] Step 1: 先添加 `testDocumentPDFOperations`、`testDocumentImageOperations`、`testDocumentCancellationAndRetry`：从工作区真实输入进入表单，PDF 合并两项/上下调整/逐输入密码/分割/导出、图片格式/质量/显式帧/提取/合成、目标选择、命名、输出及错误/取消/关闭重开。生成器用 PDFKit/CoreGraphics/ImageIO 写两份有文字 PDF、加密 PDF、足够页数的取消样本、彩色 PNG 与多帧 GIF，结果放在 DerivedData 后复制到独立模拟器应用 Documents 的专用测试子目录，测试实际点击文件入口；不要增加产品内测试专用输入/假进度。新入口尚未实现时执行针对性 XCTest RED，必须进入方法并因目标入口缺失失败，不用源码匹配或编译冒充 RED。更多入口验证真实系统导入与取消；无法完成的系统条件如实记录。
 - [ ] Step 2: 实现共享表单：单项/多项操作选择、PDF 每份分割页数、各输入密码、dpi/质量/显式帧输入、上下移动顺序、命名与目标目录。后台任务、真实 Progress 定时观察、取消且等待、错误重试、预览分享/完成刷新。更多入口 fileImporter 复制到工作区再调用同页，MoreView 接收 store，App 调用传入 runtime.store。
-- [ ] Step 3: 运行服务真实自检及完整旧自检；Simulator/Device、UI build-for-testing 顺序构建；模拟器 install 成功后 launch，收集退出码；不宣称未执行的触控及视觉。
+- [ ] Step 3: 运行服务真实自检及完整旧自检；Simulator/Device、UI build-for-testing 顺序构建；独立设备安装成功后 launch/真实 XCTest，收集结构化方法数与断言结果。现有导航方法已在本阶段真实失败于 `Tests/ShuReplicaUITests.swift:79` SearchField 不存在，日志为 DerivedData/functional-navigation-20261001.log；先查明 `.searchable` 自动放置的显示/激活条件，按实际用户可执行路径修正测试或产品，在修改后回归该方法及新文档用例。不能只删除搜索/选择断言，也不能通过跳过测试判为通过。未经授权不截图或查看图片；编译、运行与视觉证据分开记录。
 - [ ] Step 4: diff/check、changelog、原子提交与普通推送，Task 3 报告及独立复查。

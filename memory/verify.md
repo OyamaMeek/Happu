@@ -1,5 +1,13 @@
 # 验证标准
 
+## 图片服务实施（2026-10-01）
+
+- `swift run --scratch-path DerivedData/ImagePackage ImageSmoke DerivedData/TestRuns/ImageComplete` 退出 0；主代理读取完整 `DerivedData/image-complete.log`，最终通过输出包含六 codec、帧内容/时长/循环、选帧、提取、方向、白底、合成、冲突、校验、边界、取消与清理。实际测试及历史 RED 命令详见本阶段 task-2-report.md。
+- PDFSmoke、ArchiveSmoke、FileStoreSmoke、FileBatchSmoke、WorkspaceCategorySmoke、DownloadRequestSmoke、真实 localhost 下 DownloadManagerSmoke 均由实施者执行退出 0；未重复套件。PDF 坏/零页拒绝夹具的 CoreGraphics 诊断仍保留。
+- generic Simulator 和 generic Device 顺序构建退出 0；主代理读取完整 `DerivedData/image-simulator.log`、`DerivedData/image-device.log`，均只有既有 supported-platforms 提示。27cc40e / 939f672 已普通推送；独立规格与质量审查通过，UI 尚待 Task 3。
+- 最终兼容补强 ccf23be / 日志补记12265da已普通推送。ImageLoopBaseline（未改服务）与ImageLoopGreen、两轮Pillow12.3.0各16件独立GIF解码、最终Simulator构建均退出0；父代理读取完整对应log，image_loop_review确认M2 ADDRESSED，无新增问题。无扩展GIF全局属性实际为1、正次已归一化为总播放次数；原I1由原审查者撤回。错误样本前置133未记为服务RED，真正缺全局属性fallback分支未在本机实际诱发。
+- 独立新设备 bootstatus Finished、应用及 runner 顺序安装退出 0。单项导航 test-without-building session56245退出65，实际方法执行423.458秒，失败位置 Tests/ShuReplicaUITests.swift:79，SearchField无匹配；另有诊断采集超时600秒。`xcresulttool get test-results summary` 退出0：result=Failed、totalTestCount=1、failedTests=1、passedTests=0、skippedTests=0。原始日志 DerivedData/functional-navigation-20261001.log，结果包 FunctionalNavigation-20261001.xcresult。没有判定整个导航方法通过，也未截图/读取图像。
+
 ## PDF 服务实施（2026-10-01）
 
 - `swiftc -module-cache-path DerivedData/ModuleCache ShuReplica/WorkspaceCategory.swift ShuReplica/FileStore.swift ShuReplica/PDFService.swift Tests/PDFSmoke.swift -o DerivedData/PDFSmoke && DerivedData/PDFSmoke DerivedData/TestRuns/PDFFinal`：退出 0，真实合并/分割顺序、文字/几何/整页栅格、加密、PNG/JPEG、进度、同名、非法输入/路径边界、只读目标失败、取消与清理断言通过。owner-only 错误密码断言修复前退出 133。坏/零页夹具触发 CoreGraphics 诊断，不宣称输出无警告。

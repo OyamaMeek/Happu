@@ -332,3 +332,23 @@
 - **Git 提交**：`ccf23be1bd681450107e08874fc68cb2ae69b98a fix: default unspecified image animations to one play`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
+
+## [2026-10-01 14:31] 图片审查完成、导航真实失败及后续媒体规格
+
+- **需求/问题描述**：
+  > 回答 Payload 是否完整复刻，并继续完成已授权的完整 Shu 复刻。
+- **实际实现的功能与改动**：
+  - 更新图片服务完成状态：独立规格与代码质量审查、循环边界补强复查通过，无未解决的重要问题；PDF/图片 UI 和其它完整功能仍待后续实施。
+  - 记录完整功能矩阵、媒体原版操作与实际 native 能力探测，写媒体处理规格；尚未安装 MP3 依赖或实现产品媒体功能。
+  - 更新 PDF/图片 Task3 计划，加入真实测试输入生成器、文档交互测试和导航搜索失败回归；生成器不编入产品，禁止假进度或删除断言绕过失败。
+  - [测试/验证]：真实图片及八种自检、Simulator/Device 构建证据已记录；最终 ImageLoopGreen、Pillow 独立16件GIF读取及 Simulator退出0。无循环扩展GIF经ImageIO归一化为总播放次数1，原审查推断撤回；没有伪造当前平台行为RED。
+  - [测试/验证]：独立新设备与顺序安装成功后真正执行导航方法；XCTest退出65，结构化结果 total=1、failed=1、passed=0，唯一断言失败为SearchField无匹配。另有诊断采集超时，后续修正回归；没有截图或图像检查。
+  - 归档截至本阶段的47条用户/助手可见消息，保留原顺序，排除系统/开发者、内部目标控制、推理与工具输出。
+- **涉及文件**：
+  - `docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`
+  - `docs/superpowers/specs/2026-10-01-shu-media-design.md`、`docs/superpowers/plans/2026-09-30-shu-pdf-image.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
+  - `context/2026/10/01/14-31-40/对话.md`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---

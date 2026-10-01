@@ -17,9 +17,9 @@
 | Office/电子书等容器内容查看和导出 | 内置指南“显示包内容” | 待实施。 |
 | PDF 合并、分割、按页图片导出、移除密码 | `file.merge.pdf`、`file.split.*`、`public.convert.pdf.page`、`file.remove.pdf.pwd` | 服务与真实文件自检已实现，独立审查与路径修复复查通过。UI 入口待 Task 3。 |
 | PDF 内嵌素材提取 | 指南、`file.extract.pdf.fail` | 待实施；按页导出不能替代素材提取。 |
-| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | PDF/图片计划 Task 2/3 待实施。 |
-| 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | PDF/图片计划 Task 2/3 待实施；必须保留帧与可表达的时长。 |
-| 视频格式转换、质量压缩、提取/去除音频 | `file.convert.video`、`file.compress.video`、`file.extract/remove.audio` | 待实施。 |
+| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；操作 UI 待 Task 3。 |
+| 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | 服务已实现提取和 GIF/WebP 帧、时长、播放语义保留，真实自检和独立审查通过；查看与操作 UI 尚待实施。 |
+| 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | 待实施；原生编码能力核查见 `docs/SHU_MEDIA_CAPABILITIES.md`，Mac 探测不代表 iOS 运行通过。 |
 | 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | 待实施；MP3 属常见格式，需要真实编码能力。 |
 | 视频转动图、动图帧率/颜色/质量 | 指南、`more.anim.*`、`more.gif.*` | 待实施。 |
 | Photos 多选导入/导出、LivePhoto 导入/导出及转换 | 指南、`public.export.livephoto.*` | 待实施。 |
@@ -38,6 +38,6 @@
 | 排序、HTML模式、静音、剪贴板、图片/动图设置 | `more.file_order/config/html_view/picture/gif.*` | 当前只有名称/修改时间排序；其余待实施。 |
 | 文件缓存、帮助、关于、反馈/调试日志、隐私、推荐 | `more.cache/faq/about/feedback/privacy/tellFri.*` | 当前仅基础关于；其它页面待实施，不自动发送反馈。 |
 | 重置文件及下载 | `more.reset.*` | 待实施；实际删除必须由用户在应用内确认。 |
-| 全功能交互与布局验收 | 用户完整目标与已批准规格 | XCTest runner 曾在安装阶段停滞；本次单独安装旧 runner 已退出 0，未证明测试方法能运行。视觉尚无授权/证据。 |
+| 全功能交互与布局验收 | 用户完整目标与已批准规格 | 新独立设备已真正执行导航测试；1项失败于搜索控件无匹配，需修正回归。其余功能交互和布局未完成；视觉尚无授权/证据。 |
 
 所有“待实施”项和未完成验收均阻止宣布完整复刻完成。阶段构建成功及服务测试通过不能替代整表验收。
