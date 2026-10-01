@@ -161,6 +161,7 @@ struct PDFService {
     }
 
     private func checkPath(_ url: URL) throws {
+        guard !url.pathComponents.contains(where: { $0 == "." || $0 == ".." }) else { throw PDFServiceError("PDF 路径不能包含相对目录组件。") }
         let rootPath = root.resolvingSymlinksInPath().path
         let candidate = url.standardizedFileURL
         let resolved = candidate.resolvingSymlinksInPath().path

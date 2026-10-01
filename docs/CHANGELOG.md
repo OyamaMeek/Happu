@@ -246,7 +246,7 @@
   - `docs/superpowers/specs/2026-09-30-shu-pdf-image-design.md`
   - `docs/superpowers/plans/2026-09-30-shu-pdf-image.md`
   - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`72fa090d42610d10bc9bdd14febacf081410651f docs: plan Shu PDF and image processing`；已普通推送 `origin/main`。
 
 ---
 
@@ -264,5 +264,20 @@
   - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`Tests/fixtures/empty.pdf`、`Tests/fixtures/.gitattributes`（PDF 按二进制处理，保留格式所需空格）
   - `ShuReplica.xcodeproj/project.pbxproj`、`Package.swift`、`docs/CHANGELOG.md`
 - **Git 提交**：`3d1ee2320a22f631722f7a766531c9a8ae7faa7f feat: add PDF processing services and real file checks`；已普通推送 `origin/main`，提交信息通过后续文档提交保存。
+
+---
+
+## [2026-10-01 09:31] PDF 审查修正：拒绝未规范化的符号链接路径
+
+- **需求/问题描述**：
+  > 核实审查提出的 `符号链接/../文件` 路径边界，保证 PDF 输入与目标拒绝符号链接路径。
+- **实际实现的功能与改动**：
+  - 原始 URL 的 `.`/`..` 组件在标准化前明确拒绝，防止标准化消除内部符号链接后接受该路径。
+  - 真实外部输入、目标目录、内部 decoy 和哨兵文件验证：当前 Foundation 对外部 `escape/../` 会保留实际外部路径，原实现已拒绝，审查所述越界问题撤回。工作区内部 `internalLink/../traversal.pdf` 原实现确实接受，构成已复现的符号链接路径规则缺陷。
+  - [测试/验证]：`swiftc -module-cache-path DerivedData/ModuleCache ShuReplica/WorkspaceCategory.swift ShuReplica/FileStore.swift ShuReplica/PDFService.swift Tests/PDFSmoke.swift -o DerivedData/PDFSmoke && DerivedData/PDFSmoke DerivedData/TestRuns/PDFInternalLinkRed` 退出 133，`Invalid operation unexpectedly succeeded`。单行修复后运行 `DerivedData/PDFSmoke DerivedData/TestRuns/PDFTraversalGreen` 退出 0；外部四个入口的输入与目标、内部输入与目标均拒绝，原文件和哨兵未改变，未留下输出/暂存。
+  - [测试/验证]：generic iOS Simulator `xcodebuild -quiet -project ShuReplica.xcodeproj -scheme ShuReplica -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath DerivedData/ShuReplica CODE_SIGNING_ALLOWED=NO build` 退出 0；本任务 diff 检查退出 0。
+- **涉及文件**：
+  - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
 
 ---

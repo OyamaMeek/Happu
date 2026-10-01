@@ -153,6 +153,27 @@ struct PDFSmoke {
         try manager.createSymbolicLink(at: symlink, withDestinationURL: first)
         let linkedFolder = root.appendingPathComponent("linked")
         try manager.createSymbolicLink(at: linkedFolder, withDestinationURL: folder)
+        let external = run.appendingPathComponent("external", isDirectory: true)
+        let externalChild = external.appendingPathComponent("child", isDirectory: true)
+        let externalTarget = external.appendingPathComponent("target", isDirectory: true)
+        try manager.createDirectory(at: externalChild, withIntermediateDirectories: true)
+        try manager.createDirectory(at: externalTarget, withIntermediateDirectories: false)
+        let externalPDF = external.appendingPathComponent("traversal.pdf")
+        try fixture(externalPDF, pages: [("X", CGRect(x: 0, y: 0, width: 80, height: 60), 0), ("Y", CGRect(x: 0, y: 0, width: 80, height: 60), 0)])
+        let insideDecoy = root.appendingPathComponent("traversal.pdf")
+        try manager.copyItem(at: first, to: insideDecoy)
+        let insideTarget = root.appendingPathComponent("target", isDirectory: true)
+        try manager.createDirectory(at: insideTarget, withIntermediateDirectories: false)
+        let traversalLink = root.appendingPathComponent("escape")
+        try manager.createSymbolicLink(at: traversalLink, withDestinationURL: externalChild)
+        let traversalInput = URL(fileURLWithPath: root.path + "/escape/../traversal.pdf")
+        let traversalTarget = URL(fileURLWithPath: root.path + "/escape/../target", isDirectory: true)
+        try check(traversalInput.pathComponents.contains(".."), "Traversal fixture must retain original dot component")
+        try check(PDFDocument(url: traversalInput)?.page(at: 0)?.string == "X", "Original URL must read outside fixture through symlink")
+        let sentinel = externalTarget.appendingPathComponent("sentinel.txt")
+        try Data("outside sentinel".utf8).write(to: sentinel)
+        let externalOriginal = try Data(contentsOf: externalPDF)
+        let decoyOriginal = try Data(contentsOf: insideDecoy)
 
         func clean() throws {
             try check(manager.contentsOfDirectory(atPath: root.path).allSatisfy { !$0.hasPrefix(".pdf-") }, "Staging leaked")
@@ -168,6 +189,36 @@ struct PDFSmoke {
             try check(manager.contentsOfDirectory(atPath: folder.path).sorted() == before, "Failed operation changed destination")
             try clean()
         }
+        for operation in 0...3 {
+            try reject {
+                switch operation {
+                case 0: return try service.merge([first, traversalInput], passwords: [:], in: folder, named: "traversal", progress: Progress())
+                case 1: return try service.split(traversalInput, password: nil, pagesPerPart: 1, in: folder, named: "traversal", progress: Progress())
+                case 2: return try service.exportPages(traversalInput, password: nil, dpi: 72, jpeg: false, in: folder, named: "traversal", progress: Progress())
+                default: return try service.removePassword(traversalInput, password: "", in: folder, named: "traversal", progress: Progress())
+                }
+            }
+            try reject {
+                switch operation {
+                case 0: return try service.merge([first, second], passwords: [:], in: traversalTarget, named: "traversal", progress: Progress())
+                case 1: return try service.split(first, password: nil, pagesPerPart: 1, in: traversalTarget, named: "traversal", progress: Progress())
+                case 2: return try service.exportPages(first, password: nil, dpi: 72, jpeg: false, in: traversalTarget, named: "traversal", progress: Progress())
+                default: return try service.removePassword(protected, password: "secret", in: traversalTarget, named: "traversal", progress: Progress())
+                }
+            }
+            try check(manager.contentsOfDirectory(atPath: externalTarget.path) == ["sentinel.txt"], "Traversal changed outside output directory")
+            try check(manager.contentsOfDirectory(atPath: insideTarget.path).isEmpty, "Traversal changed decoy output directory")
+            try check(Data(contentsOf: sentinel) == Data("outside sentinel".utf8), "Traversal changed outside sentinel")
+            try check(Data(contentsOf: externalPDF) == externalOriginal && Data(contentsOf: insideDecoy) == decoyOriginal, "Traversal changed input files")
+        }
+        let internalLink = root.appendingPathComponent("internalLink")
+        try manager.createSymbolicLink(at: internalLink, withDestinationURL: folder)
+        let internalInput = URL(fileURLWithPath: root.path + "/internalLink/../traversal.pdf")
+        let internalTarget = URL(fileURLWithPath: root.path + "/internalLink/../target", isDirectory: true)
+        try check(internalInput.pathComponents.contains("..") && internalInput.standardizedFileURL.path == insideDecoy.path, "Internal link fixture must normalize inside workspace")
+        try reject { try service.merge([first, internalInput], passwords: [:], in: folder, named: "internalTraversal", progress: Progress()) }
+        try reject { try service.exportPages(first, password: nil, dpi: 72, jpeg: false, in: internalTarget, named: "internalTraversal", progress: Progress()) }
+        try check(manager.contentsOfDirectory(atPath: insideTarget.path).isEmpty, "Internal link changed decoy output directory")
         for inputs in [[], [first], [first, broken], [first, empty], [first, outside], [first, symlink], [first, linkedFolder.appendingPathComponent("first.pdf")], [first, folder]] {
             try reject { try service.merge(inputs, passwords: [:], in: folder, named: "bad", progress: Progress()) }
         }
