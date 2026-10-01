@@ -278,6 +278,6 @@
   - [测试/验证]：generic iOS Simulator `xcodebuild -quiet -project ShuReplica.xcodeproj -scheme ShuReplica -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath DerivedData/ShuReplica CODE_SIGNING_ALLOWED=NO build` 退出 0；本任务 diff 检查退出 0。
 - **涉及文件**：
   - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`e48284b2b4138d6556e992a5a0513d3ffc64d1a5 fix: reject noncanonical PDF paths before validation`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
