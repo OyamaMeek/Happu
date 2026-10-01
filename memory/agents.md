@@ -10,4 +10,4 @@
 - 图片 Task2：ImageIO/CoreGraphics/libwebp1.6.0，共享SwiftPM ShuServices target；image_service 实施、image_review独立审查、image_loop_review最终补强复查均完成。27cc40e/939f672/ccf23be/12265da 已普通推送；真实服务自检通过，设备 codec 运行与 UI 接入尚待后续验证。
 - 独立功能测试设备：ShuReplicaFunctional，iPhone 18 Pro / iOS 27.0，UDID `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`。runner 已真正执行导航方法；session71050终止退出65，搜索显示/输入/选择数量保持已执行，该次失败为激活搜索时顶部选择菜单隐藏。document_ui 正在真实文档交互及导航回归，未完成视觉验收。
 - PDF/图片 Task3：document_ui（gpt-6.1-sol high）消费真实服务，实现操作页与文件/更多入口，补真实文档交互与搜索回归；控制器负责后续独立审查，不并行派第二个实现者。
-- Task3完整UI批次6项失败；document_ui因usage-limit错误终止后已恢复同一代理。恢复后单Image47018退出65，键盘条件及质量输入已执行，当前失败是目标文件夹查询不可见；继续查证前台列表的懒加载及可见范围。产品提交、UI GREEN与独立审查仍未完成。
+- Task3取消重试98419与More成功导入65315两个单项均真实通过，各total1/passed1/failed0/skipped0；控制器独立核验真实PDF、工作区副本字节与结构化结果。完整六项回归19281已退出65，结构化Failed/total6/passed2/failed4/skipped0；Archive和More通过，三个文档方法在工作区入口失败，Navigation在选择菜单失败。同一document_ui依据现有文本诊断继续处理；全套输出验证、产品提交和独立审查未完成。

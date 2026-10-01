@@ -13,6 +13,9 @@
 - `DocumentUICancellationAction.xcresult`：取消重试session98419退出0，方法422.970秒；控制器独立xcresulttool session81353退出0，result=Passed、totalTestCount=1、passedTests=1、failedTests=0、skippedTests=0。覆盖错误密码、正确密码重试、真实进度变化、取消处理、运行中关闭并重开、更多PDF/图片系统导入取消返回。其余方法及成功系统导入尚未通过。
 - 控制器独立PDFKit session92896退出0：真实Output/ui-retry.pdf为2页、未加密且未锁定、第一页LOCKED1文字保留。随后实际根目录没有.pdf-/.image-暂存；PDFs只保留四个原始输入，Output仅ui-quality.jpeg/ui-retry.pdf，无两项取消输出。全套实际输出仍须完成生成器`--verify`。
 - 运行环境完整JSON核对仅iOS27.0（24A434）可用；当前真实UI结果仅覆盖该Simulator，不证明iOS26运行通过；部署目标仍为iOS18。
+- `DocumentUIMoreNativeCell.xcresult`：成功导入65315退出0、262.278秒，控制器独立xcresulttool1269退出0，Passed/total1/passed1/failed0/skipped0；真实系统选取/Open、工作区复制、共享PDF页处理输出及返回文件列表检查通过。受控reset前控制器cmp退出0，root b.pdf为6236bytes且与原始PDFs/b.pdf逐字节一致。真实两PNG由实施者检查大小1744/1907bytes，全部内容仍需最终`--verify`。
+- 同代码受控reset85639退出0后运行完整六项19281，最终退出65；控制器独立`xcresulttool get test-results summary`退出0确认`DocumentUIFinalGreen.xcresult`为Failed、totalTestCount6、passedTests2、failedTests4、skippedTests0。Archive253.022秒与More277.018秒通过；三个文档方法在UITests:302工作区入口失败，Navigation在UITests:77全选菜单失败。未only/skip，不能因结果包命名判整套通过；全部方法与实际输出验证完成后再进入Task3独立审查。
+- 点前选择菜单诊断`DocumentUISelectionBounds.xcresult`：实施者session26594退出65、52.069秒；控制器读取完整相关文字层级，Menu与TabBar按钮矩形实际重叠且点击前isHittable失败。已据此修正选择态系统工具栏显示，后续必须真实验证全选、搜索词保留、筛选反选精确数量、取消归零和完成后标签恢复；尚未判修复通过，未执行视觉验证。
 
 ## 媒体阶段必要检查（尚未实施）
 
