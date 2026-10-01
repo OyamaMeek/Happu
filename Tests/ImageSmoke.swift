@@ -37,9 +37,9 @@ struct ImageSmoke {
         }
     }
 
-    static func write(_ images: [CGImage], to url: URL, type: UTType, orientation: Int = 1) {
+    static func write(_ images: [CGImage], to url: URL, type: UTType, orientation: Int = 1, loop: Int = 3) {
         let writer = CGImageDestinationCreateWithURL(url as CFURL, type.identifier as CFString, images.count, nil)!
-        CGImageDestinationSetProperties(writer, [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 3]] as CFDictionary)
+        CGImageDestinationSetProperties(writer, [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: loop]] as CFDictionary)
         for (index, image) in images.enumerated() {
             CGImageDestinationAddImage(writer, image, [kCGImagePropertyOrientation: orientation, kCGImagePropertyTIFFDictionary: [kCGImagePropertyTIFFCompression: 5], kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: index == 0 ? 0.1 : 0.3]] as CFDictionary)
         }
@@ -80,7 +80,7 @@ struct ImageSmoke {
         return (0..<CGImageSourceGetCount(source)).map { CGImageSourceCreateImageAtIndex(source, $0, nil)! }
     }
 
-    static func animation(_ url: URL) -> ([Double], Int) {
+    static func animation(_ url: URL) -> ([Double], Int?) {
         if url.pathExtension == "webp" {
             let data = try! Data(contentsOf: url)
             return data.withUnsafeBytes { bytes in
@@ -98,13 +98,13 @@ struct ImageSmoke {
         }
         let source = CGImageSourceCreateWithURL(url as CFURL, nil)!
         let props = CGImageSourceCopyProperties(source, nil)! as NSDictionary
-        let gif = props[kCGImagePropertyGIFDictionary] as! NSDictionary
+        let gif = props[kCGImagePropertyGIFDictionary] as? NSDictionary
         let durations = (0..<CGImageSourceGetCount(source)).map { index -> Double in
             let props = CGImageSourceCopyPropertiesAtIndex(source, index, nil)! as NSDictionary
             let gif = props[kCGImagePropertyGIFDictionary] as! NSDictionary
             return (gif[kCGImagePropertyGIFUnclampedDelayTime] as? NSNumber ?? gif[kCGImagePropertyGIFDelayTime] as! NSNumber).doubleValue
         }
-        return (durations, (gif[kCGImagePropertyGIFLoopCount] as! NSNumber).intValue)
+        return (durations, (gif?[kCGImagePropertyGIFLoopCount] as? NSNumber)?.intValue)
     }
 
     static func rejects(_ expected: String? = nil, cancellation: Bool = false, _ operation: () throws -> Void) {
@@ -134,6 +134,59 @@ struct ImageSmoke {
         }
     }
 
+    static func setWebPLoop(_ loop: Int, in webp: URL, output: URL) throws {
+        let data = try Data(contentsOf: webp)
+        try data.withUnsafeBytes { bytes in
+            var input = WebPData(bytes: bytes.bindMemory(to: UInt8.self).baseAddress, size: data.count)
+            let mux = WebPMuxCreateInternal(&input, 1, WEBP_MUX_ABI_VERSION)!
+            defer { WebPMuxDelete(mux) }
+            var params = WebPMuxAnimParams()
+            precondition(WebPMuxGetAnimationParams(mux, &params) == WEBP_MUX_OK)
+            params.loop_count = Int32(loop)
+            precondition(WebPMuxSetAnimationParams(mux, &params) == WEBP_MUX_OK)
+            var result = WebPData()
+            defer { WebPFree(UnsafeMutableRawPointer(mutating: result.bytes)) }
+            precondition(WebPMuxAssemble(mux, &result) == WEBP_MUX_OK)
+            try Data(bytes: result.bytes!, count: result.size).write(to: output)
+        }
+    }
+
+    static func checkAnimation(_ url: URL, loop: Int?) {
+        let images = read(url)
+        precondition(images.count == 2 && pixel(images[0])[0] > 230 && pixel(images[1])[2] > 230)
+        let (times, actual) = animation(url)
+        precondition(times.count == 2 && abs(times[0] - 0.1) < 0.011 && abs(times[1] - 0.3) < 0.011)
+        precondition(actual == loop, "Loop metadata changed for \(url.lastPathComponent): expected \(String(describing: loop)), got \(String(describing: actual))")
+    }
+
+    static func checkLoops(_ service: ImageService, root: URL, output: URL, red: CGImage, blue: CGImage) throws {
+        for loop in [1, 0, 2, 4] {
+            let label = loop == 1 ? "absent" : String(loop)
+            let input = root.appendingPathComponent("loop-\(label).gif")
+            if loop == 1 {
+                // Pillow 编码的两帧 GIF：省略 loop 参数，未写入循环扩展。
+                let fixture = Data(base64Encoded: "R0lGODlhBgAEAIEAAP8AAAAAAAAAAAAAACH5BAAKAAAALAAAAAAGAAQAAAgLAAEIHEiwoMGBAQEAIfkEAR4AAQAsAAAAAAYABACBAAD/AAAAAAAAAAAACAsAAQgcSLCgwYEBAQA7")!
+                try fixture.write(to: input)
+            } else { write([red, blue], to: input, type: .gif, loop: loop) }
+            checkAnimation(input, loop: loop)
+            let gif = try service.convert(input, to: .gif, quality: 1, frame: nil, in: output, named: "loop-gif-\(label)", progress: Progress())
+            checkAnimation(gif, loop: loop)
+            let webp = try service.convert(input, to: .webp, quality: 1, frame: nil, in: output, named: "loop-webp-\(label)", progress: Progress())
+            checkAnimation(webp, loop: loop)
+            let back = try service.convert(webp, to: .gif, quality: 1, frame: nil, in: output, named: "loop-back-\(label)", progress: Progress())
+            checkAnimation(back, loop: loop)
+            let again = try service.convert(back, to: .webp, quality: 1, frame: nil, in: output, named: "loop-again-\(label)", progress: Progress())
+            checkAnimation(again, loop: loop)
+            let fixture = root.appendingPathComponent("native-webp-\(loop).webp")
+            try setWebPLoop(loop, in: webp, output: fixture)
+            checkAnimation(fixture, loop: loop)
+            let reverse = try service.convert(fixture, to: .gif, quality: 1, frame: nil, in: output, named: "reverse-gif-\(label)", progress: Progress())
+            checkAnimation(reverse, loop: loop)
+            let reverseWebP = try service.convert(reverse, to: .webp, quality: 1, frame: nil, in: output, named: "reverse-webp-\(label)", progress: Progress())
+            checkAnimation(reverseWebP, loop: loop)
+        }
+    }
+
     static func main() throws {
         let root = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true).standardizedFileURL
         precondition(!manager.fileExists(atPath: root.path), "Use a fresh test directory")
@@ -160,6 +213,7 @@ struct ImageSmoke {
         let gif = root.appendingPathComponent("animated.gif")
         write([red, blue], to: gif, type: .gif)
         check(try service.frameCount(gif) == 2)
+        try checkLoops(service, root: root, output: output, red: red, blue: blue)
         for format in [ImageFormat.gif, .webp, .tiff] {
             let result = try service.convert(gif, to: format, quality: 1, frame: nil, in: output, named: "animation-" + format.rawValue, progress: Progress())
             let decoded = read(result)

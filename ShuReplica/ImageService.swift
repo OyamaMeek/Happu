@@ -162,7 +162,7 @@ struct ImageService {
         let properties = CGImageSourceCopyProperties(native, nil) as NSDictionary?
         let gif = properties?[kCGImagePropertyGIFDictionary] as? NSDictionary
         let png = properties?[kCGImagePropertyPNGDictionary] as? NSDictionary
-        let loop = (gif?[kCGImagePropertyGIFLoopCount] as? NSNumber ?? png?[kCGImagePropertyAPNGLoopCount] as? NSNumber)?.intValue ?? 0
+        let loop = (gif?[kCGImagePropertyGIFLoopCount] as? NSNumber ?? png?[kCGImagePropertyAPNGLoopCount] as? NSNumber)?.intValue ?? 1
         return Source(data: data, native: native, webp: false, sizes: sizes, orientations: orientations, durations: durations, loop: loop)
     }
 

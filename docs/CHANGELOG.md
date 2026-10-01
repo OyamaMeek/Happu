@@ -317,3 +317,18 @@
 - **Git 提交**：`27cc40edaaddc892469452f3eb0edce04be80cc9 feat: add image conversion animation and composition services`；已普通推送 `origin/main`，实际哈希通过后续文档提交补记。
 
 ---
+
+## [2026-10-01 14:23] 图片循环元数据默认值补强与真实往返回归
+
+- **需求/问题描述**：
+  > 核实审查 I1 指出的缺少循环扩展 GIF 播放语义，并覆盖一次、无限及正次数的 GIF/WebP 双向转换。
+- **实际实现的功能与改动**：
+  - 仅将真正缺少循环元数据时的默认值改为一次播放；保留 ImageIO 与 WebP 的总播放次数表示及现有编码、时长和核对逻辑。
+  - 增加 Pillow 12.3.0 编码的真实两帧缺循环扩展 GIF 内嵌样本，覆盖一次、无限、两次、四次播放；通过 ImageIO/libwebp 解码及标准 mux 检查 GIF→GIF、GIF→WebP→GIF 和 WebP→GIF→WebP 的帧颜色、100/300 毫秒时长及播放次数。
+  - [测试/验证]：修改服务前的 ImageSmoke 已退出 0；实际平台 ImageIO 将缺扩展 GIF 的全局 LoopCount 读取为 1，将 GIF 原始重复次数 1/3 读取为总播放次数 2/4，因此本机未复现 I1 所述行为。此前样本前置断言失败退出 133，未将其记为行为缺陷 RED。
+  - [测试/验证]：补强后 ImageSmoke、Pillow 独立解析 16 个 GIF 的原始循环字段/帧像素/时长、generic Simulator 构建均退出 0。构建保留既有 supported-platforms 提示；未重复其它 Smoke、Device 构建或运行 UI/截图。
+- **涉及文件**：
+  - `ShuReplica/ImageService.swift`、`Tests/ImageSmoke.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
