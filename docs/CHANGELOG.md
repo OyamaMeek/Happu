@@ -511,7 +511,7 @@
   - [独立复查]：唯一scoped re-review确认I1 ADDRESSED、没有修复引入的新问题；既有M1为非阻断诊断。用户随后明确授权“无论你做什么我都会授权推送”，本次修复按已授权范围提交并普通推送。
 - **涉及文件**：
   - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交；此前自动审批两次拒绝，Git命令未执行。用户已补充明确授权本次及后续已授权开发范围内的普通推送。
+- **Git 提交**：`cb7e7e5f3449d7967e956e9a34cac217178c97ae fix: preserve PDF annotations in page exports`；提交及普通push退出0，控制器核对HEAD=origin/main。此前两次审批拒绝未执行Git；用户补充明确授权后成功发布。
 
 ---
 
@@ -529,6 +529,23 @@
   - `docs/SHU_PDF_IMAGE_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/CHANGELOG.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `context/2026/10/02/19-29-48/对话.md`
-- **Git 提交**：待提交；用户已补充明确普通推送授权，验收记录随本次修复保存。此前检查点为a1414b969bc8c129a345e9b16505eba1a2d80d08。
+- **Git 提交**：`cb7e7e5f3449d7967e956e9a34cac217178c97ae fix: preserve PDF annotations in page exports`已保存本段日志并普通推送；其它验收文档与归档由后续文档提交保存。
+
+---
+
+## [2026-10-02 19:44] 持续推送授权与PDF图片阶段记录
+
+- **需求/问题描述**：
+  > 用户明确持续授权推送；核实Payload复刻状态，完成已复查修复的提交与普通推送。
+- **实际实现的功能与改动**：
+  - PDF批注修复cb7e7e5提交/普通push退出0，HEAD=origin/main；更新功能核对表、验收记录与持久授权，不混入用户AGENTS或Xcode个人文件。
+  - [验证]：读取完整既有PDFSmoke及两平台构建日志、独立复查报告，任务diff检查退出0；没有重复未改动测试，未声明完整Shu完成。
+  - [验证]：保存206条可见会话消息，编号、角色、最新授权和内部控制排除断言通过。隔离LAME依赖解析/下载退出0，未验证媒体编码或修改产品注册。
+  - 八项阶段判断及代价、14项审查未判定处理已保存；剩余媒体、其它格式、下载增强、传输、设置和界面验收继续保留。
+- **涉及文件**：
+  - `docs/CHANGELOG.md`、`docs/SHU_FEATURES.md`、`docs/SHU_PDF_IMAGE_VALIDATION.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
+  - `context/2026/10/02/19-29-48/对话.md`、`context/2026/10/02/19-44-22/对话.md`
+- **Git 提交**：待提交；本段为当前文档提交记录，实际哈希由后续开发记录补记。
 
 ---

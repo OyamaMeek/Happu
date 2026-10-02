@@ -28,6 +28,8 @@
 - `DocumentUIFullFinal.xcresult`71766终止0/.exit0、1041.298秒，控制器独立xcresulttool退出0确认Passed/totalTestCount6/passedTests6/failedTests0/skippedTests0；覆盖同一版本下六个正式方法，无临时诊断或跳过。实际产物67668退出133于JPEG纯色参考值；控制器独立Pillow数字解码确认原PNG、GIF及对应JPEG/选帧/提取/合成像素相符，原红(255,38,0)、蓝(4,51,255)，原绝对纯色前提错误。只能改为比较真实输入像素及明确JPEG小误差，不能仅放宽单个绿色阈值；修正后的完整`--verify`尚待执行。
 - 最终`document-ui-actual-outputs-final.exit`为0，完整log确认PDF文字/顺序/分割/解密/dpi、图片质量/帧/提取/合成、取消清理和原文件检查通过。控制器核对修正仅测试参考像素：JPEG每通道差≤2，PNG提取/合成等于真实原PNG/GIF对应像素，四个结果目录准确集合保留；另独立cmp七输入均退出0，独立Pillow两原GIF帧/提取帧与两合成对应像素相等，退出0。Task3最终提交及独立审查尚待完成。
 - Task3最终9f32757已普通推送，控制器核对HEAD=origin/main；document_ui_review规格符合、质量Approved，无Critical/Important。七项跨任务核验已记录，未运行平台和专项仍保留；M1既有平台提示/坏PDF诊断交整体审查。阶段整体审查尚无最终判定。
+- 整体审查With fixes：PDF按页导出遗漏可见annotation。实际序列化输入的服务产物RED133/蓝像素0应800；修复为PDFPage.draw后完整PDFSmoke GREEN0，PNG两页800、JPEG两页3196，已知位置/尺寸/非零原点/旋转/原字节/进度通过。最终Simulator48247/Device4141均实际exit0；Device提前启动被主动中断的75保留为执行错误，不作为编译失败。唯一scoped re-review正在执行，Git因自动审批两次拒绝保持未提交；此前6项UI结果对应9f32757，未声称新批注修复已重跑UI或真机。
+- 唯一scoped re-review完整最终报告确认I1 ADDRESSED、无新增问题；其源码/diff核对、实际测试证据与系统PDFKit接口说明一致，控制器完整读取且原审查者恢复确认。既有M1仍为非阻断诊断；cb7e7e5提交和普通push均退出0，控制器核对HEAD=origin/main。完整Shu仍未完成，没有重跑未改动的UI或宣称iOS18/26、真机与视觉验收通过。
 
 ## 媒体阶段必要检查（尚未实施）
 

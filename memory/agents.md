@@ -9,4 +9,4 @@
 - 持续完整复刻：PDF/图片阶段计划与账本 `.superpowers/sdd/2026-09-30-shu-pdf-image/`；pdf_service 实施 Task 1，pdf_review 独立审查、pdf_path_review 修复复查通过。使用 PDFKit/CoreGraphics/ImageIO，同一服务由 macOS 真实自检验证。完整需求矩阵见 `docs/SHU_FEATURES.md`。子代理按计划顺序实施，每项独立复查。
 - 图片 Task2：ImageIO/CoreGraphics/libwebp1.6.0，共享SwiftPM ShuServices target；image_service 实施、image_review独立审查、image_loop_review最终补强复查均完成。27cc40e/939f672/ccf23be/12265da 已普通推送；真实服务自检通过，UI接入与实际产物已验证，真机codec运行尚未验证。
 - 独立功能测试设备：ShuReplicaFunctional，iPhone 18 Pro / iOS 27.0，UDID `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`；应用数据容器随安装变化，每次验证重新获取。未经授权不截图或读取视觉附件，数字像素断言用于文件内容验证。
-- PDF/图片 Task3：原document_ui（gpt-6.1-sol high）完成操作页与文件/更多入口，9f32757已普通推送；完整六项1041.298秒通过、十项产物及四目录精确集合验证通过、七原输入字节比较通过。document_ui_review（gpt-6.1-sol high）规格符合、质量Approved；跨任务七项核验已处理，未运行条件继续保留。唯一整体审查者pdf_image_final_review（gpt-6-astra high）检查72fa090..9f32757；控制器不修改产品或派并行实现者，整体审查仍待完成。
+- PDF/图片 Task3：原document_ui完成操作页与入口，9f32757已普通推送；完整六项6/0/0、实际产物与七输入字节比较通过，document_ui_review规格符合、质量Approved。整体审查I1批注遗漏已由原pdf_service修复，PDFSmoke及Simulator/Device构建退出0，唯一针对性复查确认ADDRESSED、无新增问题。用户补充持续推送授权后，cb7e7e5已提交并普通推送，HEAD=origin/main；原审批阻碍已解除，控制器未修改产品。

@@ -15,9 +15,9 @@
 | ZIP 普通/密码解压、目标目录、进度取消 | `file.extract*`、`uncompress.passwd.input` | 已实现，真实归档自检有通过记录；交互未验收。 |
 | 常见 RAR/7z/TAR/GZIP 解压；少见格式明确提示 | 内置指南格式列表 | 当前只有 ZIP；其它常见格式仍待实现，少见格式提示已有入口。 |
 | Office/电子书等容器内容查看和导出 | 内置指南“显示包内容” | 待实施。 |
-| PDF 合并、分割、按页图片导出、移除密码 | `file.merge.pdf`、`file.split.*`、`public.convert.pdf.page`、`file.remove.pdf.pwd` | 服务、自检及独立审查通过；iOS27完整PDF交互、最新完整六项回归与全部实际产物校验通过，含逐项选择/密码、顺序调整、合并、真实预览分享往返、分割、144dpi导出和解密。UI独立审查通过，阶段整体审查正在执行。 |
+| PDF 合并、分割、按页图片导出、移除密码 | `file.merge.pdf`、`file.split.*`、`public.convert.pdf.page`、`file.remove.pdf.pwd` | 服务、自检及独立审查通过；iOS27完整PDF交互、六项回归与实际产物校验通过。可见批注遗漏已修复，真实PNG/JPEG回归、完整PDFSmoke、Simulator/Device构建及唯一针对性复查通过；修复cb7e7e5已提交并普通推送。 |
 | PDF 内嵌素材提取 | 指南、`file.extract.pdf.fail` | 待实施；按页导出不能替代素材提取。 |
-| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；iOS27完整图片交互、最新完整六项回归与全部实际产物校验通过，含JPEG质量0.6、显式选帧、全帧提取、批量选择及调整顺序合成。UI独立审查通过，阶段整体审查正在执行。 |
+| 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；iOS27完整图片交互、最新完整六项回归与全部实际产物校验通过，含JPEG质量0.6、显式选帧、全帧提取、批量选择及调整顺序合成。UI和阶段代码审查完成，代码及整体审查修复已普通推送。 |
 | 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | 服务已实现提取和 GIF/WebP 帧、时长、播放语义保留，真实自检和独立审查通过；显式选帧/全帧提取UI及实际输出内容重读通过，逐帧查看仍待补齐。 |
 | 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | 待实施；原生编码能力核查见 `docs/SHU_MEDIA_CAPABILITIES.md`，Mac 探测不代表 iOS 运行通过。 |
 | 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | 待实施；MP3 属常见格式，需要真实编码能力。 |
@@ -38,6 +38,6 @@
 | 排序、HTML模式、静音、剪贴板、图片/动图设置 | `more.file_order/config/html_view/picture/gif.*` | 当前只有名称/修改时间排序；其余待实施。 |
 | 文件缓存、帮助、关于、反馈/调试日志、隐私、推荐 | `more.cache/faq/about/feedback/privacy/tellFri.*` | 当前仅基础关于；其它页面待实施，不自动发送反馈。 |
 | 重置文件及下载 | `more.reset.*` | 待实施；实际删除必须由用户在应用内确认。 |
-| 全功能交互与布局验收 | 用户完整目标与已批准规格 | iOS27最新完整六项回归1041.298秒通过，6通过/0失败/0跳过，覆盖归档入口、密码/取消/导入、搜索/选择、PDF处理及原生预览分享、图片转换/提取/合成；全部实际输出内容、准确目录集合、取消清理和七个原始输入字节保持均验证通过，操作页独立审查通过。阶段整体审查、动态字体和布局验收仍待完成，视觉尚无授权/证据；其它功能仍按本表逐项实施验收。 |
+| 全功能交互与布局验收 | 用户完整目标与已批准规格 | iOS27六项回归1041.298秒通过，6通过/0失败/0跳过；实际输出内容、准确目录集合、取消清理和七个原始输入字节保持均通过。操作页及阶段代码审查完成，批注修复另有真实文件回归与构建证据，已普通推送，未重跑未改动UI。动态字体和布局验收未完成，视觉尚无授权/证据；其它功能仍逐项实施验收。 |
 
 所有“待实施”项和未完成验收均阻止宣布完整复刻完成。阶段构建成功及服务测试通过不能替代整表验收。

@@ -26,10 +26,10 @@
 - 持续目标“完整复刻”已要求继续工作；沿用已授权的 main 与子代理实施方式。规格 `docs/superpowers/specs/2026-09-30-shu-pdf-image-design.md`，计划 `docs/superpowers/plans/2026-09-30-shu-pdf-image.md`。
 - 原版字符串确认 PDF 合并、按页导出、移除密码，以及图片转换、质量压缩、合成和按帧提取。PDFKit / ImageIO 优先，WebP 使用 fixed libwebp 1.6.0；动画不能静默丢帧，密码不持久化。
 - PDF 内嵌素材与包内容提取、相册/LivePhoto、常见其它归档、媒体、文本、下载增强、传输、更多设置和 UI 验收继续保留在完整目标中。
-- Task3实现9f32757已普通推送，完整六项与实际产物验证通过，document_ui_review规格符合、质量Approved；七项跨任务核验已逐项记录。当前由pdf_image_final_review进行72fa090..9f32757整体审查，未完成审查前不启动媒体代码。
+- Task3实现9f32757已普通推送，完整六项与实际产物验证通过，document_ui_review规格符合、质量Approved；七项跨任务核验已逐项记录。整体审查的批注遗漏已修复并通过唯一针对性复查、真实PDFSmoke及两平台构建；用户补充持续授权后，cb7e7e5已提交并普通推送。阶段记录保存后继续媒体。
 
 ## 媒体阶段准备
 
 - 原版需求、native 实测和 MP3 编码器依据记录于 `docs/SHU_MEDIA_CAPABILITIES.md`；后续规格 `docs/superpowers/specs/2026-10-01-shu-media-design.md` 包含四种视频、五种音频、质量/音轨/区间和 GIF/WebP 动图参数、边界与真实验证。
-- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 已写：音频与真实iOS编码、视频转换/编辑、逐帧动图、共享媒体操作页面四个独立审查任务。LAME tag及manifest校验和已核实；尚未下载二进制或实施产品媒体功能。
-- PDF/图片三个任务已分别审查完成，阶段整体审查正在执行；通过后实施媒体。Photos/LivePhoto另阶段实施，完整范围不缩小。
+- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 已写：音频与真实iOS编码、视频转换/编辑、逐帧动图、共享媒体操作页面四个独立审查任务。LAME 3.100.3的隔离SwiftPM解析与二进制下载退出0；未接入产品，也未验证音频编码或iOS运行。
+- PDF/图片三个任务和整体修复复查已完成，cb7e7e5已普通推送；完成记录保存与八项判断披露后继续媒体。Photos/LivePhoto另阶段实施，完整范围不缩小。

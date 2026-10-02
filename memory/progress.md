@@ -97,3 +97,14 @@
 - Task3独立审查已返回规格符合、质量Approved，无Critical/Important；七项Cannot verify逐项在`task-3-verification-resolution.md`处理，未发现新的实现缺口。iOS18/26实际运行、真机、Dynamic Type/VoiceOver、视觉、外部提供器及既有输出目录刷新专项继续保留为完整目标待验收条件。
 - 本阶段Task1/2/3均已完成，整体审查包72fa090..9f32757包含17提交/977999bytes，已派唯一pdf_image_final_review（gpt-6-astra/high）。首次因usage-limit终止且无报告；账户工具核实ordinaryUsageAllowed=true/primary0%/weekly47%，恢复同一代理一次。没有购买额度、执行重置、重复测试或开始媒体代码。
 - 整体审查已覆盖服务、页面、FileStore集成、依赖和新增测试，确认一项Important：PDF页面导出漏绘可见annotation。针对序列化重读的真实100×100红色square批注PDF，纯内存数值探测当前CG红像素0/PDFKit.draw红像素3600，退出0；等待完整报告后派唯一修复波，不提前修改产品或重跑全套。
+- 完整整体审查With fixes，Critical0/Important1/Minor1；14条Declined to judge已在`docs/SHU_PDF_IMAGE_VALIDATION.md`逐项处理。控制器检查点a1414b9已普通push/HEAD=origin/main；原pdf_service已恢复执行唯一修复波，报告追加Task1，index/CHANGELOG暂交该实施者。修复后一次scoped re-review，不能在批注内容回归通过前完成本阶段或开始媒体代码。
+- 全目标后续专项：低内存真机临界图像、多帧disposal/APNG/短时长、极大GIF循环、特殊provider部分导入失败及深层输出目录刷新、磁盘耗尽/强制终止/并发文件替换/发布后取消窗口均未验收；后续按实际行为补证，不外推现有测试。
+- PDF批注实际服务回归：`pdf-annotation-red.exit=133`，蓝色批注像素0/预期800，控制器读完整log确认有效RED。修复共享exportPages后`pdf-annotation-green.exit=0`，PNG两页800/800，JPEG两页3196/3196（预期3200），预定位置/非零box/旋转/原字节/进度断言通过，完整既有PDFSmoke通过；控制器读取完整log与实际diff。原实施者依次Simulator/Device构建，尚未最终提交或复查，不重复UI/Image/Archive。
+- 构建顺序错误已明确：实施者误读Simulator running返回而提前启动Device，移除提前写出的exit标记并主动中断Device；Simulator48247随后实际exit0，控制器读最终.exit/log确认。旧Device77304实际exit75/BUILD INTERRUPTED后才重启同Device4141，原中断日志保留；未将观察超时判终止或写成产品编译失败。控制器当前pgrep无xcodebuild输出、Device最终.exit尚不存在，已通知实施者收取同一4141终态，禁止重复启动。
+- 最终Device4141实际exit0，控制器读`.exit=0`和完整短log，只有既有平台提示；无后台构建。原pdf_service报告DONE_WITH_CONCERNS，修复/真实PDFSmoke和两平台构建通过，index空且HEAD仍a1414b9。两次auto-review在进程创建前拒绝暂存/commit/普通push；提供原始role=user的main开发、自动推送和原子提交授权仍被拒绝，理由要求本次具体修复授权。停止Git重试，没有绕过；index/CHANGELOG已释放。
+- 为使审批成为最后一步，生成三文件未提交修复包`final-fix-working-review.diff`（184行），派唯一pdf_annotation_fix_review（gpt-6.1-sol/high）验证I1和新增变更，无Git/产品修改。复查后向用户明确请求这项修复及验收记录提交/普通push授权，阶段目录保留，媒体尚未开始。
+- 唯一scoped re-review完整报告已保存；代理额度错误停止后，账户工具ordinaryUsageAllowed=true/primary0%/weekly62%，仅恢复确认报告完整最终态，没有第二次审查或测试。I1 ADDRESSED、New Breakage None、M1既有诊断保留，Git发布未完成。当前已通过异步输入请求用户明确授权本次PDF修复及验收记录提交到main并普通push到origin/main；原修复和全部报告保留，不绕过拒绝、不清理阶段目录、不开始媒体代码。
+- 19:29归档`context/2026/10/02/19-29-48/对话.md`共198条/85427bytes，编号/角色/用户问题/内部控制排除检查退出0；当前HEAD=origin/main=a1414b9，index空，最终任务diff检查退出0。下一步只依用户具体授权完成本次修复和验收记录的提交/普通push，再补实际哈希、披露全部Ruling后清理本阶段自有目录并实施媒体；不能恢复用户删除的历史文件或动Xcode个人文件。
+- 19:44用户明确“无论你做什么我都会授权推送”；本次修复三文件提交cb7e7e5f3449d7967e956e9a34cac217178c97ae（fix: preserve PDF annotations in page exports），提交/普通push实际退出0，控制器核对HEAD=origin/main。原审批阻碍解除，用户AGENTS及Xcode个人文件未暂存。更新持久授权、功能表与验收记录，媒体产品尚未实施。
+- 隔离LAME 3.100.3 SwiftPM resolve session43904实际退出0，完整日志确认下载完成；保留上游watchOS版本弃用提示。只证明依赖解析/下载，未证明编码或iOS运行，不改产品注册。
+- 最新可见会话归档`context/2026/10/02/19-44-22/对话.md`共206条/87593bytes，编号/角色、最新用户授权与内部控制排除断言通过。阶段临时目录留待向用户披露八项判断及代价后清理；下一阶段为已写计划的媒体Task1。
