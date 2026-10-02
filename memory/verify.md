@@ -20,6 +20,10 @@
 
 - `DocumentUIStableLists.xcresult`：9728退出65/.exit65，Image142.283秒、PDF34.276秒，两项失败/零通过/零跳过；稳定标识已通过真实目录前提。失败文字树证明逐行点击后count0、批量Menu Disabled、嵌套TabBar仍显示，尚无两项完整GREEN。
 - `DocumentUIRowSelectionRed.xcresult`：仅加强逐行断言后build41589退出0，单PDF97628退出65、25.959秒；summary为Failed/total1/passed0/failed1/skipped0，首个a.pdf中心真实tap后仍未选择。行点击区域修复必须保留每行value=已选择、精确count2和批量菜单可点击断言，并完成原完整PDF/Image输出流程；工具栏改动还需覆盖根页及嵌套目录选择完成后标签恢复。
+- `DocumentUIRowHitArea.xcresult`单PDF93434退出65、78.947秒，逐行value与count2通过，batch.isHittable失败；第二步原生automatic修正后`DocumentUIInheritedTabBar.xcresult`45810退出65、127.350秒，batch可点击及合并产出通过。最新失败是测试previewDone命中底层完成，前台QL未关闭，随后分享按钮hitpoint{-1,-1}；全局同名按钮与底层navigationBar.exists不能证明前台关闭/恢复。后续必须真实关闭QL、等待其消失，再实际打开/关闭native分享，不弱化原完整处理断言。
+- `DocumentUIPreviewReturn.xcresult`43342退出65、96.258秒，1失败/0通过/0跳过；真实QL关闭/消失和处理页恢复条件已通过，Share实际tap及底层关闭变不可点击通过，随后前台Close候选等待超时。当前app文字树为空remote层，需核对真实分享owner/公共控件树并完成native关闭及处理页恢复，不以底层被遮挡独立判整段分享通过；完整PDF方法及全部输出仍未通过。
+- `DocumentUIPreviewContent.xcresult`完整PDF26820退出0/.exit0、276.591秒，控制器独立`xcresulttool get test-results summary --format json`退出0确认Passed/totalTestCount1/passedTests1/failedTests0/skippedTests0。覆盖逐输入选择/密码/顺序、真实合并、实际QL PDF内容加载与关闭、SharingUIService实际collection/caption、PopoverDismissRegion真实关闭并等待popover/owner消失及PDF恢复、分割、144dpi导出、移除密码。临时owner诊断方法已删除，仍6个正式测试；全部实际产物内容和最新完整六项尚待运行。
+- `DocumentUIImageComplete.xcresult`完整图片44527退出0/.exit0、254.968秒，控制器读取终态日志及独立`xcresulttool get test-results summary --format json`退出0确认Passed/totalTestCount1/passedTests1/failedTests0/skippedTests0。覆盖JPEG质量0.6、显式frame1、全部帧提取、逐行选择/count2/批量菜单真实可点击、合成顺序与指定目录/名称；全部实际输出内容仍待独立重读。最终generic Device构建83666的`document-ui-final-device-v2.exit`为0，完整日志仅既有supported-platforms提示；真实设备运行和最新完整六项尚未验收。
 
 ## 媒体阶段必要检查（尚未实施）
 

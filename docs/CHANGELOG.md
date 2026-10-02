@@ -436,6 +436,24 @@
 - **涉及文件**：
   - `docs/SHU_FEATURES.md`、`memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
   - `context/2026/10/01/22-15-51/对话.md`
-- **Git 提交**：待提交；仅保存实际验证与消息记录，产品及测试仍在实施。
+- **Git 提交**：`49a4e658c78f15d6f31334bc0f3569a8db756121 docs: record navigation success and file selection diagnosis`；提交与普通推送退出0，控制器核对HEAD=origin/main。产品及测试仍由原document_ui实施。
+
+---
+
+## [2026-10-02 09:38] PDF与图片完整交互通过记录
+
+- **需求/问题描述**：
+  > 核实Payload完整复刻状态，继续完整复刻并完成PDF与图片实际交互验证。
+- **实际实现的功能与改动**：
+  - 更新功能核对表、进度和验证记录，完整复刻尚未完成；产品及测试仍由原document_ui实施，未纳入本次文档提交。
+  - [测试/验证]：完整PDF26820退出0、276.591秒；控制器独立xcresult确认1通过/0失败/0跳过，覆盖密码、顺序、合并、真实QuickLook与原生分享往返、分割、144dpi导出、解密。
+  - [测试/验证]：完整图片44527退出0、254.968秒；控制器独立xcresult确认1通过/0失败/0跳过，覆盖JPEG质量0.6、显式选帧、全部帧提取、批量选择和调整顺序合成。
+  - [测试/验证]：最终generic Device构建83666的.exit为0，完整短日志仅既有supported-platforms提示。测试实际运行环境为iOS27.0模拟器，尚无iOS26或真实设备运行证据。
+  - 最新完整六项71766由控制器精确pgrep核实PID12600存活，已进入Archive；完整回归和全部产物内容校验尚未完成，不将运行中作业计为通过。
+  - 保存147条和164条可见消息归档，核对编号、角色和内部控制排除；未执行截图或视觉验证。
+- **涉及文件**：
+  - `docs/SHU_FEATURES.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+  - `context/2026/10/02/09-05-03/对话.md`、`context/2026/10/02/09-38-13/对话.md`
+- **Git 提交**：待提交。
 
 ---
