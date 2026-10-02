@@ -1,6 +1,6 @@
 # 媒体功能与编码能力核查
 
-核查时间：2026-10-01。此记录提供后续媒体规格的依据，当前产品尚未实现这些操作。
+核查时间：2026-10-01至2026-10-02。此记录提供媒体规格与实施的依据；音频Task1正在实施，尚无编码通过或iOS运行结论。
 
 ## 原版可证实需求
 
@@ -22,7 +22,17 @@
 
 MP3 输出需要实际编码器。已读取 LAME 的 Apple SwiftPM 固定版本 manifest：`BB9z/LAME-xcframework` 3.100.3 提供 LAME binary target，声明 macOS 10.13+、iOS 12+。[固定版本 Package.swift](https://github.com/BB9z/LAME-xcframework/blob/3.100.3/Package.swift)、[项目说明](https://github.com/BB9z/LAME-xcframework)
 
-只读 `git ls-remote` 退出0，tag对应 `3f906714cf8a8cf2a82a8cf5bc760e639febf7b2`；manifest下载校验和为 `bcc33a8311c80993a06d363a29f631d74420cf954be8e8ee9e13450a525944ab`。尚未下载二进制、核对其实际头文件或安装产品依赖；包存在和manifest正确不能证明产品编码运行通过。
+只读 `git ls-remote` 退出0，tag对应 `3f906714cf8a8cf2a82a8cf5bc760e639febf7b2`；manifest下载校验和为 `bcc33a8311c80993a06d363a29f631d74420cf954be8e8ee9e13450a525944ab`。
+
+- 隔离SwiftPM解析下载session43904退出0，完整日志`DerivedData/media-dependency-resolve.log`保留上游watchOS最低版本弃用提示；未修改产品Package或Xcode注册。
+- 实际artifact的Info.plist用plistlib读取：iOS arm64、模拟器arm64/x86_64、macOS arm64/x86_64存在。公开lame.h含初始化、输入/输出采样率设置、分块浮点编码、flush、标签获取和关闭API，modulemap导出LAME；LICENSE及LICENSE-LAME已读取并保留。
+- 隔离初始化/关闭探测session72251编译成功，实际启动退出134，`DerivedData/media-dependency-link.log`记录dyld无法加载`@rpath/LAME.framework/Versions/A/LAME`。otool确认可执行文件仅有Swift系统rpath，而实际框架已复制到同一products目录。该结果证明运行路径缺失，未触达编码，不计行为RED；音频Task1需验证持久Package运行路径和iOS框架嵌入。
+
+包下载、头文件、构建成功均不能证明产品编码运行通过。
+
+2026-10-02音频Task1正在实施。先前Mac批次已有20项五格式/两采样率/单双声道内容和10项码率通过；聚焦边界批次80523退出0，覆盖真实视频选轨、六speaker内容、明确下混、低采样率、路径、权限、取消与清理。最终完整套95272退出1，新增WAV位深断言正在核查；尚无完整GREEN、hosted iOS运行或独立Task1审查，音频UI尚未实施。
+
+音频Task1的裸swift run已触达真实44.1k双声道PCM首转换，live handle25727实际退出133，原日志`DerivedData/audio-red.log`为可编译stub明确拒绝“音频服务尚未实现。”。这证明行为RED与当前动态加载路径可运行，尚未证明任何输出编码通过；首次缓存编译失败不计RED。
 
 后续选择需固定版本、核对公开头文件和实际 Mac/iOS 构建，并用真实音频编码与重读测试证明输出。MP3 不能按“少见格式可明确不支持”的例外跳过。
 

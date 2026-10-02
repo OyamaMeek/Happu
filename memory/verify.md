@@ -31,9 +31,10 @@
 - 整体审查With fixes：PDF按页导出遗漏可见annotation。实际序列化输入的服务产物RED133/蓝像素0应800；修复为PDFPage.draw后完整PDFSmoke GREEN0，PNG两页800、JPEG两页3196，已知位置/尺寸/非零原点/旋转/原字节/进度通过。最终Simulator48247/Device4141均实际exit0；Device提前启动被主动中断的75保留为执行错误，不作为编译失败。唯一scoped re-review正在执行，Git因自动审批两次拒绝保持未提交；此前6项UI结果对应9f32757，未声称新批注修复已重跑UI或真机。
 - 唯一scoped re-review完整最终报告确认I1 ADDRESSED、无新增问题；其源码/diff核对、实际测试证据与系统PDFKit接口说明一致，控制器完整读取且原审查者恢复确认。既有M1仍为非阻断诊断；cb7e7e5提交和普通push均退出0，控制器核对HEAD=origin/main。完整Shu仍未完成，没有重跑未改动的UI或宣称iOS18/26、真机与视觉验收通过。
 
-## 媒体阶段必要检查（尚未实施）
+## 媒体阶段必要检查（Task1实施中）
 
 - 精确LAME3.100.3包由SwiftPM校验下载，核对实际头文件和Mac/Simulator/Device slices；tag与manifest存在仅是前置证据。
+- 隔离下载及实际headers/slices已核查；Mac probe实际启动134，rpath问题尚待本任务解决。最终裸swift run须触达真实服务断言，不能把编译/dyld失败冒充RED；iOS app须实际嵌入加载框架并运行hosted方法。
 - AudioSmoke/VideoSmoke/VideoAnimationSmoke真实生成输入并重读PCM/帧内容、时长、采样率/声道、轨道/方向及GIF/WebP时长/循环，覆盖原文件保护、边界、同名、取消与清理。
 - 新hosted ShuReplicaRuntimeTests直接调用相同产品服务，实际运行testAudioCodecs/testVideoContainersAndEdits/testVideoAnimations；Mac通过或iOS编译不能替代iOS方法通过。当前目标尚未配置或执行。
 - Media UI方法从真实Documents输入验证表单、参数/轨道、输出、错误重试与取消/关闭重开；统计实际总数、通过、失败、跳过，未经授权不做视觉验收。

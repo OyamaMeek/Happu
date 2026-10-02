@@ -546,6 +546,24 @@
   - `docs/CHANGELOG.md`、`docs/SHU_FEATURES.md`、`docs/SHU_PDF_IMAGE_VALIDATION.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
   - `context/2026/10/02/19-29-48/对话.md`、`context/2026/10/02/19-44-22/对话.md`
-- **Git 提交**：待提交；本段为当前文档提交记录，实际哈希由后续开发记录补记。
+- **Git 提交**：`2540efeb1dbcb87c8339cdb2249e3eb42355d4aa docs: record PDF fix publication and push authorization`；提交/普通push退出0，控制器核对HEAD=origin/main。
+
+---
+
+## [2026-10-02 20:34] 本地网络共享优先级与音频验证进度
+
+- **需求/问题描述**：
+  > 用户要求当前部分完成后优先本地网络共享，保留完整Payload/Shu复刻范围及持续推送授权。
+- **实际实现的功能与改动**：
+  - 记录音频Task1验收后优先网络共享的顺序，媒体Task2暂不派发，其余媒体和全部复刻需求保留；音频UI尚未实施。
+  - 读取原版完整指南、中文网络字符串和Info.plist，整理浏览器传输、WebDAV、共享目录、二维码及前台生命周期要求；候选服务库的重名替换、现有连接和后台恢复行为已从官方实现与接口核实，未接入网络产品或安装依赖。
+  - [验证]：独立读取音频真实RED133、FLAC有效样本诊断、部分格式/码率通过日志及focused5完整日志。focused5实际退出0、六speaker/选轨/下混/边界/权限/取消/清理通过；最终完整95272退出1且hosted iOS尚未运行，未将聚焦批次计为完整验收。
+  - [验证]：保存209/213/225/229条可见消息快照，连续编号、角色、最新用户优先级与内部控制排除断言通过。归档解析采用JSONL的LF分隔，保留原文合法U+2028，未改源会话或丢弃错误记录。文档diff检查退出0，用户AGENTS既有空白问题保持原样。
+- **涉及文件**：
+  - `docs/CHANGELOG.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`docs/SHU_NETWORK_CAPABILITIES.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
+  - `context/2026/10/02/19-48-11/对话.md`、`context/2026/10/02/19-59-36/对话.md`
+  - `context/2026/10/02/20-22-43/对话.md`、`context/2026/10/02/20-34-32/对话.md`
+- **Git 提交**：待提交；本次仅保存控制器文档与归档，产品实现和测试继续由原audio_service完成。
 
 ---
