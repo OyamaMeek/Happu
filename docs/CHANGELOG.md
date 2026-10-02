@@ -474,6 +474,26 @@
   - `ShuReplica/DocumentOperationView.swift`（+296）、`FilesView.swift`（+42/-6）、`MoreView.swift`（+40）、`ShuReplicaApp.swift`（+1/-1）
   - `Tests/ShuReplicaUITests.swift`（+431/-5）、`Tests/prepare_document_ui_fixtures.swift`（+161，仅测试生成/验证器）
   - `Package.swift`（+3/-3）、`ShuReplica.xcodeproj/project.pbxproj`（+4/-2）、`docs/CHANGELOG.md`
-- **Git 提交**：待提交；只暂存本任务精确文件，保留用户AGENTS/Xcode用户文件及控制器文档改动。
+- **Git 提交**：`9f3275717e5e259bb84973fab0e614f03dc960a8 feat: add PDF and image operation pages`；提交与普通推送退出0，控制器独立核对HEAD=origin/main。仅9个任务文件，用户AGENTS/Xcode用户文件及控制器文档改动保留；Task3独立审查规格符合、质量Approved，无严重或重要问题；阶段整体审查仍待完成。
+
+---
+
+## [2026-10-02 14:21] PDF与图片任务审查完成及整体验收检查点
+
+- **需求/问题描述**：
+  > 核实Payload完整复刻进度，继续完整复刻并完成PDF与图片阶段审查。
+- **实际实现的功能与改动**：
+  - 更新完整功能表与持久记录；三个实施任务均通过独立审查，完整Shu仍有后续功能与平台/布局验收未完成。
+  - 保存PDF与图片需求对应的实际证据、未运行条件，以及按顺序作出的八项判断和判断错误时的代价。
+  - [测试/验证]：重新读取真实FullFinal结果包，结构化结果6通过/0失败/0跳过，无testFailures/runtimeWarnings；实际产物校验与最终Device构建的退出码均为0。没有重复测试或构建。
+  - Task3独立审查规格符合、质量Approved，无严重/重要问题；七项跨任务核验逐项处理，已有轻微诊断交整体审查。
+  - 整体审查包覆盖72fa090..9f32757的17提交；同一只读审查代理额度错误后恢复，当前未有最终判定。没有购买额度或执行重置。
+  - 整体审查已确认PDF页面导出遗漏可见annotation，真实序列化PDF的数值探测退出0：当前CG绘制红像素0，PDFKit.draw为3600；等待完整finding清单后统一修复与针对性复查，未把旧测试通过当作该缺陷已解决。
+  - 保存截至归档时的用户/助手可见消息，排除内部控制、推理和工具输出。
+- **涉及文件**：
+  - `docs/SHU_PDF_IMAGE_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/CHANGELOG.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
+  - `context/2026/10/02/10-10-10/对话.md`、`context/2026/10/02/14-22-21/对话.md`
+- **Git 提交**：待提交。
 
 ---

@@ -24,6 +24,10 @@
 - `DocumentUIPreviewReturn.xcresult`43342退出65、96.258秒，1失败/0通过/0跳过；真实QL关闭/消失和处理页恢复条件已通过，Share实际tap及底层关闭变不可点击通过，随后前台Close候选等待超时。当前app文字树为空remote层，需核对真实分享owner/公共控件树并完成native关闭及处理页恢复，不以底层被遮挡独立判整段分享通过；完整PDF方法及全部输出仍未通过。
 - `DocumentUIPreviewContent.xcresult`完整PDF26820退出0/.exit0、276.591秒，控制器独立`xcresulttool get test-results summary --format json`退出0确认Passed/totalTestCount1/passedTests1/failedTests0/skippedTests0。覆盖逐输入选择/密码/顺序、真实合并、实际QL PDF内容加载与关闭、SharingUIService实际collection/caption、PopoverDismissRegion真实关闭并等待popover/owner消失及PDF恢复、分割、144dpi导出、移除密码。临时owner诊断方法已删除，仍6个正式测试；全部实际产物内容和最新完整六项尚待运行。
 - `DocumentUIImageComplete.xcresult`完整图片44527退出0/.exit0、254.968秒，控制器读取终态日志及独立`xcresulttool get test-results summary --format json`退出0确认Passed/totalTestCount1/passedTests1/failedTests0/skippedTests0。覆盖JPEG质量0.6、显式frame1、全部帧提取、逐行选择/count2/批量菜单真实可点击、合成顺序与指定目录/名称；全部实际输出内容仍待独立重读。最终generic Device构建83666的`document-ui-final-device-v2.exit`为0，完整日志仅既有supported-platforms提示；真实设备运行和最新完整六项尚未验收。
+- 最终产物验证须在完整六项终态后重新查询真实容器：执行现有`--verify`，另用`cmp`核对源fixtures的全部七项PDF/图片输入与容器对应文件字节一致，并核对分割、按页导出、按帧提取、导入导出的结果目录准确条目数。现有verifier仅检查指定条目及部分原文件，不能独自证明没有多余输出或所有原文件保持完整；已通知原实施者补齐实际命令证据，不修改产品或重复已通过方法。
+- `DocumentUIFullFinal.xcresult`71766终止0/.exit0、1041.298秒，控制器独立xcresulttool退出0确认Passed/totalTestCount6/passedTests6/failedTests0/skippedTests0；覆盖同一版本下六个正式方法，无临时诊断或跳过。实际产物67668退出133于JPEG纯色参考值；控制器独立Pillow数字解码确认原PNG、GIF及对应JPEG/选帧/提取/合成像素相符，原红(255,38,0)、蓝(4,51,255)，原绝对纯色前提错误。只能改为比较真实输入像素及明确JPEG小误差，不能仅放宽单个绿色阈值；修正后的完整`--verify`尚待执行。
+- 最终`document-ui-actual-outputs-final.exit`为0，完整log确认PDF文字/顺序/分割/解密/dpi、图片质量/帧/提取/合成、取消清理和原文件检查通过。控制器核对修正仅测试参考像素：JPEG每通道差≤2，PNG提取/合成等于真实原PNG/GIF对应像素，四个结果目录准确集合保留；另独立cmp七输入均退出0，独立Pillow两原GIF帧/提取帧与两合成对应像素相等，退出0。Task3最终提交及独立审查尚待完成。
+- Task3最终9f32757已普通推送，控制器核对HEAD=origin/main；document_ui_review规格符合、质量Approved，无Critical/Important。七项跨任务核验已记录，未运行平台和专项仍保留；M1既有平台提示/坏PDF诊断交整体审查。阶段整体审查尚无最终判定。
 
 ## 媒体阶段必要检查（尚未实施）
 
