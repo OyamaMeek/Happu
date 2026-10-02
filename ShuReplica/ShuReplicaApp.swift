@@ -28,7 +28,7 @@ struct ShuReplicaApp: App {
                     .tabItem { Label("下载", systemImage: "arrow.down.circle") }
 
                     NavigationStack {
-                        MoreView()
+                        MoreView(store: runtime.store)
                     }
                     .tabItem { Label("更多", systemImage: "ellipsis.circle") }
                 }

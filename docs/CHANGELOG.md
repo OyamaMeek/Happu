@@ -454,6 +454,26 @@
 - **涉及文件**：
   - `docs/SHU_FEATURES.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
   - `context/2026/10/02/09-05-03/对话.md`、`context/2026/10/02/09-38-13/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`80821cc3fab165b863d1984357553d5e5c14c6ff docs: record complete PDF and image interaction tests`；提交和普通推送退出0，控制器独立核对HEAD=origin/main。产品及测试继续由原document_ui完成。
+
+---
+
+## [2026-10-02 10:01] PDF与图片处理页面及真实交互完成
+
+- **需求/问题描述**：
+  > 继续完整Shu复刻的PDF/图片阶段Task3，把现有真实服务接入文件和更多入口，完成表单、后台处理、取消重试、预览分享与实际产物验收。
+- **实际实现的功能与改动**：
+  - 共享DocumentOperationView消费现有PDFService/ImageService，提供单项/多项操作、逐输入密码、上下顺序、分割页数、dpi、图片格式/质量/显式帧、命名与FolderPicker目的目录。
+  - 后台真实处理与Progress观察，取消和进行中关闭均等待任务结束；错误重试、原生QuickLook预览、ShareLink分享、完成/关闭刷新；密码只在页面及在途闭包中存活。
+  - 文件长按及批量合并/合成入口；更多通过系统fileImporter真实选取并复制到工作区，再进入同一处理页。按真实行为修正原生搜索drawer、选择菜单、嵌套tabBar继承及文件行点击范围，保留搜索词与精确选择断言。
+  - [测试/验证]：有效入口RED真实进入方法且因缺少PDF处理入口退出65；最终完整六项71766退出0，1041.298秒，xcresult确认6通过/0失败/0跳过，包含原归档/导航、完整PDF/图片、错误重试/取消关闭、更多成功选取复制处理。临时仅文字诊断方法已删除。
+  - [测试/验证]：真实十项输出--verify退出0，核验PDF文字/顺序/分割/解密/dpi、图片质量/帧/合成及四个输出子目录精确集合、取消清理；七个原始输入逐一cmp全部退出0。图像颜色参考真实原输入解码像素，JPEG每通道误差≤2，PNG帧/合成精确匹配。
+  - [测试/验证]：PDF/Image服务及完整旧自检实际通过；精确Package excludes后最终Image/Archive无unhandled-source警告。最终Simulator target/UI build-for-testing和真实新binary运行通过，generic Device build83666退出0；构建短日志保留既有平台提示。
+  - 实际仅iOS27.0模拟器运行，iOS18部署与iOS26 Liquid Glass设计目标保持；无iOS26/真机运行或视觉验证证据。完整Shu的其它范围继续由控制器执行，没有声称整个复刻已完成。
+- **涉及文件**：
+  - `ShuReplica/DocumentOperationView.swift`（+296）、`FilesView.swift`（+42/-6）、`MoreView.swift`（+40）、`ShuReplicaApp.swift`（+1/-1）
+  - `Tests/ShuReplicaUITests.swift`（+431/-5）、`Tests/prepare_document_ui_fixtures.swift`（+161，仅测试生成/验证器）
+  - `Package.swift`（+3/-3）、`ShuReplica.xcodeproj/project.pbxproj`（+4/-2）、`docs/CHANGELOG.md`
+- **Git 提交**：待提交；只暂存本任务精确文件，保留用户AGENTS/Xcode用户文件及控制器文档改动。
 
 ---

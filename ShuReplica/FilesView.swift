@@ -73,6 +73,7 @@ struct FolderView: View {
     @State private var shareRequest: FileShareRequest?
     @State private var archiveRequest: ArchiveRequest?
     @State private var archiveRunning = false
+    @State private var documentRequest: DocumentOperationRequest?
 
     private enum Edit { case folder, rename(URL) }
     private enum Transfer { case copy([URL]), move([URL]) }
@@ -101,6 +102,12 @@ struct FolderView: View {
                             }
                             Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy([url]) }
                             Button("移动到…", systemImage: "folder") { transfer = .move([url]) }
+                            if let mode = documentMode(url) {
+                                Button(mode == .pdf ? "PDF 处理" : "图片处理", systemImage: "doc.badge.gearshape") {
+                                    documentRequest = DocumentOperationRequest(inputs: [url], mode: mode)
+                                }
+                                .disabled(archiveRunning)
+                            }
                             Button("打包为 ZIP", systemImage: "archivebox") { openArchive(.create([url])) }
                                 .disabled(archiveRunning)
                             if !isFolder(url), url.pathExtension.lowercased() == "zip" {
@@ -123,6 +130,7 @@ struct FolderView: View {
                     }
             }
         }
+        .accessibilityIdentifier("workspace-files")
         .overlay {
             if items.isEmpty {
                 ContentUnavailableView("暂无文件", systemImage: "folder",
@@ -131,7 +139,8 @@ struct FolderView: View {
         }
         .navigationTitle(folder == store.root ? "文件" : folder.lastPathComponent)
         .navigationBarTitleDisplayMode(folder == store.root ? .large : .inline)
-        .searchable(text: $search, prompt: "搜索当前文件夹")
+        .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索当前文件夹")
+        .toolbar(selecting ? .hidden : .automatic, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button(selecting ? "完成" : "编辑") {
@@ -150,20 +159,30 @@ struct FolderView: View {
                 } label: { Image(systemName: "plus").accessibilityLabel("新增") }
             }
             if selecting {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Text("已选 \(selectedItems.count) 项")
+                    Spacer()
                     Menu {
                         Button("全选") { selection.formUnion(visibleItems) }
                         Button("反选") { selection.formSymmetricDifference(visibleItems) }
                         Button("取消选择") { selection.removeAll() }
                     } label: { Label("选择", systemImage: "checkmark.circle") }
                     .accessibilityLabel("选择")
-                }
-                ToolbarItemGroup(placement: .bottomBar) {
-                    Text("已选 \(selectedItems.count) 项")
-                    Spacer()
                     Menu {
                         Button("复制到…", systemImage: "doc.on.doc") { transfer = .copy(selectedItems) }
                         Button("移动到…", systemImage: "folder") { transfer = .move(selectedItems) }
+                        if selectedItems.count >= 2, selectedItems.allSatisfy({ documentMode($0) == .pdf }) {
+                            Button("合并 PDF", systemImage: "doc.on.doc") {
+                                documentRequest = DocumentOperationRequest(inputs: selectedItems, mode: .pdf)
+                            }
+                            .disabled(archiveRunning)
+                        }
+                        if selectedItems.count >= 2, selectedItems.allSatisfy({ documentMode($0) == .image }) {
+                            Button("合成图片", systemImage: "photo.on.rectangle") {
+                                documentRequest = DocumentOperationRequest(inputs: selectedItems, mode: .image)
+                            }
+                            .disabled(archiveRunning)
+                        }
                         Button("打包为 ZIP", systemImage: "archivebox") { openArchive(.create(selectedItems)) }
                             .disabled(archiveRunning)
                         Button("归组", systemImage: "square.grid.2x2") { perform(.group, on: selectedItems) }
@@ -221,6 +240,13 @@ struct FolderView: View {
             }
             .id(request.id)
         }
+        .sheet(item: $documentRequest, onDismiss: reload) { request in
+            DocumentOperationView(store: store, request: request) {
+                selection.removeAll()
+                reload()
+            }
+            .id(request.id)
+        }
         .alert("操作失败", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好") { errorMessage = nil }
         } message: { Text(errorMessage ?? "") }
@@ -240,6 +266,8 @@ struct FolderView: View {
                         .foregroundStyle(.blue)
                     row(url)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(url.lastPathComponent)
@@ -270,6 +298,13 @@ struct FolderView: View {
 
     private func isFolder(_ url: URL) -> Bool {
         (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
+    }
+
+    private func documentMode(_ url: URL) -> DocumentOperationRequest.Mode? {
+        guard !isFolder(url) else { return nil }
+        if url.pathExtension.lowercased() == "pdf" { return .pdf }
+        if WorkspaceCategory.forFile(url) == .picture { return .image }
+        return nil
     }
 
     private var editTitle: String {
@@ -372,6 +407,7 @@ struct FolderPicker: View {
                 NavigationLink(child.lastPathComponent) { folderList(child) }
             }
         }
+        .accessibilityIdentifier("destination-folders")
         .navigationTitle(folder == store.root ? "文件" : folder.lastPathComponent))
     }
 }

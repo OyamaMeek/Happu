@@ -14,19 +14,19 @@ let package = Package(
         name: "ShuServices",
         dependencies: ["ArchiveBridge", .product(name: "ZipArchive", package: "ZipArchive"), .product(name: "libwebp", package: "libwebp-Xcode")],
         path: "ShuReplica",
-        exclude: ["PDFService.swift", "Info.plist", "ShuReplicaApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift"],
+        exclude: ["PDFService.swift", "Info.plist", "ShuReplicaApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DocumentOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift"],
         sources: ["ArchiveService.swift", "FileStore.swift", "WorkspaceCategory.swift", "ImageService.swift"]
     ), .executableTarget(
         name: "ArchiveSmoke",
         dependencies: ["ShuServices"],
         path: "Tests",
-        exclude: ["make_archive_fixtures.py", "fixtures", "FileBatchSmoke.swift", "FileStoreSmoke.swift", "WorkspaceCategorySmoke.swift", "DownloadRequestSmoke.swift", "DownloadManagerSmoke.swift", "ShuReplicaUITests.swift", "PDFSmoke.swift", "ImageSmoke.swift"],
+        exclude: ["make_archive_fixtures.py", "prepare_document_ui_fixtures.swift", "fixtures", "FileBatchSmoke.swift", "FileStoreSmoke.swift", "WorkspaceCategorySmoke.swift", "DownloadRequestSmoke.swift", "DownloadManagerSmoke.swift", "ShuReplicaUITests.swift", "PDFSmoke.swift", "ImageSmoke.swift"],
         sources: ["ArchiveSmoke.swift"]
     ), .executableTarget(
         name: "ImageSmoke",
         dependencies: ["ShuServices", .product(name: "libwebp", package: "libwebp-Xcode")],
         path: "Tests",
-        exclude: ["make_archive_fixtures.py", "fixtures", "FileBatchSmoke.swift", "FileStoreSmoke.swift", "WorkspaceCategorySmoke.swift", "DownloadRequestSmoke.swift", "DownloadManagerSmoke.swift", "ShuReplicaUITests.swift", "PDFSmoke.swift", "ArchiveSmoke.swift"],
+        exclude: ["make_archive_fixtures.py", "prepare_document_ui_fixtures.swift", "fixtures", "FileBatchSmoke.swift", "FileStoreSmoke.swift", "WorkspaceCategorySmoke.swift", "DownloadRequestSmoke.swift", "DownloadManagerSmoke.swift", "ShuReplicaUITests.swift", "PDFSmoke.swift", "ArchiveSmoke.swift"],
         sources: ["ImageSmoke.swift"]
     )]
 )
