@@ -494,6 +494,41 @@
   - `docs/SHU_PDF_IMAGE_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/CHANGELOG.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `context/2026/10/02/10-10-10/对话.md`、`context/2026/10/02/14-22-21/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`a1414b969bc8c129a345e9b16505eba1a2d80d08 docs: preserve PDF and image validation checkpoint`；提交与普通push退出0，控制器独立核对HEAD=origin/main。
+
+---
+
+## [2026-10-02 14:39] PDF 页面导出保留可见批注
+
+- **需求/问题描述**：
+  > 修复整体审查 I1：PDF 按页导出 PNG/JPEG 遗漏可见 annotation，保留页面几何、旋转、白底和既有文件保护。
+- **实际实现的功能与改动**：
+  - 共享 exportPages 使用系统 PDFPage.draw 绘制页面及可见批注；外部只按输出像素尺寸等比缩放与居中，页面原点和旋转由 PDFKit 处理，避免重复变换。未增加产品依赖或改动页面与图片服务。
+  - 真实带批注 PDF 写出后重读，非零 mediaBox 与旋转页的实际 PNG/JPEG 产物按已知颜色、位置和面积断言，并核对原页面内容、白底、进度和原文件字节不变。
+  - [测试/验证]：实际服务输出 RED 退出 133，`Visible annotation blue area missing: 0, expected about 800`；修复后完整 PDFSmoke 退出 0，两页 PNG 蓝像素各 800，两页 JPEG 各 3196（预期约 3200），既有几何、密码、取消、边界与清理检查全部保留并通过。精确命令及完整原始日志保存于 Task1 报告、`DerivedData/pdf-annotation-{red,green}.log/.exit`。
+  - [测试/验证]：generic Simulator 最终 session48247、generic Device 最终 session4141 均退出 0。最初 Device 被我在误读 Simulator 运行状态后提前启动，主动中断，旧 session77304 实际退出 75 后才重启；原始 `BUILD INTERRUPTED` 日志和退出码保存在 `DerivedData/pdf-annotation-device-interrupted.log/.exit`，未将执行顺序错误归因于平台编译失败。构建与预期坏 PDF 的既有诊断保持原始输出，未隐藏。
+  - [测试/验证]：本任务 diff 检查退出 0；未重跑无改动的 UI 六项或 Image/Archive 全套，未截图或图像查看，也未派遣子代理。
+  - [独立复查]：唯一scoped re-review确认I1 ADDRESSED、没有修复引入的新问题；既有M1为非阻断诊断。用户随后明确授权“无论你做什么我都会授权推送”，本次修复按已授权范围提交并普通推送。
+- **涉及文件**：
+  - `ShuReplica/PDFService.swift`、`Tests/PDFSmoke.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交；此前自动审批两次拒绝，Git命令未执行。用户已补充明确授权本次及后续已授权开发范围内的普通推送。
+
+---
+
+## [2026-10-02 19:29] 批注修复复查与提交审批记录
+
+- **需求/问题描述**：
+  > 持续完整复刻，完成PDF与图片整体审查及实际缺陷修复，并保存可审阅的结果。
+- **实际实现的功能与改动**：
+  - 整体审查唯一Important已修复；唯一scoped re-review确认I1 ADDRESSED、无新增问题，既有M1非阻断。三任务、整体审查和修复回归的范围分别记录，不声称整个Shu已完成。
+  - 保存14项审查未判定事项的逐项处理、八项实现判断及代价，未运行平台/视觉/提供器等条件保留。
+  - [测试/验证]：控制器读取实际服务RED133/GREEN0完整日志、Simulator/Device最终退出码0/0与短日志，并核对修复diff；最终diff检查退出0。旧六项UI对应9f32757，未将其写成新批注修复的重跑结果。
+  - 真实原始用户授权证据已核实，但自动审批两次拒绝本次具体修复提交/push，全部改动保持未提交，暂存区为空；异步具体授权请求已发出。没有改变执行途径绕过拒绝。
+  - 归档198条可见用户/助手消息，编号/角色、用户问题与内部控制排除检查退出0，文件非空；阶段工作目录保留，媒体尚未开始。
+- **涉及文件**：
+  - `docs/SHU_PDF_IMAGE_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/CHANGELOG.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
+  - `context/2026/10/02/19-29-48/对话.md`
+- **Git 提交**：待提交；用户已补充明确普通推送授权，验收记录随本次修复保存。此前检查点为a1414b969bc8c129a345e9b16505eba1a2d80d08。
 
 ---

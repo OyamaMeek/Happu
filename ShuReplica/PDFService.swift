@@ -63,16 +63,21 @@ struct PDFService {
             for index in 0..<document.pageCount {
                 try checkCancellation(progress)
                 try autoreleasepool {
-                    guard let page = document.page(at: index)?.pageRef else { throw PDFServiceError("无法读取 PDF 页面。") }
-                    let size = try pixelSize(page, dpi: dpi)
+                    guard let page = document.page(at: index), let pageRef = page.pageRef else { throw PDFServiceError("无法读取 PDF 页面。") }
+                    let size = try pixelSize(pageRef, dpi: dpi)
                     guard let context = CGContext(data: nil, width: size.width, height: size.height, bitsPerComponent: 8, bytesPerRow: size.width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
                         throw PDFServiceError("无法为 PDF 页面分配图像内存。")
                     }
                     let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
                     context.setFillColor(CGColor(gray: 1, alpha: 1))
                     context.fill(rect)
-                    context.concatenate(page.getDrawingTransform(.mediaBox, rect: rect, rotate: 0, preserveAspectRatio: true))
-                    context.drawPDFPage(page)
+                    let box = pageRef.getBoxRect(.mediaBox)
+                    let rotated = pageRef.rotationAngle % 180 != 0
+                    let points = CGSize(width: rotated ? box.height : box.width, height: rotated ? box.width : box.height)
+                    let scale = min(rect.width / points.width, rect.height / points.height)
+                    context.translateBy(x: (rect.width - points.width * scale) / 2, y: (rect.height - points.height * scale) / 2)
+                    context.scaleBy(x: scale, y: scale)
+                    page.draw(with: .mediaBox, to: context)
                     guard let image = context.makeImage() else { throw PDFServiceError("无法绘制 PDF 页面。") }
                     let destination = output.appendingPathComponent(String(format: "page-%06d.%@", index + 1, jpeg ? "jpg" : "png"))
                     guard let writer = CGImageDestinationCreateWithURL(destination as CFURL, (jpeg ? UTType.jpeg.identifier : UTType.png.identifier) as CFString, 1, nil) else {

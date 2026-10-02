@@ -57,6 +57,22 @@ struct PDFSmoke {
         return Data(bytes: context.data!, count: width * height * 4)
     }
 
+    static func annotationCheck(_ url: URL, center: CGPoint, area: Int, width: Int, height: Int) throws {
+        let source = CGImageSourceCreateWithURL(url as CFURL, nil)!
+        let image = CGImageSourceCreateImageAtIndex(source, 0, nil)!
+        try check(image.width == width && image.height == height, "Annotated export dimensions mismatch")
+        let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let bytes = context.data!.assumingMemoryBound(to: UInt8.self)
+        let blueCount = stride(from: 0, to: width * height * 4, by: 4).filter { bytes[$0] < 80 && bytes[$0 + 1] < 80 && bytes[$0 + 2] > 180 }.count
+        try check(abs(blueCount - area) <= area / 10, "Visible annotation blue area missing: \(blueCount), expected about \(area)")
+        var pixel = [UInt8](repeating: 0, count: 4)
+        let sample = CGContext(data: &pixel, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+        sample.draw(image, in: CGRect(x: -center.x, y: -center.y, width: CGFloat(width), height: CGFloat(height)))
+        try check(pixel[0] < 80 && pixel[1] < 80 && pixel[2] > 180, "Visible annotation moved from expected page coordinates")
+        print("Annotation \(url.pathExtension) \(width)x\(height): blue pixels \(blueCount), center \(Int(center.x)),\(Int(center.y))")
+    }
+
     static func main() throws {
         let manager = FileManager.default
         let base = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true).standardizedFileURL
@@ -140,6 +156,38 @@ struct PDFSmoke {
         }
         let png2 = try service.exportPages(first, password: nil, dpi: 36, jpeg: false, in: folder, named: "PNG", progress: Progress())
         try check(png2.lastPathComponent == "PNG 2", "Same-name directory overwritten")
+        let annotated = folder.appendingPathComponent("annotated.pdf")
+        try manager.copyItem(at: first, to: annotated)
+        let annotatedDocument = PDFDocument(url: annotated)!
+        for (index, bounds) in [CGRect(x: 40, y: 45, width: 40, height: 20), CGRect(x: 10, y: 30, width: 40, height: 20)].enumerated() {
+            let annotation = PDFAnnotation(bounds: bounds, forType: .square, withProperties: nil)
+            annotation.color = .blue
+            annotation.interiorColor = .blue
+            let border = PDFBorder()
+            border.lineWidth = 0
+            annotation.border = border
+            annotatedDocument.page(at: index)!.addAnnotation(annotation)
+        }
+        try check(annotatedDocument.write(to: annotated), "Annotated fixture serialization failed")
+        let annotatedReloaded = PDFDocument(url: annotated)!
+        try check(annotatedReloaded.page(at: 0)!.annotations.count == 1 && annotatedReloaded.page(at: 1)!.annotations.count == 1, "Serialized annotations must survive reload")
+        try check(annotatedReloaded.page(at: 0)!.pageRef!.getBoxRect(.mediaBox) == CGRect(x: 20, y: 30, width: 200, height: 100), "Annotated source lost nonzero mediaBox")
+        try check(annotatedReloaded.page(at: 1)!.rotation == 90, "Annotated source lost page rotation")
+        let annotatedOriginal = try Data(contentsOf: annotated)
+        for (jpeg, dpi, centers, dimensions, area) in [
+            (false, 72.0, [CGPoint(x: 40, y: 25), CGPoint(x: 25, y: 80)], [(200, 100), (180, 120)], 800),
+            (true, 144.0, [CGPoint(x: 80, y: 50), CGPoint(x: 50, y: 160)], [(400, 200), (360, 240)], 3200)
+        ] {
+            let annotationProgress = Progress()
+            let output = try service.exportPages(annotated, password: nil, dpi: dpi, jpeg: jpeg, in: folder, named: jpeg ? "annotatedJPEG" : "annotatedPNG", progress: annotationProgress)
+            for index in 0..<2 {
+                let page = output.appendingPathComponent(String(format: "page-%06d.%@", index + 1, jpeg ? "jpg" : "png"))
+                try annotationCheck(page, center: centers[index], area: area, width: dimensions[index].0, height: dimensions[index].1)
+                try imageCheck(page, width: dimensions[index].0, height: dimensions[index].1)
+            }
+            try check(annotationProgress.totalUnitCount == 2 && annotationProgress.completedUnitCount == 2, "Annotated export progress mismatch")
+        }
+        try check(Data(contentsOf: annotated) == annotatedOriginal, "Annotated export changed input bytes")
         let broken = folder.appendingPathComponent("broken.pdf")
         try Data("broken PDF".utf8).write(to: broken)
         let empty = folder.appendingPathComponent("empty.pdf")
