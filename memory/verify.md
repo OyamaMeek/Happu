@@ -121,3 +121,11 @@
 - 服务修复复查、Task 2 规格与代码质量审查通过；最终整体审查覆盖 `5d66f4a..4b30df6`，结论 Ready Yes，无严重／重要问题。
 - UI 现有进度区标题断言不能证明动态进度或关闭重开；runner 恢复后仍需补充真实多条目交互测试。supported-platforms 提示保留为环境诊断项，未证明它与 runner 阻碍存在因果关系。
 - 最终审查建议已由 `2b556f421ef4910bbe0ef767c39f33ea9d206b9d` 补齐：四种危险路径／链接统一断言拒绝发布、暂存清理，保留越界与 sentinel 保护。`swift run --scratch-path DerivedData/ArchivePackage ArchiveSmoke DerivedData/TestRuns/ArchiveFinalFix` 退出 0（`DerivedData/archive-final-fix-green.log`）；唯一针对修复复查确认 ADDRESSED，无新增严重／重要／次要问题，Ready Yes。仅测试改变，未重复产品构建或 UI runner。
+
+## 音频 Task1 最终验证（2026-10-03）
+
+- `swift run --scratch-path DerivedData/MediaPackage AudioSmoke DerivedData/TestRuns/AudioFinalVerification`：原54523实际exit0，33项真实格式/码率/精度/输入内容及全部选轨、范围、六声道、路径、权限、取消和清理边界通过。完整日志`DerivedData/audio-final-verification.log`。
+- 最终generic Simulator20826、generic Device92359、build-for-testing73620实际exit0，日志`audio-simulator-final.log`、`audio-device-final.log`、`audio-build-for-testing-final.log`保留于DerivedData。
+- 指定Simulator `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`安装实际exit0后hosted61280实际exit0。`MediaRuntimeTests/testAudioCodecs()` Passed/5.485秒，内部33/33/0/0；控制器独立xcresulttool实际exit0，`AudioRuntime.xcresult` total1/passed1/failed0/skipped0、arm64 iOS27.0、runtimeWarnings=[]。完整系统诊断与原先未执行方法的Attempt1保留，未替换真实结果。
+- ImageSmoke44015及ArchiveSmoke34337共享模块回归实际exit0。未重跑已通过的相同代码测试。
+- 已提交并普通推送`759d1bd3a614d389da61764890ef3f5e98b6b02f`，独立审查仍进行中；没有真实设备、音频UI或视觉验证结论，完整复刻未完成。
