@@ -639,6 +639,6 @@
   - `docs/CHANGELOG.md`、`docs/SHU_MEDIA_CAPABILITIES.md`
   - `memory/progress.md`、`memory/verify.md`
   - `context/2026/10/03/10-48-55/对话.md`
-- **Git 提交**：待提交；完成后通过后续文档提交补记实际哈希。
+- **Git 提交**：`f45a1769ae07e7f02f08c433ff769140599bc720 docs: complete audio service review and preserve network priority`；5文件1938+/4-，提交与普通push实际exit0，HEAD=origin/main、index为空；本哈希通过后续文档提交保存。
 
 ---
