@@ -31,11 +31,11 @@
 ## 媒体阶段准备
 
 - 原版需求、native 实测和 MP3 编码器依据记录于 `docs/SHU_MEDIA_CAPABILITIES.md`；后续规格 `docs/superpowers/specs/2026-10-01-shu-media-design.md` 包含四种视频、五种音频、质量/音轨/区间和 GIF/WebP 动图参数、边界与真实验证。
-- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 已写：音频与真实iOS编码、视频转换/编辑、逐帧动图、共享媒体操作页面四个独立审查任务。当前唯一audio_service实施Task1，固定LAME 3.100.3已写入未提交的Package/Xcode注册；部分Mac编码和聚焦边界通过，最终完整回归、iOS运行及独立审查仍待完成。
+- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 包含四任务。音频 Task1 服务已提交759d1bd并普通推送；Mac33项、两平台构建及hosted iOS33项通过，独立审查规格/质量通过。媒体 Tasks2–4 未执行，音频 UI 尚未完成。
 - PDF/图片三个任务和整体修复复查已完成，cb7e7e5已普通推送；完成记录保存与八项判断披露后继续媒体。Photos/LivePhoto另阶段实施，完整范围不缩小。
 
 ## 最新优先级
 
-- 用户要求“在这个部分做完了建议先做本地网络共享功能”。当前按音频Task1完成实施、真实验证及独立审查后优先网络共享理解；已提供纠正顺序的机会，暂不派发媒体Task2。音频UI仍属Task4，服务验收不能代表完整音频用户流程。
-- 网络是新的服务模块，先按brainstorming读取原版指南/字符串/Info.plist及现有入口，记录于`docs/SHU_NETWORK_CAPABILITIES.md`。范围含同网段/热点浏览器传输、WebDAV、选定共享目录、真实地址/二维码、启动停止和文件操作；尚无产品网络代码或运行结论。
-- 音频、视频、动图、Photos/LivePhoto及其它完整目标继续保留，优先级调整不删除需求。网络依赖与前台生命周期方案尚待具体设计。
+- 用户要求当前部分完成后优先本地网络共享；音频 Task1 已验收，暂不派发媒体 Task2。音频 UI 仍属 Task4，完整目标继续保留。
+- 网络设计 `docs/superpowers/specs/2026-10-03-shu-local-network-design.md` 已获用户“确认”。实施计划 `docs/superpowers/plans/2026-10-03-shu-local-network.md` 分为受限 HTTP/停止、DAV/浏览器、原生入口/地址/生命周期三任务；待用户审阅后沿用 main、顺序子代理实施/独立审查与普通推送。
+- 已读取固定上游连接/请求/DAV源码及 Apple TN3179；参考快照只在忽略的 DerivedData/NetworkPlanning，没有安装产品网络依赖或实施代码，网络运行和设备证据尚未取得。

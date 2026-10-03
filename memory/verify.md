@@ -131,3 +131,10 @@
 - 已提交并普通推送`759d1bd3a614d389da61764890ef3f5e98b6b02f`，独立审查规格通过/质量Approved、Critical0/Important0，Task1服务验收完成；没有真实设备、音频UI或视觉验证结论，完整复刻未完成。
 - 审查CV1补核：现存SwiftPM缓存zip实际SHA256=bcc33a8311c80993a06d363a29f631d74420cf954be8e8ee9e13450a525944ab；workspace-state记录同一远端/版本/checksum。实际头文件与源码SHA256同为b30e4d3f5bb247bad2781758d90604f29cc44dd5bd79fee130aaef7c7d25bcf0，modulemap、许可与iOS arm64/Simulator及Mac arm64+x86_64实际lipo检查exit0。既有原始终态及最终日志保留，没有重新下载或重跑套件。
 - CV2作为明确验证限制保留：同卷stat检查实现已核实，真实跨卷测试无第二卷条件，未运行。CV3映射媒体Task4关闭等待/UI及后续真实设备/iOS26交互，不能由Task1模拟器结果代替。Minor M1错误断言精度、M2系统诊断记录到整体审查清单。
+
+## 网络实施计划检查（2026-10-03）
+
+- 用户已确认设计；三任务计划完成覆盖、接口/类型、五类失败条件与命令自查。现有 Xcode target 为 ShuReplicaRuntimeTests / ShuReplicaUITests，计划使用实际名称。
+- 固定提交的连接、服务器、FileRequest、DAV 源码及 Apple TN3179 Markdown 已实际读取；规划参考保存在忽略的 DerivedData/NetworkPlanning，不属于产品依赖。SDK libxml2 module mapping 已核实；网络包编译尚未执行。
+- 后续必须取得真实 HTTP/DAV 截断、无覆盖、路径竞争、停止清理与 hosted iOS/WebKit/UI 结果；真实 Wi-Fi、个人热点、权限拒绝和锁屏分别取得设备证据。计划中命令/断言为待执行标准，不能记为通过。
+- 没有运行网络产品测试或视觉验证；此前音频验收结果保持原范围，完整复刻尚未完成。
