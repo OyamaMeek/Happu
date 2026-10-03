@@ -564,6 +564,23 @@
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
   - `context/2026/10/02/19-48-11/对话.md`、`context/2026/10/02/19-59-36/对话.md`
   - `context/2026/10/02/20-22-43/对话.md`、`context/2026/10/02/20-34-32/对话.md`
-- **Git 提交**：待提交；本次仅保存控制器文档与归档，产品实现和测试继续由原audio_service完成。
+- **Git 提交**：`9c7f69c8f2aaf479e645e2500e80ae5e2db58a78 docs: prioritize local network sharing after audio validation`；提交及普通push退出0，HEAD=origin/main独立核对一致。
+
+---
+
+## [2026-10-03 09:12] 本地网络共享草案与音频边界核验
+
+- **需求/问题描述**：
+  > 保持完整Shu复刻目标，完成当前音频服务验收后优先本地网络共享。
+- **实际实现的功能与改动**：
+  - 完成本地网络共享设计草案，明确浏览器/DAV、目录选择、地址/二维码、无覆盖及前台停止语义，并已提交用户审阅；尚无网络产品代码或依赖安装。
+  - 恢复原音频实施代理继续同一Task1，没有重复派发；记录已有iOS真实结果及新增精度边界RED/GREEN，最终平台重验、任务提交和独立审查继续进行。
+  - [验证]：控制器只读xcresulttool退出0，已有hosted结果total1/passed1/failed0/skipped0、arm64 iOS27.0。完整读取audio-precision-green.log；实施者收取27110实际exit0，31项格式/码率/24-bit样本、原始Int32/float明确拒绝及全部既有边界通过，保留系统诊断。24-bit本来完整保留，没有记录成产品修复。
+  - [验证]：草案自查覆盖范围、冲突和验收证据；保存244条可见消息，排除内部控制、工具输出和推理。只修改控制器记录，未暂存产品或用户个人文件。
+- **涉及文件**：
+  - `docs/superpowers/specs/2026-10-03-shu-local-network-design.md`
+  - `docs/CHANGELOG.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/progress.md`
+  - `context/2026/10/03/09-12-17/对话.md`
+- **Git 提交**：待提交；当前借用index/CHANGELOG保存本次控制器文档检查点。
 
 ---
