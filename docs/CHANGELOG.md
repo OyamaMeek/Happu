@@ -581,6 +581,27 @@
   - `docs/superpowers/specs/2026-10-03-shu-local-network-design.md`
   - `docs/CHANGELOG.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/progress.md`
   - `context/2026/10/03/09-12-17/对话.md`
-- **Git 提交**：待提交；当前借用index/CHANGELOG保存本次控制器文档检查点。
+- **Git 提交**：`f8c606eccb9e3d2dbeb36ca0fbc124e39aa23c74 docs: draft local network sharing design and validation`；提交及普通push实际退出0，HEAD=origin/main一致。
+
+---
+
+## [2026-10-03 09:52] 音频转换服务与真实 iOS 编码验证
+
+- **需求/问题描述**：
+  > 实施 Shu 媒体阶段 Task1：五格式音频转换、视频音轨选择、工作区安全发布及 hosted iOS 实际编码验证。
+- **实际实现的功能与改动**：
+  - 实现 MediaWorkspace 和 AudioService，分块真实 PCM、五格式编码与重读、轨道 ID/语言/采样率/声道、明确多轨选择及系统下混、真实进度和取消、唯一暂存清理及同卷无覆盖发布。
+  - 固定并核实 LAME 3.100.3，静态导入公开编码/flush/gapless tag/close API；SwiftPM 持久 rpath 和 Xcode 动态产品自动嵌入，保留包许可、原有 UITests、iOS18 部署目标和用户个人工程文件。
+  - 原生 AAC LC/六声道布局、WAV16bit、CAF整数PCM、FLAC；真实 I24 的 88200 个样本完整相等，含低于16-bit LSB的8个非零样本。当前原始浮点/超过24位整数PCM转FLAC在写入前明确失败，常见AAC/MP3解码输入正常支持。
+  - [验证]：编译后真实服务 stub RED exit133；原始Int32精度边界RED exit1。最终 AudioSmoke exit0，33项格式/码率/精度/编码输入内容检查及全部选轨、三秒音轨/四秒视频范围、六speaker/FLAC下混、路径/同名、真实权限失败、15次取消和清理失败检查通过。
+  - [验证]：最终 generic Simulator、generic Device、build-for-testing 均实际 exit0；最终app顺序安装 exit0。最终 hosted 方法实际通过5.485秒，exit0；iOS27 arm64 Simulator真实33/33/0/0，xcresult total1/passed1/failed0/skipped0。原测试启动IPC等待经专用模拟器顺序重启恢复，原attempt exit143及原30项基线分别保留，系统诊断不隐藏。既有 ImageSmoke、ArchiveSmoke 回归 exit0；项目 plist/XML 和任务范围 diff 检查完成。
+  - 音频 UI、真实设备运行和视觉验证不在本任务已完成范围；详细命令、原始日志、逐次真实终态、精度与平台限制见 Task1 报告。
+- **涉及文件**：
+  - `ShuReplica/MediaWorkspace.swift`、`ShuReplica/AudioService.swift`
+  - `Tests/AudioSmoke.swift`、`Tests/MediaRuntimeTests.swift`
+  - `Package.swift`、`Package.resolved`
+  - `ShuReplica.xcodeproj/project.pbxproj`、`ShuReplica.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`、`ShuReplica.xcodeproj/xcshareddata/xcschemes/ShuReplica.xcscheme`
+  - `docs/CHANGELOG.md`
+- **Git 提交**：待提交；最终验证已完成，精确暂存本任务10个文件并原子提交、普通推送；实际哈希由后续开发记录补记。
 
 ---

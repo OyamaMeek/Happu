@@ -1,6 +1,15 @@
 {
-  "originHash" : "63223ebd52b065422ba44bb8215fef877aaa92c6e99a718898fd403f9f312ab8",
+  "originHash" : "539be85920b83c0dd404e73b53b8de8b5602e08dd16613da78411c82b60b5b96",
   "pins" : [
+    {
+      "identity" : "lame-xcframework",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BB9z/LAME-xcframework.git",
+      "state" : {
+        "revision" : "3f906714cf8a8cf2a82a8cf5bc760e639febf7b2",
+        "version" : "3.100.3"
+      }
+    },
     {
       "identity" : "libwebp-xcode",
       "kind" : "remoteSourceControl",
