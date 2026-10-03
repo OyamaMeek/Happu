@@ -128,4 +128,6 @@
 - 最终generic Simulator20826、generic Device92359、build-for-testing73620实际exit0，日志`audio-simulator-final.log`、`audio-device-final.log`、`audio-build-for-testing-final.log`保留于DerivedData。
 - 指定Simulator `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`安装实际exit0后hosted61280实际exit0。`MediaRuntimeTests/testAudioCodecs()` Passed/5.485秒，内部33/33/0/0；控制器独立xcresulttool实际exit0，`AudioRuntime.xcresult` total1/passed1/failed0/skipped0、arm64 iOS27.0、runtimeWarnings=[]。完整系统诊断与原先未执行方法的Attempt1保留，未替换真实结果。
 - ImageSmoke44015及ArchiveSmoke34337共享模块回归实际exit0。未重跑已通过的相同代码测试。
-- 已提交并普通推送`759d1bd3a614d389da61764890ef3f5e98b6b02f`，独立审查仍进行中；没有真实设备、音频UI或视觉验证结论，完整复刻未完成。
+- 已提交并普通推送`759d1bd3a614d389da61764890ef3f5e98b6b02f`，独立审查规格通过/质量Approved、Critical0/Important0，Task1服务验收完成；没有真实设备、音频UI或视觉验证结论，完整复刻未完成。
+- 审查CV1补核：现存SwiftPM缓存zip实际SHA256=bcc33a8311c80993a06d363a29f631d74420cf954be8e8ee9e13450a525944ab；workspace-state记录同一远端/版本/checksum。实际头文件与源码SHA256同为b30e4d3f5bb247bad2781758d90604f29cc44dd5bd79fee130aaef7c7d25bcf0，modulemap、许可与iOS arm64/Simulator及Mac arm64+x86_64实际lipo检查exit0。既有原始终态及最终日志保留，没有重新下载或重跑套件。
+- CV2作为明确验证限制保留：同卷stat检查实现已核实，真实跨卷测试无第二卷条件，未运行。CV3映射媒体Task4关闭等待/UI及后续真实设备/iOS26交互，不能由Task1模拟器结果代替。Minor M1错误断言精度、M2系统诊断记录到整体审查清单。
