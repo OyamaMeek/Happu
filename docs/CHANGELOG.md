@@ -665,12 +665,12 @@
 - **实际实现的功能与改动**：
   - 将网络设计状态更新为已确认，写明三个实施任务：受限 HTTP 文件服务与停止清理、WebDAV/中文浏览器传输、原生入口/真实地址/二维码及生命周期。
   - 固定上游源码核实连接 close 通知、stop 范围、请求体完成回调、默认暂存及 DAV 行为；Apple TN3179 核实入站 TCP、Bonjour 与权限证据的区别。参考只保存到忽略的规划目录，没有安装产品依赖或实施网络功能。
-  - [验证]：计划逐项自查设计覆盖、接口、五类失败条件、真实请求与平台验证；Xcode 实际 runtime/UI target 名核实。未执行网络编译、产品测试、设备测试或视觉验证；计划待用户审阅后沿用已选择方式实施。
+  - [验证]：计划逐项自查设计覆盖、接口、五类失败条件、真实请求与平台验证；Xcode 实际 runtime/UI target 名核实。七项任务文件 staged diff 检查退出0，可见归档288条/108478bytes、连续编号/角色与内部控制排除断言通过。未执行网络编译、产品测试、设备测试或视觉验证；计划待用户审阅后沿用已选择方式实施。
 - **涉及文件**：
   - `docs/superpowers/plans/2026-10-03-shu-local-network.md`
   - `docs/superpowers/specs/2026-10-03-shu-local-network-design.md`
   - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
   - `context/2026/10/03/15-15-43/对话.md`（288条可见消息）
-- **Git 提交**：待提交。
+- **Git 提交**：`9d4aa012bee42ccaf6544fa63199eb6b3767a3eb docs: plan approved local network sharing design`；7文件2153+/8-，提交与普通push实际exit0，HEAD=origin/main、index为空；实际哈希通过后续文档提交保存。
 
 ---
