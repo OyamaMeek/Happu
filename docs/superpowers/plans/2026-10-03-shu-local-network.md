@@ -67,7 +67,7 @@
 
 **Files:** 创建 DAVServer 与三项本地网页资源、NetworkBrowserRuntimeTests；扩展 Service、NetworkSmoke/NetworkRuntimeTests，注册资源与 hosted 测试。
 
-**Interfaces:** 消费 Task 1 的服务与文件边界；新增 `@MainActor NetworkChecks.dav(root: URL) async throws -> Int`。webDAV 使用同一端口的 `/` 作为共享根，browser 保持 Task 1 API；资源从模块 Bundle 读取，不依赖当前工作目录。
+**Interfaces:** 消费 Task 1 的服务与文件边界；新增 `@MainActor NetworkChecks.dav(root: URL) async throws -> Int`。webDAV 使用同一端口的 `/` 作为共享根，browser 保持 Task 1 API，并增加 `GET/HEAD /`、`/sharing.js`、`/sharing.css`。Bridge target 声明 `resources: [.copy("Resources")]`，Objective-C 通过 `SWIFTPM_MODULE_BUNDLE` 读取保留结构的 `Resources` 子目录；不使用 Swift 的 Bundle.module 或当前工作目录，Xcode 通过同一本地包携带资源。
 
 - [ ] **Step 1：写 DAV 行为测试。** 实际请求 OPTIONS、PROPFIND Depth 0/1、GET/HEAD、PUT、MKCOL、DELETE、COPY/MOVE，检查 207 XML href/propstat、真实文件字节和中文/空格/XML 特殊名称；未知属性返回对应 404。无限深度 403/finite-depth、无效 XML 400、未实现 LOCK/UNLOCK/PROPPATCH 501；不宣称完整 Class 1/2 或 Finder 兼容。Destination 外部 authority/端口/越界、源目标相同、目录移动至自身子目录均拒绝；已存在目标 `Overwrite: F` 为 412，T 或缺省为 409 并明确无覆盖策略。
 
@@ -75,7 +75,7 @@
 - [ ] **Step 2：运行 DAV RED。** `swift run --scratch-path DerivedData/NetworkPackage NetworkSmoke DerivedData/TestRuns/NetworkDAVRed dav`；编译完成且测试因未实现 DAV 行为失败，记录实际断言，不用 Task 1 通过替代。
 - [ ] **Step 3：实现 DAV 适配。** 保留上游 libxml2 解析/序列化，所有路径和变更交由 FileAccess，删除默认覆盖及未经验证的 Class 宣告；DTD/外部实体拒绝，用真实范围外文件和本地监测请求证明没有读入/发出请求。目录 COPY 先完整暂存，再排他发布；失败不出现部分目标。
 - [ ] **Step 4：实现浏览器页面与来源校验。** 中文目录导航、多文件选择、逐项 XHR 上传真实进度、下载、新建目录、确认删除及失败原因/成功刷新；名称使用 textContent、路径逐段编码。浏览器修改请求的 Host/Origin 必须属于当前真实服务地址及端口，不能仅比较攻击者控制的 Host 与 Origin；不开放任意 CORS。DAV 无 Origin 请求按正常协议和相同 Host 边界处理。
-- [ ] **Step 5：添加真实页面验证。** `NetworkBrowserRuntimeTests/testBrowserTransfer` 在 WKWebView 加载真实服务资源，执行 DOM 文件选择/上传、导航、新建、确认删除，检查进度事件、结果刷新及真实磁盘字节；测试文件来自实际夹具字节。HTML 特殊文件名无标记执行，跨来源修改被拒绝。该证据是 WebKit 页面流程，不能代替其它设备浏览器实测，不截图。
+- [ ] **Step 5：添加真实页面验证。** 先在 Mac CLI 与 hosted iOS 对上述三条静态资源路由分别 GET/HEAD，核对与包内资源逐字节一致、正确 Content-Type、HEAD 空 body；以不包含资源的 `DerivedData/TestRuns/NetworkAssetCWD` 为 CLI 当前目录再运行一次资源读取检查。`NetworkBrowserRuntimeTests/testBrowserTransfer` 在 WKWebView 加载真实服务资源，执行 DOM 文件选择/上传、导航、新建、确认删除，检查进度事件、结果刷新及真实磁盘字节；测试文件来自实际夹具字节。HTML 特殊文件名无标记执行，跨来源修改被拒绝。该证据是 WebKit 页面流程，不能代替其它设备浏览器实测，不截图。
 - [ ] **Step 6：运行 GREEN 与 hosted 测试。** CLI `NetworkDAVGreen dav` 退出 0，再以 curl 对同一服务执行真实 DAV 请求交叉核对；按平台顺序运行 `NetworkRuntimeTests/testDAVFiles` 和 `NetworkBrowserRuntimeTests/testBrowserTransfer`，结果 `NetworkDAVBrowser.xcresult`。Task 1 实现被修改时重跑其相关回归。
 - [ ] **Step 7：提交、普通推送、独立审查。** 提交 `feat: add WebDAV and local browser file transfer`；本任务完整 BASE..HEAD 审查通过后进入 Task 3。
 
@@ -115,3 +115,4 @@
 - [固定 GCDWebServer 源码](https://github.com/swisspol/GCDWebServer/tree/1c36bf07c848476111d523057a3a63b05328ce2a)：Core 的 close 为通知，stop 不等于终止既有连接；定长/chunked 回调与默认上传暂存须局部适配。
 - [RFC 4918](https://www.rfc-editor.org/rfc/rfc4918)：DAV 状态、Depth 和 Destination；本产品无覆盖策略及未实现方法如实表达。
 - [Apple TN3179](https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy)：入站 TCP、Bonjour 和权限证据不同，模拟器不能验证局域网隐私。
+- [Swift SE-0271](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0271-package-manager-resources.md)：资源归属 target、copy 保留目录结构，Objective-C 使用 SWIFTPM_MODULE_BUNDLE。

@@ -138,3 +138,4 @@
 - 固定提交的连接、服务器、FileRequest、DAV 源码及 Apple TN3179 Markdown 已实际读取；规划参考保存在忽略的 DerivedData/NetworkPlanning，不属于产品依赖。SDK libxml2 module mapping 已核实；网络包编译尚未执行。
 - 后续必须取得真实 HTTP/DAV 截断、无覆盖、路径竞争、停止清理与 hosted iOS/WebKit/UI 结果；真实 Wi-Fi、个人热点、权限拒绝和锁屏分别取得设备证据。计划中命令/断言为待执行标准，不能记为通过。
 - 没有运行网络产品测试或视觉验证；此前音频验收结果保持原范围，完整复刻尚未完成。
+- 官方 SE-0271 文档实际读取，核实 target 资源与 Objective-C SWIFTPM_MODULE_BUNDLE；计划补入本地包资源注册、静态路由和真实字节/MIME/HEAD/cwd 独立性检查。此为打包规则证据，不是当前工具链编译或资源运行通过。

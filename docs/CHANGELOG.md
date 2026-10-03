@@ -674,3 +674,18 @@
 - **Git 提交**：`9d4aa012bee42ccaf6544fa63199eb6b3767a3eb docs: plan approved local network sharing design`；7文件2153+/8-，提交与普通push实际exit0，HEAD=origin/main、index为空；实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-03 15:20] 网络网页资源打包计划核实
+
+- **需求/问题描述**：
+  > 保持完整复刻目标，在网络实施计划审阅期间核实浏览器资源的打包和验收方式。
+- **实际实现的功能与改动**：
+  - 读取官方 Swift SE-0271，计划明确 Bridge target 的 copy 资源、Objective-C SWIFTPM_MODULE_BUNDLE 访问及三条静态路由；补入真实 GET/HEAD 字节、MIME、空 body 和 cwd 独立性检查。
+  - [验证]：一手文档是打包规则依据；计划及记录检查通过，没有实施网络产品、运行网络编译或资源请求测试。实施计划仍待用户审阅，自动 goal 续轮不构成确认。
+  - 保存291条可见会话，按连续编号/角色和内部控制排除规则检查；保留用户 AGENTS 和个人 Xcode 数据。
+- **涉及文件**：
+  - `docs/superpowers/plans/2026-10-03-shu-local-network.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+  - `context/2026/10/03/15-21-06/对话.md`
+- **Git 提交**：待提交。
+
+---
