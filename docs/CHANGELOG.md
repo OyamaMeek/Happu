@@ -720,6 +720,6 @@
   - `ShuReplica/NetworkSharingService.swift`
   - `Tests/NetworkSmoke.swift`、`Tests/NetworkRuntimeTests.swift`
   - `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交；适用验证与暂存范围检查已完成。
+- **Git 提交**：`24541eb45542a517c2c7afe69bd295142b06f669 feat: add local HTTP sharing and safe session shutdown`；48文件8647+/12-，提交与普通 push 实际 exit0。该哈希通过后续文档提交保存。
 
 ---
