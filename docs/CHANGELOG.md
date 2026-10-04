@@ -781,6 +781,6 @@
 - **涉及文件**：
   - 全局技能 /Users/oyamameek/.codex/skills/impeccable/ 与引擎 /Users/oyamameek/.impeccable/bin/0.1.11/impeccable（仓库外）。
   - docs/CHANGELOG.md、context/2026/10/04/23-24-39/对话.md。
-- **Git 提交**：待提交。
+- **Git 提交**：`efb94ba282ce5894fcea6b5af2358d2a529fa109 docs: record Impeccable skill installation`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
 
 ---
