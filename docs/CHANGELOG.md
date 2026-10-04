@@ -704,3 +704,22 @@
 - **Git 提交**：`3e5460d3c6d56dc3ef0105f1e8cda5fd782bed4c docs: preserve blocked network plan review handoff`；3文件2047+，提交与普通push实际exit0，HEAD=origin/main、index为空；哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-04 10:04] 本地网络 HTTP 文件服务与完整停止
+
+- **需求/问题描述**：
+  > 按已批准的本地网络计划完成 Task1：受限 HTTP 文件操作、无覆盖上传、真实停止和清理，以及 Mac/iOS 平台验证。
+- **实际实现的功能与改动**：
+  - 固定 GCDWebServer 3.5.4 源码与许可证，通过本地 SwiftPM 包接入应用及检查目标；修正请求读取完成、chunk 分段写盘、socket 终止、连接等待和已验证描述符下载行为。
+  - FileAccess 统一处理工作区/共享根身份、逐段禁止链接访问、隐藏会话暂存与排他发布；HTTP 提供列表、上传、完整/范围下载、HEAD、创建目录、删除和 Host/Origin 校验。Swift 服务合并并发停止，清理失败保留诊断并允许重试。
+  - [验证]：原始未实现入口与 chunk 中途写盘取得行为 RED；最终 Mac HTTP CLI 实际 exit0，68/0/0；真实 native IO 组件实际 exit0，4/0/0。顺序 generic Simulator、generic Device、指定模拟器 build-for-testing 与完整应用安装均 exit0。
+  - [运行记录]：hosted 命令实际 exit0，`DerivedData/NetworkHTTP.xcresult` JSON 确认 iOS27/arm64 Simulator、1项通过/0失败/0跳过，方法耗时3.656秒、内部68/0/0。停止监听产生1条 Thread Performance Checker 优先级反转警告；Xcode 的附加模拟器诊断收集600秒超时，完整测试结果仍保存。上游 UTType 与既有 LAME 警告如实保留。未执行截图或真机网络/热点/权限验证。
+  - 本阶段保留后续 DAV/中文网页和原生网络页面任务；本实现不代表完整网络共享功能已全部完成。独立规格与质量审查由控制器接续执行。
+- **涉及文件**：
+  - `Vendor/ShuNetwork/`（固定上游、来源记录、FileAccess/HTTPServer、本地包及 native IO 检查）
+  - `ShuReplica/NetworkSharingService.swift`
+  - `Tests/NetworkSmoke.swift`、`Tests/NetworkRuntimeTests.swift`
+  - `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交；适用验证与暂存范围检查已完成。
+
+---

@@ -1,0 +1,11 @@
+module GCDWebServer {
+    header "GCDWebServer/Core/GCDWebServer.h"
+    header "GCDWebServer/Core/GCDWebServerConnection.h"
+    header "GCDWebServer/Core/GCDWebServerRequest.h"
+    header "GCDWebServer/Core/GCDWebServerResponse.h"
+    header "GCDWebServer/Requests/GCDWebServerDataRequest.h"
+    header "GCDWebServer/Responses/GCDWebServerDataResponse.h"
+    header "GCDWebServer/Responses/GCDWebServerFileResponse.h"
+    header "GCDWebDAVServer/GCDWebDAVServer.h"
+    export *
+}
