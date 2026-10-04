@@ -768,3 +768,19 @@
 - **Git 提交**：`dd2e9d0b732eeaf84f75f4b152de076e941353b5 docs: record apple-design skill installation`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-04 23:24] 安装 Impeccable 技能
+
+- **需求/问题描述**：
+  > 安装 https://impeccable.style/#downloads。
+- **实际实现的功能与改动**：
+  - 核实官网和 pbakaus/impeccable 官方仓库后，使用 skill-installer 将 .agents/skills/impeccable 完整目录安装到 /Users/oyamameek/.codex/skills/impeccable，技能版本4.5.0。
+  - 恢复官方启动器执行权限；由启动器下载并校验运行引擎，engine-probe 实际退出0，返回 impeccable-engine 0.1.11。
+  - [验证]：安装程序退出0；62个文件与32条直接引用检查通过，command-metadata.json 解析通过。未修改产品代码或启用项目 hooks，未运行产品测试。
+  - 保存本次会话截至归档时的可见消息。
+- **涉及文件**：
+  - 全局技能 /Users/oyamameek/.codex/skills/impeccable/ 与引擎 /Users/oyamameek/.impeccable/bin/0.1.11/impeccable（仓库外）。
+  - docs/CHANGELOG.md、context/2026/10/04/23-24-39/对话.md。
+- **Git 提交**：待提交。
+
+---
