@@ -753,3 +753,18 @@
 - **Git 提交**：待提交，最终独立审查覆盖本修复。
 
 ---
+
+## [2026-10-04 23:18] 安装 apple-design 技能
+
+- **需求/问题描述**：
+  > 安装 https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md。
+- **实际实现的功能与改动**：
+  - 使用 skill-installer 从 emilkowalski/skills 的 main 分支安装完整 skills/apple-design 目录到全局 Codex 技能目录。
+  - [验证]：安装程序退出0；目标目录包含非空 SKILL.md，已完整读取，名称为 apple-design。下一轮对话可用；本任务未修改产品代码，未运行产品测试。
+  - 按 Asia/Shanghai 本地时间保存本次安装任务截至归档时的可见对话。
+- **涉及文件**：
+  - 全局技能：/Users/oyamameek/.codex/skills/apple-design/SKILL.md（位于项目仓库外）。
+  - docs/CHANGELOG.md、context/2026/10/04/23-18-13/对话.md。
+- **Git 提交**：待提交。
+
+---
