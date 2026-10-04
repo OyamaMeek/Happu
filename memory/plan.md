@@ -37,5 +37,6 @@
 ## 最新优先级
 
 - 用户要求当前部分完成后优先本地网络共享；音频 Task1 已验收，暂不派发媒体 Task2。音频 UI 仍属 Task4，完整目标继续保留。
-- 网络设计 `docs/superpowers/specs/2026-10-03-shu-local-network-design.md` 已获用户“确认”。实施计划 `docs/superpowers/plans/2026-10-03-shu-local-network.md` 分为受限 HTTP/停止、DAV/浏览器、原生入口/地址/生命周期三任务；待用户审阅后沿用 main、顺序子代理实施/独立审查与普通推送。
-- 已读取固定上游连接/请求/DAV源码及 Apple TN3179；参考快照只在忽略的 DerivedData/NetworkPlanning，没有安装产品网络依赖或实施代码，网络运行和设备证据尚未取得。
+- 网络设计及实施计划均已获用户“确认”。`docs/superpowers/plans/2026-10-03-shu-local-network.md` 分为受限 HTTP/停止、DAV/浏览器、原生入口/地址/生命周期三任务；沿用 main、顺序子代理实施/独立审查与普通推送，从 Task1 执行，不再等待计划审阅。
+- 网络 HTTP/FileAccess 与固定源码包已由24541eb提交、e581739补记并普通推送；Mac68项、native4项、两平台构建和hosted iOS1方法/内部68项通过。独立审查正在进行，浏览器/DAV与原生共享页尚未实施。
+- 2026-10-04 用户要求优先完成本地网络共享，浏览器首页显示应用首页各个文件夹。底部标签为文件/网络共享/更多，共享默认工作区根目录；现有下载页面移到更多并复用原DownloadManager，不新增下载功能。浏览器列出全部分类目录、下载、共享及用户实际目录，Downloads仅在根目录显示为“下载”。沿用已确认三任务计划，继续实施、运行及审查。

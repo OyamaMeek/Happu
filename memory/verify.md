@@ -139,3 +139,13 @@
 - 后续必须取得真实 HTTP/DAV 截断、无覆盖、路径竞争、停止清理与 hosted iOS/WebKit/UI 结果；真实 Wi-Fi、个人热点、权限拒绝和锁屏分别取得设备证据。计划中命令/断言为待执行标准，不能记为通过。
 - 没有运行网络产品测试或视觉验证；此前音频验收结果保持原范围，完整复刻尚未完成。
 - 官方 SE-0271 文档实际读取，核实 target 资源与 Objective-C SWIFTPM_MODULE_BUNDLE；计划补入本地包资源注册、静态路由和真实字节/MIME/HEAD/cwd 独立性检查。此为打包规则证据，不是当前工具链编译或资源运行通过。
+- 网络计划已获第二次“确认”，Task1开始实施；有效RED8008实际exit1，成功编译17.21秒后NETWORK_HTTP_FAILED“网络共享服务尚未实现。”，控制器对应日志核对一致。首次manifest41796失败不计行为RED。扩展RED和产品GREEN、hosted运行及独立审查仍待实际结果。
+- 只读实际设备条件核查：devicectl help90190与list40544实际exit0，devices.json outcome=success/jsonVersion5；严格字段检查通过，两个device均reality=simulated/iOS27且bootState=shutdown，没有列出真机。指定UDID需后续重新boot/核实；这不证明Wi-Fi/热点/局域网权限或真机运行。结果在忽略的DerivedData/NetworkPlanning/devices.json。
+- 首轮HTTP GREEN3265实际exit0/51/0/0，控制器完整读取attempt4短日志，包含terminate主类/category归属两项新警告；原始日志保留，警告已交实施者处理。组件/清理/取消边界尚未全部通过，iOS仍待验证。
+- 60465组件边界RED实际exit1，日志network-task1-boundary-red.log成功编译后NETWORK_HTTP_FAILED component release cleans session。它证明独立组件释放留下隐藏session；原实施者已恢复继续处理，没有用原51项代替新增边界。
+- 边界GREEN9828实际exit0，完整短日志network-task1-boundary-green2.log为66/0/0，未见原terminate警告；此前3700实际exit134，原系统ips指向上游stop清理重试时options=nil断言，实施者修复并保留诊断。此Mac结果不能替代待执行的iOS流程或审查。
+- 首次generic Simulator65538由实施者收取实际exit0；quiet日志没有BUILD结果标记，UTType弃用及既有LAME signed不strip诊断保留。后续发现chunked整chunk缓冲边界，新增中途写盘真实断言9132运行中；修改后须重新取得最终平台证据，首次构建不是Task1最终验收。
+- chunked中途写盘新增RED90662实际exit1：编译41.10秒后真实行为断言失败；修复后47938实际exit0，最终Mac流式日志67/0/0，控制器完整读取RED/GREEN短日志。原9132/73717编译中止不计行为RED；native IO50139的3项实际检查单列。最终iOS构建/hosted及独立审查仍待完成。
+- 2026-10-04新增验收：底部文件/网络共享/更多，共享默认根目录，更多可进入现有下载页且复用下载状态；切离共享标签停止服务。真实WKWebView加载根页面后列出FileStore全部分类、下载、共享目录，逐项导航与真实磁盘内容一致；下载展示名与Downloads路径分离。截图未授权，不宣称视觉验证。
+- Task1本轮实际Simulator55908/Device73174/build-for-testing47737退出0，原上游UTType及LAME诊断保留；Mac44055退出0/68项，native64302退出0/4项。hosted15152的最终exit/xcresult尚待收取，方法日志成功不代替整个命令结果。root读取Mac/native完整日志，xcresult目前无Info.plist读取得到exit64，不能认定损坏。
+- hosted15152最终exit0；NetworkHTTP.xcresult的summary与tests读取exit0，root独立summary核实Passed/total1/pass1/fail0/skip0，iOS27/arm64、testFailures=[]、runtimeWarnings仅QoS1。Task1报告保存完整命令/终态/限制，24541eb/e581739实际提交普通推送；未运行真机网络或视觉验证。

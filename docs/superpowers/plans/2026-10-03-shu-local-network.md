@@ -8,7 +8,7 @@
 
 **Tech Stack:** Swift/SwiftUI、Objective-C、GCDWebServer 3.5.4（`1c36bf07c848476111d523057a3a63b05328ce2a`）、Darwin 文件描述符 API、libxml2、Network、CoreImage、XCTest/WKWebView。
 
-**Spec:** [已确认设计](../specs/2026-10-03-shu-local-network-design.md)。用户“确认”批准该设计；本实施计划待用户审阅，尚未执行。
+**Spec:** [已确认设计](../specs/2026-10-03-shu-local-network-design.md)。用户已分别回复“确认”批准设计和本实施计划；从 Task1 顺序执行。
 
 ## Global Constraints
 
@@ -32,10 +32,10 @@
 
 ## 文件职责
 
-- `Vendor/GCDWebServer/`：本地 SwiftPM 包、Core/Requests/Responses/DAV、许可证及 `SOURCE.md`；不接入 WebUploader。记录固定来源、文件校验及每项局部修改。
-- `NetworkSharingBridge/ShuNetworkFileAccess.h/.m`：共享根句柄、逐段路径检查、统一文件操作和会话暂存。
-- `NetworkSharingBridge/ShuNetworkHTTPServer.h/.m`：HTTP 路由、流式请求/响应、连接跟踪与异步停止；`ShuNetworkDAVServer.h/.m`：DAV 路由复用同一文件操作。
-- `NetworkSharingBridge/Resources/index.html`、`sharing.js`、`sharing.css`：中文浏览器页面及上传流程，通过包资源加载。
+- `Vendor/ShuNetwork/`：同一本地 SwiftPM 包内的 GCDWebServer 与 ShuNetwork 两 target；`Upstream` 保存 Core/Requests/Responses/DAV、许可证，`UPSTREAM.md` 保存固定来源、文件校验及局部修改；不接入 WebUploader。
+- `Vendor/ShuNetwork/Sources/FileAccess.m`：共享根句柄、逐段路径检查、统一文件操作和会话暂存；`Sources/include/ShuNetwork.h` 声明公开桥接接口。
+- `Vendor/ShuNetwork/Sources/HTTPServer.m`：HTTP 路由、流式请求/响应、连接跟踪与异步停止；`Sources/DAVServer.m`：DAV 路由复用同一文件操作。
+- `Vendor/ShuNetwork/Sources/Resources/index.html`、`sharing.js`、`sharing.css`：中文浏览器页面及上传流程，通过包资源加载。
 - `ShuReplica/NetworkSharingService.swift`：唯一产品会话；`NetworkSharingAddresses.swift`：实际接口地址；`NetworkSharingQRCode.swift`：CoreImage 编码；`NetworkSharingView.swift`：原生控制页面。
 - `Tests/NetworkSmoke.swift`：Mac CLI 与 hosted iOS 共用真实请求断言；`NetworkRuntimeTests.swift`：iOS 服务测试；`NetworkBrowserRuntimeTests.swift`：真实 WKWebView 页面测试；`prepare_network_ui_fixtures.swift`：真实 UI 产物准备/核对。
 - 修改 `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj` 与现有 scheme 注册包和测试；Task 3 修改 `ShuReplicaApp.swift`、`MoreView.swift`、`FilesView.swift`、`Info.plist`、`Tests/ShuReplicaUITests.swift`。注册及 vendoring 属机械配置，功能代码按职责分段实施。
@@ -74,7 +74,7 @@
   hosted 方法 `testDAVFiles()` 调用 `NetworkChecks.dav(root:)`；真实 COPY 冲突断言 `XCTAssertEqual(overwriteFalseStatus, 412)`、`XCTAssertEqual(overwriteTrueStatus, 409)`、`XCTAssertEqual(existingBytesAfter, existingBytesBefore)`。
 - [ ] **Step 2：运行 DAV RED。** `swift run --scratch-path DerivedData/NetworkPackage NetworkSmoke DerivedData/TestRuns/NetworkDAVRed dav`；编译完成且测试因未实现 DAV 行为失败，记录实际断言，不用 Task 1 通过替代。
 - [ ] **Step 3：实现 DAV 适配。** 保留上游 libxml2 解析/序列化，所有路径和变更交由 FileAccess，删除默认覆盖及未经验证的 Class 宣告；DTD/外部实体拒绝，用真实范围外文件和本地监测请求证明没有读入/发出请求。目录 COPY 先完整暂存，再排他发布；失败不出现部分目标。
-- [ ] **Step 4：实现浏览器页面与来源校验。** 中文目录导航、多文件选择、逐项 XHR 上传真实进度、下载、新建目录、确认删除及失败原因/成功刷新；名称使用 textContent、路径逐段编码。浏览器修改请求的 Host/Origin 必须属于当前真实服务地址及端口，不能仅比较攻击者控制的 Host 与 Origin；不开放任意 CORS。DAV 无 Origin 请求按正常协议和相同 Host 边界处理。
+- [ ] **Step 4：实现浏览器页面与来源校验。** 中文目录导航、多文件选择、逐项 XHR 上传真实进度、下载、新建目录、确认删除及失败原因/成功刷新；名称使用 textContent、路径逐段编码。根目录页面必须显示 FileStore 创建的全部首页文件夹，Downloads 在根目录显示“下载”且保留实际导航路径；额外的用户目录和普通文件仍可访问。浏览器修改请求的 Host/Origin 必须属于当前真实服务地址及端口，不能仅比较攻击者控制的 Host 与 Origin；不开放任意 CORS。DAV 无 Origin 请求按正常协议和相同 Host 边界处理。
 - [ ] **Step 5：添加真实页面验证。** 先在 Mac CLI 与 hosted iOS 对上述三条静态资源路由分别 GET/HEAD，核对与包内资源逐字节一致、正确 Content-Type、HEAD 空 body；以不包含资源的 `DerivedData/TestRuns/NetworkAssetCWD` 为 CLI 当前目录再运行一次资源读取检查。`NetworkBrowserRuntimeTests/testBrowserTransfer` 在 WKWebView 加载真实服务资源，执行 DOM 文件选择/上传、导航、新建、确认删除，检查进度事件、结果刷新及真实磁盘字节；测试文件来自实际夹具字节。HTML 特殊文件名无标记执行，跨来源修改被拒绝。该证据是 WebKit 页面流程，不能代替其它设备浏览器实测，不截图。
 - [ ] **Step 6：运行 GREEN 与 hosted 测试。** CLI `NetworkDAVGreen dav` 退出 0，再以 curl 对同一服务执行真实 DAV 请求交叉核对；按平台顺序运行 `NetworkRuntimeTests/testDAVFiles` 和 `NetworkBrowserRuntimeTests/testBrowserTransfer`，结果 `NetworkDAVBrowser.xcresult`。Task 1 实现被修改时重跑其相关回归。
 - [ ] **Step 7：提交、普通推送、独立审查。** 提交 `feat: add WebDAV and local browser file transfer`；本任务完整 BASE..HEAD 审查通过后进入 Task 3。
@@ -85,15 +85,15 @@
 
 **Interfaces:**
 - `NetworkSharingAddresses.urls(port: UInt16) throws -> [URL]`；`NetworkSharingQRCode.image(for url: URL) throws -> CGImage`；Service 增加只读发布 `accessURLs: [URL]`、`discoveryError: String?`。
-- `NetworkSharingRequest: Identifiable` 包含 `initialFolder: URL`；`NetworkSharingView(store: FileStore, request: NetworkSharingRequest, onFinish: () -> Void)` 从环境消费唯一 Service。App 的 Runtime 增加 `sharing: NetworkSharingService` 并在 TabView 注入，两个入口及多窗口不能各自创建独立服务。
-- 原生文案为“本地网络共享”“通过本地网络共享”；默认目录为工作区“共享”；`NSLocalNetworkUsageDescription` 为“允许同一 Wi-Fi 或热点上的设备访问你选择共享的文件夹。”；`NSBonjourServices` 为 `_http._tcp`。
+- `NetworkSharingRequest: Identifiable` 包含 `initialFolder: URL`；`NetworkSharingView(store: FileStore, request: NetworkSharingRequest, onFinish: () -> Void)` 从环境消费唯一 Service。App 的 Runtime 增加 `sharing: NetworkSharingService` 并在 TabView 注入，标签、目录菜单及多窗口不能各自创建独立服务。共享标签直接显示控制页，目录菜单使用可关闭页面；按现有 SwiftUI 模式区分展示方式。
+- 底部标签为“文件”“网络共享”“更多”；共享标签默认工作区根目录，目录菜单预选当前目录。MoreView接收Runtime现有DownloadManager并通过NavigationLink打开原DownloadsView，保留下载状态和行为，不新增下载功能。原生文案为“本地网络共享”“通过本地网络共享”；`NSLocalNetworkUsageDescription` 为“允许同一 Wi-Fi 或热点上的设备访问你选择共享的文件夹。”；`NSBonjourServices` 为 `_http._tcp`。
 
 - [ ] **Step 1：写地址、二维码及 UI RED。** 添加实际接口分类/URL 合法性与 CoreImage 内容解码检查；UI 方法 `testNetworkSharingEntrypoints`、`testNetworkSharingLifecycleAndTransfer` 从现有两入口启动，检查默认/预选目录、模式、更换目录、地址复制/二维码内容、真实上传后的文件列表、停止/关闭重开/后台手动重启。夹具脚本用真实 app container 准备文件并提供 `--verify` 字节及无暂存检查；运行未实现入口断言失败，构建失败不计 RED。
 
   在 `NetworkRuntimeTests/testAddressesAndQRCode` 中以当前服务实际 URL 编码并解码，断言 `XCTAssertEqual(decodedURL, accessURL.absoluteString)`；真实页面重开后断言 `XCTAssertTrue(app.buttons["启动"].isEnabled)`，同时用先前地址确认连接失败。
 - [ ] **Step 2：实现实际地址与发现。** 使用 getifaddrs 加原生接口功能类型（如 `SIOCGIFFUNCTIONALTYPE`），不硬编码 en0；列出实际活跃 Wi-Fi/热点等适用接口，排除回环、蜂窝、未指定地址，正确表达 IPv6 scope。运行时监测接口变化、撤下旧地址并更新 QR；无适用接口明确提示。仅显式启动后用 NetService 注册实际端口，停止释放，不额外创建监听器。监听成功、Bonjour 注册、权限与可连接分别表达；没有通用权限查询 API，不把入站 TCP/模拟器成功标记为权限允许。
-- [ ] **Step 3：实现两个原生入口和控制页。** 更多入口默认“共享”，目录菜单预选该目录，复用 FolderPicker；显示工作区相对路径、模式、开始/停止状态、真实地址复制与 QR、实际错误及清理重试。目录/模式变化先完成 stop；清理结束前不能 start。
-- [ ] **Step 4：绑定实际生命周期。** Done 等待 stop 后再 onFinish、刷新文件列表与关闭；资源存活时禁用交互式 dismiss。App 的 background 与 protectedDataWillBecomeUnavailable 触发同一 stop，前台不自动恢复；不要把权限弹窗造成的每次 inactive 当作锁屏。关闭清理失败保留页面和可重试错误，不能假报成功。
+- [ ] **Step 3：实现原生入口和控制页。** 底部下载标签替换为网络共享，默认工作区根目录；更多内可打开原下载页面。目录菜单预选该目录，复用 FolderPicker；显示工作区相对路径、模式、开始/停止状态、真实地址复制与 QR、实际错误及清理重试。目录/模式变化先完成 stop；清理结束前不能 start。UI断言检查三标签及更多下载入口，更新既有标签断言以反映新导航。
+- [ ] **Step 4：绑定实际生命周期。** 切换离开共享标签触发同一stop；目录共享页面Done等待stop后再onFinish、刷新文件列表与关闭，资源存活时禁用交互式dismiss。App的background与protectedDataWillBecomeUnavailable触发同一stop，前台不自动恢复；不要把权限弹窗造成的每次inactive当作锁屏。关闭清理失败保留页面和可重试错误，不能假报成功。
 - [ ] **Step 5：验证完整用户路径。** 运行新增两项 UI 方法和夹具 `--verify`， hosted/CLI 执行全部网络检查；保留已有六项 UI 方法。共享模块仅按实际影响范围运行一次回归；最终按平台顺序构建/安装/运行，结果 `NetworkUI.xcresult`。记录实际 methods/checks/失败/跳过和原始诊断，未取得视觉证据不宣称布局验证完成。
 - [ ] **Step 6：取得设备证据或明确限制。** 条件允许时，用真实 iPhone 与同网段另一设备分别验证普通 Wi-Fi、个人热点、浏览器/DAV 传输、权限拒绝、锁屏停止及网络变化。模拟器不支持局域网隐私验证；缺少设备、签名或连接对端时逐项记录未验证，不把 loopback、Info.plist 或 Bonjour 注册充当证据。
 - [ ] **Step 7：提交、普通推送与审查。** 提交 `feat: add local network sharing controls`；任务独立审查后，对整个网络阶段完整提交范围进行整体审查，处理发现并验证。更新完整目标剩余项：媒体 Tasks 2–4、音频 UI、Photos/LivePhoto、文本、下载/设置及完整 UI 验收继续保留。

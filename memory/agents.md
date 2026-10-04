@@ -10,4 +10,8 @@
 - 图片 Task2：ImageIO/CoreGraphics/libwebp1.6.0，共享SwiftPM ShuServices target；image_service 实施、image_review独立审查、image_loop_review最终补强复查均完成。27cc40e/939f672/ccf23be/12265da 已普通推送；真实服务自检通过，UI接入与实际产物已验证，真机codec运行尚未验证。
 - 独立功能测试设备：ShuReplicaFunctional，iPhone 18 Pro / iOS 27.0，UDID `4DA3B41E-303F-4B8E-A77C-340A5DC1A7BD`；应用数据容器随安装变化，每次验证重新获取。未经授权不截图或读取视觉附件，数字像素断言用于文件内容验证。
 - PDF/图片 Task3：原document_ui完成操作页与入口，9f32757已普通推送；完整六项6/0/0、实际产物与七输入字节比较通过，document_ui_review规格符合、质量Approved。整体审查I1批注遗漏已由原pdf_service修复，PDFSmoke及Simulator/Device构建退出0，唯一针对性复查确认ADDRESSED、无新增问题。用户补充持续推送授权后，cb7e7e5已提交并普通推送，HEAD=origin/main；原审批阻碍已解除，控制器未修改产品。
-- 媒体Task1：唯一audio_service（gpt-6.1-sol high）实施音频服务、安全发布、固定LAME及hosted RuntimeTests；BASE2540efe，index/CHANGELOG交接需明确确认。LAME实际headers/slices已核查，裸swift run已能加载并编码；部分格式/码率和聚焦六speaker/边界通过，最终完整回归、iOS运行与独立审查仍待完成。用户当前优先级为本部分验收后先本地网络共享。
+- 媒体Task1服务已由audio_service实施、audio_task1_review独立审查通过，759d1bd已推送；Mac及hosted iOS各33项通过，UI及媒体Tasks2–4尚未完成。用户优先本地网络共享，其设计和实施计划现均已确认。
+- 网络阶段账本 `.superpowers/sdd/2026-10-03-shu-local-network/progress.md`；固定GCDWebServer3.5.4源码包、ObjC受限文件/HTTP/DAV适配、Swift唯一会话及原生页面，按计划顺序实施和独立复查。Task1实施者持有index/CHANGELOG时，控制器仅更新自有文档，不并发暂存或提交。
+- 2026-10-04 network_http_finish（gpt-6-astra high）已完成网络 Task1接续及最终平台注册，BASE6f9f777；报告`.superpowers/sdd/2026-10-03-shu-local-network/task-1-report.md`。旧network_http不在本会话，已有代码及真实验证保留；index/CHANGELOG已归还控制器。
+- 当前Xcode支持`-collect-test-diagnostics never`（本机help退出0核实），后续测试采用此参数避免每次失败触发最长600秒sysdiagnose；保留实际断言、原始日志及xcresult，不影响方法验收。
+- network_http_finish已完成24541eb/e581739并普通推送，index/CHANGELOG已归还；network_http_review（gpt-6-astra high）只读审查完整6f9f777..e581739，报告本计划task-1-review.md。

@@ -723,3 +723,19 @@
 - **Git 提交**：`24541eb45542a517c2c7afe69bd295142b06f669 feat: add local HTTP sharing and safe session shutdown`；48文件8647+/12-，提交与普通 push 实际 exit0。该哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-04 10:14] 网络共享首页与导航需求同步
+
+- **需求/问题描述**：
+  > 优先完成本地网络共享，浏览器展示首页各文件夹；底部下载标签改为网络共享，现有下载功能移入更多。
+- **实际实现的功能与改动**：
+  - 同步已确认规格与计划：共享标签默认工作区根目录，浏览器显示全部实际分类、下载和共享目录；Downloads展示名称为“下载”。现有下载页移入更多并复用DownloadManager。
+  - 保存HTTP阶段最终验证与审查接续状态；产品HTTP与日志24541eb/e581739已普通推送，当前独立审查进行中，网页和原生导航尚未实施。
+  - [验证]：需求与任务接口逐项核对；root独立读取NetworkHTTP.xcresult确认1项通过/0失败/0跳过，停止线程QoS警告保留。此文档改动未另运行产品测试。
+- **涉及文件**：
+  - `docs/superpowers/specs/2026-10-03-shu-local-network-design.md`
+  - `docs/superpowers/plans/2026-10-03-shu-local-network.md`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交。
+
+---
