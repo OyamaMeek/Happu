@@ -303,6 +303,10 @@ NS_ASSUME_NONNULL_END
           if (invalidLength || (transfer && lengthHeader) || (transfer && [transfer caseInsensitiveCompare:@"chunked"] != NSOrderedSame)) {
             [self abortRequest:nil withStatusCode:400]; return;
           }
+          NSString *contentEncoding = requestHeaders[@"Content-Encoding"];
+          if (contentEncoding && [[contentEncoding stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceCharacterSet] caseInsensitiveCompare:@"identity"] != NSOrderedSame) {
+            [self abortRequest:nil withStatusCode:415]; return;
+          }
           NSURL* requestURL = CFBridgingRelease(CFHTTPMessageCopyRequestURL(self->_requestMessage));
           if (requestURL) {
             requestURL = [self rewriteRequestURL:requestURL withMethod:requestMethod headers:requestHeaders];
@@ -570,6 +574,7 @@ static inline NSUInteger _ScanHexNumber(const void* bytes, NSUInteger size) {
           block(NSMaxRange(trailerRange) == chunkData.length);
           return;
         }
+        break;
       }
     } else {
       GWS_LOG_ERROR(@"Invalid chunk length reading request body on socket %i", _socket);

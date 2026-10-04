@@ -28,7 +28,9 @@ enum NetworkChecks {
         }
         deinit { close(fd) }
         func send(_ string: String) throws {
-            let data = Data(string.utf8)
+            try send(Data(string.utf8))
+        }
+        func send(_ data: Data) throws {
             try data.withUnsafeBytes { bytes in
                 var offset = 0
                 while offset < bytes.count {
@@ -202,7 +204,90 @@ enum NetworkChecks {
         try manager.setAttributes([.posixPermissions: 0o755], ofItemAtPath: readonly.path)
         passed += try components(root: root, sourceBytes: sourceBytes, sentinel: sentinel)
         passed += try await lifecycle(port: port, shared: shared, service: service)
+        passed += try await chunkEndings(root: root.appendingPathComponent("chunk-endings"))
+        passed += try await contentEncoding(root: root.appendingPathComponent("content-encoding"))
         return passed
+    }
+
+    @MainActor static func stopWithinDeadline(_ service: NetworkSharingService) async throws {
+        let stopping = Task { try await service.stop() }
+        for _ in 0..<20 {
+            try await Task.sleep(nanoseconds: 100_000_000)
+            if service.status == .stopped { break }
+        }
+        try require(service.status == .stopped && service.canStart, "stop finishes within two seconds")
+        try await stopping.value
+    }
+
+    @MainActor static func chunkEndings(root: URL) async throws -> Int {
+        let manager = FileManager.default
+        var passed = 0
+        for scenario in ["split", "disconnect", "stop"] {
+            let shared = root.appendingPathComponent(scenario)
+            try manager.createDirectory(at: shared, withIntermediateDirectories: true)
+            let service = NetworkSharingService(root: root)
+            try await service.start(folder: shared, mode: .browser)
+            let port = service.listeningPort!
+            let socket = try Socket(port: port)
+            try socket.send("PUT /files/result HTTP/1.1\r\nHost: 127.0.0.1:\(port)\r\nTransfer-Encoding: chunked\r\n\r\n3\r\nabc\r\n0\r\n")
+            try await Task.sleep(nanoseconds: 100_000_000)
+            let target = shared.appendingPathComponent("result")
+            try require(!manager.fileExists(atPath: target.path), "zero chunk without final CRLF is not published: \(scenario)")
+            passed += 1
+            if scenario == "split" {
+                try socket.send("\r\n")
+                try require(socket.response().hasPrefix("HTTP/1.1 201"), "split zero chunk completes after final CRLF")
+                try require(try Data(contentsOf: target) == Data("abc".utf8), "split chunk exact published bytes")
+                passed += 2
+            } else if scenario == "disconnect" {
+                shutdown(socket.fd, SHUT_WR)
+                try require(socket.response().hasPrefix("HTTP/1.1 400"), "zero chunk disconnect rejects missing final CRLF")
+                passed += 1
+            }
+            try await stopWithinDeadline(service)
+            passed += 1
+            try require(try manager.contentsOfDirectory(atPath: shared.path).allSatisfy { !$0.hasPrefix(".shu-network-") }, "zero chunk stop clears staging: \(scenario)")
+            passed += 1
+            if scenario != "split" {
+                try require(!manager.fileExists(atPath: target.path), "incomplete zero chunk never publishes: \(scenario)")
+                passed += 1
+            }
+            if scenario == "stop" {
+                try require(!socket.response().hasPrefix("HTTP/1.1 201"), "stopped zero chunk cannot succeed")
+                passed += 1
+            }
+        }
+        return passed
+    }
+
+    @MainActor static func contentEncoding(root: URL) async throws -> Int {
+        let manager = FileManager.default
+        try manager.createDirectory(at: root, withIntermediateDirectories: true)
+        let service = NetworkSharingService(root: root)
+        try await service.start(folder: root, mode: .browser)
+        let port = service.listeningPort!
+        let truncatedGzip = Data(base64Encoded: "H4sIAAAAAAAC/ytILCrJTMxRSElNzk9JTVFIzs8rSc0rKQYA")!
+        var passed = 0
+        for (name, encoding, body) in [("empty", "gzip", Data()), ("truncated", "gzip", truncatedGzip), ("mixed", "GZip", truncatedGzip), ("unknown", "br", Data([1]))] {
+            let socket = try Socket(port: port)
+            var wire = Data("PUT /files/\(name) HTTP/1.1\r\nHost: 127.0.0.1:\(port)\r\nContent-Encoding: \(encoding)\r\nContent-Length: \(body.count)\r\n\r\n".utf8)
+            wire.append(body)
+            try socket.send(wire)
+            try require(socket.response().hasPrefix("HTTP/1.1 415"), "unsupported encoding rejected before decoding: \(name)")
+            let stage = try manager.contentsOfDirectory(at: root, includingPropertiesForKeys: nil).first { $0.lastPathComponent.hasPrefix(".shu-network-") }!
+            try require(!manager.fileExists(atPath: root.appendingPathComponent(name).path) && (try manager.contentsOfDirectory(atPath: stage.path)).isEmpty, "encoding failure leaves no published or staged bytes: \(name)")
+            let probe = try Socket(port: port)
+            try probe.send("GET /api/list HTTP/1.1\r\nHost: 127.0.0.1:\(port)\r\n\r\n")
+            try require(probe.response().hasPrefix("HTTP/1.1 200"), "service survives rejected encoding: \(name)")
+            passed += 3
+        }
+        let identity = try Socket(port: port)
+        try identity.send("PUT /files/identity HTTP/1.1\r\nHost: 127.0.0.1:\(port)\r\nContent-Encoding: IdEnTiTy\r\nContent-Length: 3\r\n\r\nabc")
+        try require(identity.response().hasPrefix("HTTP/1.1 201") && (try Data(contentsOf: root.appendingPathComponent("identity"))) == Data("abc".utf8), "identity encoding preserves bytes")
+        passed += 1
+        try await stopWithinDeadline(service)
+        try require(try manager.contentsOfDirectory(atPath: root.path) == ["identity"], "encoding failure stop removes session")
+        return passed + 2
     }
 
     @MainActor static func lifecycle(port: UInt16, shared: URL, service: NetworkSharingService) async throws -> Int {

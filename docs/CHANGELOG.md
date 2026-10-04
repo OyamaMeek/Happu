@@ -736,6 +736,20 @@
   - `docs/superpowers/specs/2026-10-03-shu-local-network-design.md`
   - `docs/superpowers/plans/2026-10-03-shu-local-network.md`
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`4a92a301c46da5a44d8e381f0c0fe5eac20d7bdd docs: update network sharing home and navigation requirements`，提交及普通推送退出0。
+
+---
+
+## [2026-10-04 21:28] HTTP结束标记与请求编码修复
+
+- **需求/问题描述**：
+  > 修复独立审查发现的分段结束标记停止挂起，以及不完整gzip请求造成断言或部分发布。
+- **实际实现的功能与改动**：
+  - 缺少结束空行时继续异步读取；在创建请求和解码前以415拒绝不支持的Content-Encoding，保留identity及普通请求。
+  - [验证]：两个真实请求RED分别退出1和SIGABRT；修复后针对性15+15及完整HTTP98项全部通过。两平台构建退出0；root测试构建及hosted运行退出0，NetworkHTTPFix1Root.xcresult确认1通过/0失败/0跳过，原QoS警告保留。没有真机网络或视觉验证。
+- **涉及文件**：
+  - `Vendor/ShuNetwork/Upstream/GCDWebServer/Core/GCDWebServerConnection.m`、`Vendor/ShuNetwork/UPSTREAM.md`
+  - `Tests/NetworkSmoke.swift`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交，最终独立审查覆盖本修复。
 
 ---
