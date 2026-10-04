@@ -15,3 +15,5 @@
 - 2026-10-04 network_http_finish（gpt-6-astra high）已完成网络 Task1接续及最终平台注册，BASE6f9f777；报告`.superpowers/sdd/2026-10-03-shu-local-network/task-1-report.md`。旧network_http不在本会话，已有代码及真实验证保留；index/CHANGELOG已归还控制器。
 - 当前Xcode支持`-collect-test-diagnostics never`（本机help退出0核实），后续测试采用此参数避免每次失败触发最长600秒sysdiagnose；保留实际断言、原始日志及xcresult，不影响方法验收。
 - network_http_finish已完成24541eb/e581739并普通推送，index/CHANGELOG已归还；network_http_review（gpt-6-astra high）只读审查完整6f9f777..e581739，报告本计划task-1-review.md。
+- 用户“你做啊”后root直接执行余下网络任务；network_http_finish的R1/R2修复与15+15/HTTP98证据保留，root接续hosted与提交。后续TDD/真实验证并一次最终独立审查，实施代理不再派发。
+- 网络最终由root实施，network_final_review独立只读审查与复查；使用本地固定GCDWebServer3.5.4、Foundation/Network/CoreImage/libxml2及标准process资源。用户追加apple-design/impeccable后已读取两技能、正常运行context和一次detect；网页保留原生系统字体/列表，未新增前端依赖或截图。最终真实WKWebView、URLSession、XCUITest和普通签名结果已写入验证记录。

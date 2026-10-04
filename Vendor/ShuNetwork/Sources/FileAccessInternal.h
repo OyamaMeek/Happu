@@ -6,6 +6,7 @@ BOOL ShuFinishFile(int *descriptor, NSError **error);
 @interface ShuUpload : NSObject
 @end
 @interface ShuFileAccess (Session)
+- (nullable NSDictionary *)metadataAtRelativePath:(NSString *)path error:(NSError **)error;
 - (nullable ShuUpload *)beginUpload:(NSString *)path error:(NSError **)error;
 - (BOOL)writeUpload:(ShuUpload *)upload data:(NSData *)data error:(NSError **)error;
 - (BOOL)finishUpload:(ShuUpload *)upload error:(NSError **)error;

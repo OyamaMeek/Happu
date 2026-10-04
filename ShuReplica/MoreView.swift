@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct MoreView: View {
     let store: FileStore
+    @ObservedObject var downloads: DownloadManager
     @AppStorage("sortByDate") private var sortByDate = false
     @State private var importing = false
     @State private var copying = false
@@ -12,6 +13,9 @@ struct MoreView: View {
 
     var body: some View {
         Form {
+            Section("传输") {
+                NavigationLink { DownloadsView(manager: downloads) } label: { Label("下载", systemImage: "arrow.down.circle") }
+            }
             Section("文件") {
                 Button("PDF 处理", systemImage: "doc.text") { importMode = .pdf; importing = true }
                     .disabled(copying)

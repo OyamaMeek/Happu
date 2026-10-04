@@ -750,7 +750,7 @@
 - **涉及文件**：
   - `Vendor/ShuNetwork/Upstream/GCDWebServer/Core/GCDWebServerConnection.m`、`Vendor/ShuNetwork/UPSTREAM.md`
   - `Tests/NetworkSmoke.swift`、`docs/CHANGELOG.md`
-- **Git 提交**：待提交，最终独立审查覆盖本修复。
+- **Git 提交**：`90ca408191a441ce396095fa16377b974e9fa318 fix: handle split upload endings and reject encoded bodies`，提交及普通推送退出0；最终独立审查覆盖本修复。
 
 ---
 
@@ -782,5 +782,26 @@
   - 全局技能 /Users/oyamameek/.codex/skills/impeccable/ 与引擎 /Users/oyamameek/.impeccable/bin/0.1.11/impeccable（仓库外）。
   - docs/CHANGELOG.md、context/2026/10/04/23-24-39/对话.md。
 - **Git 提交**：`efb94ba282ce5894fcea6b5af2358d2a529fa109 docs: record Impeccable skill installation`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
+
+---
+
+## [2026-10-05 00:04] 本地网络共享与Web页面优化
+
+- **需求/问题描述**：
+  > 浏览器首页显示应用各文件夹；底部下载改为网络共享，现有下载放进更多。修复截图中的CodeSign错误，使用apple-design和impeccable优化Web共享页面。
+- **实际实现的功能与改动**：
+  - 浏览器列出全部首页分类、下载、共享及实际用户目录；支持导航、新建、真实多文件上传进度、下载和确认删除。同名文件拒绝覆盖。
+  - WebDAV接入同一受限文件服务；强化COPY/MOVE源祖先校验、提前取消与停止清理，浏览器活动文件采用attachment/nosniff/sandbox。
+  - 底部网络共享默认首页根目录；目录新增菜单预选当前目录，提供实际IPv4/IPv6地址、二维码、复制、两模式、启动/停止。切离页面或进入后台停止，返回前台不自动启动；现有下载管理移至更多。
+  - Web页面采用系统字体、功能性半透明顶栏、明确目录标题、SVG文件列表、手机尺寸布局、深色适配、44px控件、选择反馈、键盘焦点及减弱动态/透明设置，无新增前端依赖。
+  - 标准process资源打包修复资源包签名格式错误，默认签名的新旧缓存构建和严格应用codesign校验通过。
+  - [验证]：Mac HTTP98、DAV37、资源13及MOVE/取消/下载安全边界真实通过；8个唯一Runtime/UI方法分别取得成功终态。最终结果包3通过/0失败/0跳过、无运行警告，包含Web25及两个原生共享流程；已有下载导航/搜索/选择回归通过。最新Device编译退出0；Impeccable一次机械检测退出0/[]。真机互联、热点、权限拒绝、物理锁屏与视觉未验证，详细证据见网络共享验证文档。
+  - 保存本次会话截至归档时的66条用户与助手可见消息；保留用户AGENTS及Xcode个人配置改动。
+- **涉及文件**：
+  - `ShuReplica/NetworkSharing*.swift`、`ShuReplica/ShuReplicaApp.swift`、`ShuReplica/FilesView.swift`、`ShuReplica/MoreView.swift`、`ShuReplica/Info.plist`
+  - `Vendor/ShuNetwork/Package.swift`、`Vendor/ShuNetwork/Sources/`、`Vendor/ShuNetwork/Upstream/GCDWebServer/Core/GCDWebServer.m`、`Vendor/ShuNetwork/UPSTREAM.md`
+  - `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj`、`Tests/Network*.swift`、`Tests/ShuReplicaUITests.swift`
+  - `docs/NETWORK_SHARING_VERIFICATION.md`、实施计划、`memory/`、`docs/CHANGELOG.md`、`context/2026/10/05/00-04-26/对话.md`
+- **Git 提交**：待提交。
 
 ---

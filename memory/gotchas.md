@@ -14,3 +14,5 @@
 - AudioToolbox 编码器查询在受限环境可能返回 noErr 但漏报 AAC/FLAC；能力判断需在实际权限下复核，并实际写出和重读，不将格式常量或查询成功视为编码通过。
 - 图像容器原始 metadata 与 ImageIO 全局属性可能不同；GIF 原始重复次数可被归一化为总播放次数，缺扩展可合成为1。先用成熟编码器/解析器与实际平台回读核对，再修改映射；失败的样本前置断言不能充当产品行为RED。
 - JSONL只能按LF分隔记录；Python str.splitlines会把JSON字符串内合法U+2028拆成伪记录。保留源文件，使用split("\n")并严格json.loads；不得为绕过解析错误静默丢弃非空记录。
+- SwiftPM iOS资源包使用process处理网页静态文件，并从模块资源包根读取；保留名为Resources的顶层目录会导致普通CodeSign判定bundle格式无效。必须用默认签名构建验证，CODE_SIGNING_ALLOWED=NO不能覆盖该问题。
+- SwiftUI LabeledContent的AX标签可能合并名称和值；原生交互测试使用稳定标识及真实合并标签。操作反馈应在操作位置可见，避免放在多项二维码列表之后。

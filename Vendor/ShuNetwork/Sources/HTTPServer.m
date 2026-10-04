@@ -1,19 +1,21 @@
 #import "ShuNetwork.h"
-#import "FileAccessInternal.h"
+#import "HTTPServerInternal.h"
 @import GCDWebServer;
 #import <sys/socket.h>
 #import <netdb.h>
+#import <arpa/inet.h>
 
-static GCDWebServerResponse *ErrorResponse(NSError *error) {
+GCDWebServerResponse *ShuErrorResponse(NSError *error) {
     GCDWebServerDataResponse *response = [GCDWebServerDataResponse responseWithJSONObject:@{@"error": error.localizedDescription ?: @"请求失败。"}];
     response.statusCode = [error.domain isEqual:@"ShuNetwork"] ? error.code : 500;
     return response;
 }
-static NSString *RelativePath(NSURL *url, NSError **error) {
+NSString *ShuRelativePath(NSURL *url, NSString *prefix, NSError **error) {
     NSString *raw = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO].percentEncodedPath;
-    if (![raw hasPrefix:@"/files/"]) { if (error) *error = ShuError(404, @"未找到文件接口。"); return nil; }
+    if (![raw hasPrefix:prefix]) { if (error) *error = ShuError(404, @"未找到文件接口。"); return nil; }
     NSMutableArray *parts = [NSMutableArray new];
-    NSString *tail = [raw substringFromIndex:7];
+    NSString *tail = [raw substringFromIndex:prefix.length];
+    if ([prefix isEqual:@"/"] && [tail hasSuffix:@"/"]) tail = [tail substringToIndex:tail.length - 1];
     if (!tail.length) return @"";
     for (NSString *part in [tail componentsSeparatedByString:@"/"]) {
         NSString *decoded = part.stringByRemovingPercentEncoding;
@@ -24,15 +26,33 @@ static NSString *RelativePath(NSURL *url, NSError **error) {
     }
     return [parts componentsJoinedByString:@"/"];
 }
-static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
-    char host[NI_MAXHOST], service[NI_MAXSERV];
+BOOL ShuMatchesServerURL(NSURLComponents *components, GCDWebServerRequest *request) {
+    if (![components.scheme isEqual:@"http"] || components.user || components.password || !components.port) return NO;
     const struct sockaddr *address = request.localAddressData.bytes;
-    if (!address || getnameinfo(address, (socklen_t)request.localAddressData.length, host, sizeof(host), service, sizeof(service), NI_NUMERICHOST | NI_NUMERICSERV)) {
-        if (error) *error = ShuError(500, @"无法读取监听地址。"); return NO;
+    NSString *host = components.host.stringByRemovingPercentEncoding;
+    if ([host hasPrefix:@"["] && [host hasSuffix:@"]"]) host = [host substringWithRange:NSMakeRange(1, host.length - 2)];
+    host = [host componentsSeparatedByString:@"%"].firstObject;
+    if (!host || !address) return NO;
+    if (address->sa_family == AF_INET && request.localAddressData.length >= sizeof(struct sockaddr_in)) {
+        const struct sockaddr_in *local = (const struct sockaddr_in *)address;
+        struct in_addr parsed;
+        return components.port.integerValue == ntohs(local->sin_port) && inet_pton(AF_INET, host.UTF8String, &parsed) == 1 && parsed.s_addr == local->sin_addr.s_addr;
     }
-    NSString *authority = address->sa_family == AF_INET6 ? [NSString stringWithFormat:@"[%s]:%s", host, service] : [NSString stringWithFormat:@"%s:%s", host, service];
+    if (address->sa_family == AF_INET6 && request.localAddressData.length >= sizeof(struct sockaddr_in6)) {
+        const struct sockaddr_in6 *local = (const struct sockaddr_in6 *)address;
+        struct in6_addr parsed;
+        return components.port.integerValue == ntohs(local->sin6_port) && inet_pton(AF_INET6, host.UTF8String, &parsed) == 1 && !memcmp(&parsed, &local->sin6_addr, sizeof(parsed));
+    }
+    return NO;
+}
+static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
+    NSString *host = request.headers[@"Host"];
+    NSURLComponents *authority = host ? [NSURLComponents componentsWithString:[@"http://" stringByAppendingString:host]] : nil;
     NSString *origin = request.headers[@"Origin"];
-    if (![request.headers[@"Host"] isEqualToString:authority] || (origin && ![origin isEqualToString:[@"http://" stringByAppendingString:authority]])) {
+    NSURLComponents *originURL = origin ? [NSURLComponents componentsWithString:origin] : nil;
+    BOOL validHost = ShuMatchesServerURL(authority, request) && !authority.path.length && !authority.query && !authority.fragment;
+    BOOL validOrigin = !origin || (ShuMatchesServerURL(originURL, request) && !originURL.path.length && !originURL.query && !originURL.fragment);
+    if (!validHost || !validOrigin) {
         if (error) *error = ShuError(403, @"请求来源与当前共享服务不一致。"); return NO;
     }
     return YES;
@@ -74,6 +94,10 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
 - (void)dealloc { if (_upload) [_access discardUpload:_upload]; }
 @end
 
+@interface ShuHTTPServer ()
+@property(nonatomic) ShuHTTPServerMode sharingMode;
+@end
+#define ErrorResponse ShuErrorResponse
 @implementation ShuHTTPServer {
     GCDWebServer *_server;
     ShuFileAccess *_access;
@@ -87,11 +111,12 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
         _server = [GCDWebServer new];
         _stopCompletions = [NSMutableArray new];
         ShuFileAccess *access = _access;
+        __weak ShuHTTPServer *weakSelf = self;
         [_server addHandlerWithMatchBlock:^GCDWebServerRequest *(NSString *method, NSURL *url, NSDictionary *headers, NSString *path, NSDictionary *query) {
             ShuHTTPRequest *request = [[ShuHTTPRequest alloc] initWithMethod:method url:url headers:headers path:path query:query];
             request.access = access;
-            if ([path hasPrefix:@"/files/"]) {
-                NSError *error; request.relativePath = RelativePath(url, &error); request.failure = error;
+            if (weakSelf.sharingMode == ShuHTTPServerModeWebDAV || [path hasPrefix:@"/files/"]) {
+                NSError *error; request.relativePath = ShuRelativePath(url, weakSelf.sharingMode == ShuHTTPServerModeWebDAV ? @"/" : @"/files/", &error); request.failure = error;
             }
             return request;
         } processBlock:^GCDWebServerResponse *(GCDWebServerRequest *rawRequest) {
@@ -99,6 +124,19 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
             NSError *error = request.failure;
             if (!error) CheckSource(request, &error);
             if (error) return ErrorResponse(error);
+            if (weakSelf.sharingMode == ShuHTTPServerModeWebDAV && ![request.method isEqual:@"PUT"]) return ShuDAVResponse(request, access, request.relativePath, request.body);
+            NSDictionary *assets = @{@"/": @[@"index.html", @"text/html; charset=utf-8"], @"/sharing.js": @[@"sharing.js", @"application/javascript; charset=utf-8"], @"/sharing.css": @[@"sharing.css", @"text/css; charset=utf-8"]};
+            NSArray *asset = assets[request.path];
+            if (asset && [request.method isEqual:@"GET"]) {
+                NSURL *url = [SWIFTPM_MODULE_BUNDLE URLForResource:asset[0] withExtension:nil];
+                NSData *data = url ? [NSData dataWithContentsOfURL:url options:0 error:&error] : nil;
+                if (!data) return ErrorResponse(error ?: ShuError(500, @"浏览器资源缺失。"));
+                GCDWebServerDataResponse *response = [GCDWebServerDataResponse responseWithData:data contentType:asset[1]];
+                [response setValue:@"default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'" forAdditionalHeader:@"Content-Security-Policy"];
+                [response setValue:@"nosniff" forAdditionalHeader:@"X-Content-Type-Options"];
+                [response setValue:@"no-store" forAdditionalHeader:@"Cache-Control"];
+                return response;
+            }
             if ([request.path isEqual:@"/api/list"] && [request.method isEqual:@"GET"]) {
                 NSString *path = request.query[@"path"] ?: @"";
                 NSArray *entries = [access listAtRelativePath:path error:&error];
@@ -121,6 +159,11 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
                 int fd = [access openRegularFileAtRelativePath:request.relativePath error:&error];
                 if (fd < 0) return ErrorResponse(error);
                 GCDWebServerFileResponse *response = [[GCDWebServerFileResponse alloc] initWithFileDescriptor:fd filename:request.relativePath byteRange:request.byteRange];
+                NSMutableCharacterSet *characters = [NSCharacterSet.alphanumericCharacterSet mutableCopy]; [characters addCharactersInString:@"-._~"];
+                NSString *filename = [request.relativePath.lastPathComponent stringByAddingPercentEncodingWithAllowedCharacters:characters];
+                [response setValue:[NSString stringWithFormat:@"attachment; filename=\"download\"; filename*=UTF-8''%@", filename] forAdditionalHeader:@"Content-Disposition"];
+                [response setValue:@"nosniff" forAdditionalHeader:@"X-Content-Type-Options"];
+                [response setValue:@"default-src 'none'; sandbox" forAdditionalHeader:@"Content-Security-Policy"];
                 return response ?: ErrorResponse(ShuError(416, @"下载范围超出文件。"));
             }
             return ErrorResponse(ShuError(405, @"此方法不受支持。"));
@@ -130,7 +173,7 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
 }
 - (uint16_t)port { return (uint16_t)_server.port; }
 - (BOOL)startWithMode:(ShuHTTPServerMode)mode error:(NSError **)error {
-    if (mode != ShuHTTPServerModeBrowser) { if (error) *error = ShuError(501, @"WebDAV 尚未启用。"); return NO; }
+    self.sharingMode = mode;
     [GCDWebServer setLogLevel:4];
     NSMutableDictionary *options = [@{GCDWebServerOption_Port: @0, GCDWebServerOption_AutomaticallyMapHEADToGET: @YES, GCDWebServerOption_RequestNATPortMapping: @NO, GCDWebServerOption_ConnectedStateCoalescingInterval: @0} mutableCopy];
 #if TARGET_OS_IPHONE
@@ -144,11 +187,15 @@ static BOOL CheckSource(GCDWebServerRequest *request, NSError **error) {
     _stopping = YES;
     [_access invalidate];
     [_server stopAndDrainWithCompletion:^{
-        NSError *error;
-        [self->_access cleanup:&error];
-        NSArray *completions = [self->_stopCompletions copy];
-        [self->_stopCompletions removeAllObjects]; self->_stopping = NO;
-        for (void (^callback)(NSError *) in completions) callback(error);
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+            NSError *error;
+            [self->_access cleanup:&error];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSArray *completions = [self->_stopCompletions copy];
+                [self->_stopCompletions removeAllObjects]; self->_stopping = NO;
+                for (void (^callback)(NSError *) in completions) callback(error);
+            });
+        });
     }];
 }
 @end

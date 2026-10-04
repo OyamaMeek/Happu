@@ -16,6 +16,8 @@
     <dict><key>NSAllowsArbitraryLoads</key><true/></dict>
     <key>LSSupportsOpeningDocumentsInPlace</key><true/>
     <key>UIFileSharingEnabled</key><true/>
+    <key>NSLocalNetworkUsageDescription</key><string>允许同一 Wi-Fi 或热点上的设备访问你选择共享的文件夹。</string>
+    <key>NSBonjourServices</key><array><string>_http._tcp</string></array>
     <key>UILaunchScreen</key><dict/>
     <key>UISupportedInterfaceOrientations</key>
     <array>

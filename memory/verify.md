@@ -139,6 +139,7 @@
 - 后续必须取得真实 HTTP/DAV 截断、无覆盖、路径竞争、停止清理与 hosted iOS/WebKit/UI 结果；真实 Wi-Fi、个人热点、权限拒绝和锁屏分别取得设备证据。计划中命令/断言为待执行标准，不能记为通过。
 - 没有运行网络产品测试或视觉验证；此前音频验收结果保持原范围，完整复刻尚未完成。
 - 官方 SE-0271 文档实际读取，核实 target 资源与 Objective-C SWIFTPM_MODULE_BUNDLE；计划补入本地包资源注册、静态路由和真实字节/MIME/HEAD/cwd 独立性检查。此为打包规则证据，不是当前工具链编译或资源运行通过。
+- 2026-10-04普通签名资源验收：`network-signed-build-red.log`实际exit65，ShuNetwork资源包格式不受codesign识别；process资源后`network-signed-green.log`/`network-signed-final-build.log`两次build-for-testing、`network-signed-existing-cache.log`旧缓存普通build均exit0，资源包包含有效_CodeSignature且旧Resources由Xcode删除。`network-processed-assets.log`实际exit0/13/0/0，标准资源包根查找与真实HTTP字节一致。最终signed 8项方法和Device构建尚待终态。
 - 网络计划已获第二次“确认”，Task1开始实施；有效RED8008实际exit1，成功编译17.21秒后NETWORK_HTTP_FAILED“网络共享服务尚未实现。”，控制器对应日志核对一致。首次manifest41796失败不计行为RED。扩展RED和产品GREEN、hosted运行及独立审查仍待实际结果。
 - 只读实际设备条件核查：devicectl help90190与list40544实际exit0，devices.json outcome=success/jsonVersion5；严格字段检查通过，两个device均reality=simulated/iOS27且bootState=shutdown，没有列出真机。指定UDID需后续重新boot/核实；这不证明Wi-Fi/热点/局域网权限或真机运行。结果在忽略的DerivedData/NetworkPlanning/devices.json。
 - 首轮HTTP GREEN3265实际exit0/51/0/0，控制器完整读取attempt4短日志，包含terminate主类/category归属两项新警告；原始日志保留，警告已交实施者处理。组件/清理/取消边界尚未全部通过，iOS仍待验证。
@@ -149,3 +150,8 @@
 - 2026-10-04新增验收：底部文件/网络共享/更多，共享默认根目录，更多可进入现有下载页且复用下载状态；切离共享标签停止服务。真实WKWebView加载根页面后列出FileStore全部分类、下载、共享目录，逐项导航与真实磁盘内容一致；下载展示名与Downloads路径分离。截图未授权，不宣称视觉验证。
 - Task1本轮实际Simulator55908/Device73174/build-for-testing47737退出0，原上游UTType及LAME诊断保留；Mac44055退出0/68项，native64302退出0/4项。hosted15152的最终exit/xcresult尚待收取，方法日志成功不代替整个命令结果。root读取Mac/native完整日志，xcresult目前无Info.plist读取得到exit64，不能认定损坏。
 - hosted15152最终exit0；NetworkHTTP.xcresult的summary与tests读取exit0，root独立summary核实Passed/total1/pass1/fail0/skip0，iOS27/arm64、testFailures=[]、runtimeWarnings仅QoS1。Task1报告保存完整命令/终态/限制，24541eb/e581739实际提交普通推送；未运行真机网络或视觉验证。
+- 独立Task1审查发现R1/R2不满足请求完整性与停止标准，原68项结果不覆盖分段零chunk结束空行和gzip流结束；已交实施者补有界真实请求RED/GREEN，不将静态审查推断记作实测。修复后须取得最终HTTP/hosted及针对性复查。
+- 2026-10-04 root最终验证进行中：资源13、DAV30、HTTP98分别真实exit0；Simulator/Device产品构建exit0。资源首次RED为404；Mac资源定位错误来自测试未使用Bundle，其修正后13项通过。DAV HEAD测试改reloadIgnoringLocalCacheData后实际空body，避免GET缓存复用；Destination按已验证的Host解析实际端口。UI入口RED结果包NetworkEntrypointsRed.xcresult实际exit65，断言待独立summary核对；后续真实WKWebView/后台/二维码与最终UI结果尚未完成。地址与二维码单项测试在实现之后补充，不声称这两项已有独立先失败证据。
+- SignedFunctionalFinal实际exit65/5通过3失败/无runtimeWarnings：全部5项NetworkRuntimeTests通过；入口自动化在旧清理helper点击文件标签时SIGTERM，复制按钮反馈通过但后台runner读取剪贴板nil，旧导航方法因历史文件多导致新建行不在AX视口失败。新网络方法改正常fresh launch，剪贴板改在前台应用实际粘贴进新建下载链接字段验证；旧导航创建前排唯一目录。保留原结果，不记UI全部通过。
+- Web优化验收：沿用真实WKWebView加载资源与XHR/disk检查；补充390/1100视口无横向溢出、长中文名称、当前位置标题、SVG图标、最小44px触控目标、选择后上传按钮与清空恢复状态。新测试编译的async-autoclosure错误已经修正，不计行为RED；NetworkWebPolishRed运行待终态。无截图和视觉验收授权，不导出XCTest视觉附件。
+- 最终网络/Web验收（2026-10-05）：WebPolishRed实际exit65目标状态断言失败，Green1实际3pass2UI失败（Web24、DAV37+资源13、旧下载导航搜索选择通过），按真实标题/列表视口修正后FinalConfirmation20007实际exit0，summary Passed/3pass0fail0skip/runtimeWarnings=[]；最终Web25及两原生共享方法通过。结合SignedFunctionalFinal五Runtime通过，全部8个唯一相关方法均取得成功终态，不虚构单个8/0/0结果包。最后Mac编译62760、资源GET/HEAD13及Device68531实际exit0；严格codesign验证独立命令exit0。机械检测一次exit0/[]；独立质量审查无剩余Critical/Important。真机互联、热点、隐私拒绝、物理锁屏与视觉仍未验证。

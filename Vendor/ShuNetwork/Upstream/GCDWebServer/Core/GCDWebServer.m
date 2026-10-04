@@ -683,7 +683,6 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
   dispatch_source_cancel(_source6);
   dispatch_source_cancel(_source4);
-  dispatch_group_wait(_sourceGroup, DISPATCH_TIME_FOREVER);  // Wait until the cancellation handlers have been called which guarantees the listening sockets are closed
 #if !OS_OBJECT_USE_OBJC_RETAIN_RELEASE
   dispatch_release(_source6);
 #endif
@@ -769,10 +768,12 @@ static inline NSString* _EncodeBase64(NSString* string) {
 
 - (void)stopAndDrainWithCompletion:(void (^)(void))completion {
   if (_options) [self stop];
-  __block NSArray *connections;
-  dispatch_sync(_syncQueue, ^{ connections = self->_connections.allObjects; });
-  for (GCDWebServerConnection *connection in connections) [connection terminate];
-  dispatch_group_notify(_connectionGroup, dispatch_get_main_queue(), completion);
+  dispatch_group_notify(_sourceGroup, dispatch_get_main_queue(), ^{
+    __block NSArray *connections;
+    dispatch_sync(self->_syncQueue, ^{ connections = self->_connections.allObjects; });
+    for (GCDWebServerConnection *connection in connections) [connection terminate];
+    dispatch_group_notify(self->_connectionGroup, dispatch_get_main_queue(), completion);
+  });
 }
 
 - (void)stop {

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Shu 网络共享</title>
+  <link rel="stylesheet" href="/sharing.css">
+  <script src="/sharing.js" defer></script>
+</head>
+<body>
+  <a id="skip-files" class="skip-link" href="#entries">跳到文件列表</a>
+  <header class="topbar">
+    <div class="topbar-content">
+      <div class="brand"><span class="badge" aria-hidden="true">Shu</span><div><h1>网络共享</h1><p>浏览和管理手机中的文件</p></div></div>
+      <button id="refresh" type="button" class="quiet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 3M4 15l2 3a7 7 0 0 0 12-1"/></svg><span>刷新</span></button>
+    </div>
+  </header>
+  <main>
+    <nav id="breadcrumbs" aria-label="文件位置"></nav>
+    <div class="directory-heading"><h2 id="folder-title">首页</h2><p id="item-count"></p></div>
+    <section class="actions" aria-label="文件操作">
+      <label class="file-picker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 15v5h16v-5"/></svg><span>选择文件</span><input id="files" type="file" multiple aria-label="选择要上传的文件"></label>
+      <button id="upload" type="button" class="primary" disabled>上传到这里</button>
+      <span id="selection" class="selection" aria-live="polite">未选择文件</span>
+      <details id="new-folder"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7V4h6l3 3h9v13H3V7Zm6 7h6m-3-3v6"/></svg>新建文件夹</summary><form id="create"><label for="folder-name">新文件夹名称</label><div><input id="folder-name" placeholder="新文件夹名称" required autocomplete="off"><button class="primary">创建</button></div></form></details>
+    </section>
+    <p id="status" role="status" aria-live="polite"></p>
+    <section id="uploads" aria-label="上传进度" aria-live="polite"></section>
+    <div class="list-heading" aria-hidden="true"><span>名称</span><span>类型 / 大小</span><span></span></div>
+    <ul id="entries" aria-label="文件和文件夹" tabindex="-1"></ul>
+    <div id="empty" hidden><h3>这个文件夹暂时没有文件</h3><p>选择文件并上传到这里，或新建一个文件夹。</p></div>
+  </main>
+  <footer>共享时请保持手机解锁，并停留在网络共享页面。</footer>
+</body>
+</html>

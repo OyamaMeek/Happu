@@ -74,6 +74,7 @@ struct FolderView: View {
     @State private var archiveRequest: ArchiveRequest?
     @State private var archiveRunning = false
     @State private var documentRequest: DocumentOperationRequest?
+    @State private var networkRequest: NetworkSharingRequest?
 
     private enum Edit { case folder, rename(URL) }
     private enum Transfer { case copy([URL]), move([URL]) }
@@ -151,6 +152,7 @@ struct FolderView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
+                    Button("通过本地网络共享", systemImage: "network") { networkRequest = NetworkSharingRequest(initialFolder: folder) }
                     Button("导入文件", systemImage: "square.and.arrow.down") { importing = true }
                     Button("新建文件夹", systemImage: "folder.badge.plus") {
                         editName = ""
@@ -198,6 +200,9 @@ struct FolderView: View {
             }
         }
         .onAppear(perform: reload)
+        .sheet(item: $networkRequest, onDismiss: reload) { request in
+            NavigationStack { NetworkSharingView(store: store, request: request, onFinish: { networkRequest = nil }) }
+        }
         .quickLookPreview($preview)
         .fileImporter(isPresented: $importing, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
             do {

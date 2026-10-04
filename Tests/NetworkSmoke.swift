@@ -53,6 +53,177 @@ enum NetworkChecks {
     static func require(_ condition: Bool, _ message: String) throws {
         if !condition { throw NSError(domain: "NetworkChecks", code: 1, userInfo: [NSLocalizedDescriptionKey: "ASSERTION: " + message]) }
     }
+    @MainActor static func moveBoundary(root: URL) async throws -> Int {
+        let manager = FileManager.default
+        try manager.createDirectory(at: root, withIntermediateDirectories: true)
+        let parent = root.appendingPathComponent("parent")
+        try manager.createDirectory(at: parent, withIntermediateDirectories: false)
+        let source = parent.appendingPathComponent("large")
+        manager.createFile(atPath: source.path, contents: nil)
+        let file = try FileHandle(forWritingTo: source)
+        try file.truncate(atOffset: 268435456); try file.close()
+        let access = try ShuFileAccess(workspaceURL: root, sharedDirectoryURL: root)
+        let operation = Task.detached { () -> NSError? in
+            do { try access.copyItem(atRelativePath: "parent/large", toRelativePath: "moved", move: true); return nil }
+            catch { return error as NSError }
+        }
+        var copying = false
+        for _ in 0..<1000 {
+            let stages = try manager.contentsOfDirectory(at: root, includingPropertiesForKeys: nil).filter { $0.lastPathComponent.hasPrefix(".shu-network-") }
+            if let stage = stages.first, !(try manager.contentsOfDirectory(atPath: stage.path)).isEmpty { copying = true; break }
+            try await Task.sleep(for: .milliseconds(1))
+        }
+        try require(copying, "real MOVE staging observed")
+        let outside = root.deletingLastPathComponent().appendingPathComponent("moved-parent-" + UUID().uuidString)
+        defer { try? manager.removeItem(at: outside) }
+        try manager.moveItem(at: parent, to: outside)
+        let error = await operation.value
+        try require(error?.code == 403 || error?.code == 404, "MOVE rejects parent relocated outside root")
+        try require(manager.fileExists(atPath: outside.appendingPathComponent("large").path) && !manager.fileExists(atPath: root.appendingPathComponent("moved").path), "outside MOVE source preserved and no target published")
+        return 3
+    }
+    @MainActor static func stopDuringCopy(root: URL) async throws -> Int {
+        _ = try FileStore(root: root)
+        let manager = FileManager.default
+        let source = root.appendingPathComponent("large")
+        manager.createFile(atPath: source.path, contents: nil)
+        let file = try FileHandle(forWritingTo: source)
+        try file.truncate(atOffset: 536870912); try file.close()
+        let service = NetworkSharingService(root: root)
+        try await service.start(folder: root, mode: .webDAV)
+        let base = "http://127.0.0.1:\(service.listeningPort!)"
+        var request = URLRequest(url: URL(string: base + "/large")!)
+        request.httpMethod = "COPY"; request.setValue(base + "/copied", forHTTPHeaderField: "Destination")
+        let operation = Task { try await URLSession.shared.data(for: request) }
+        var copying = false
+        var stagedFile: URL?
+        for _ in 0..<1000 {
+            let stages = try manager.contentsOfDirectory(at: root, includingPropertiesForKeys: nil).filter { $0.lastPathComponent.hasPrefix(".shu-network-") }
+            if let stage = stages.first, let item = try manager.contentsOfDirectory(at: stage, includingPropertiesForKeys: nil).first { copying = true; stagedFile = item; break }
+            try await Task.sleep(for: .milliseconds(1))
+        }
+        try require(copying, "real DAV COPY staging observed before stop")
+        let stagedHandle = try FileHandle(forReadingFrom: stagedFile!)
+        defer { try? stagedHandle.close() }
+        let start = Date()
+        let stopping = Task { try await service.stop() }
+        await Task.yield()
+        let responsiveness = Date().timeIntervalSince(start)
+        try await stopping.value
+        _ = await operation.result
+        try require(try stagedHandle.seekToEnd() < 536870912, "stop cancels COPY before reading complete source")
+        try require(responsiveness < 0.1, "main actor remains responsive while stopping copy: \(responsiveness)")
+        try require(!manager.fileExists(atPath: root.appendingPathComponent("copied").path), "stopped COPY never publishes")
+        try require(try manager.contentsOfDirectory(atPath: root.path).allSatisfy { !$0.hasPrefix(".shu-network-") }, "COPY stop removes staging")
+        return 5
+    }
+    @MainActor static func downloadSafety(root: URL) async throws -> Int {
+        _ = try FileStore(root: root)
+        let contents = Data("<script>fetch('/api/list')</script>".utf8)
+        try contents.write(to: root.appendingPathComponent("activity.html"))
+        let service = NetworkSharingService(root: root)
+        try await service.start(folder: root, mode: .browser)
+        let (data, response) = try await URLSession.shared.data(from: URL(string: "http://127.0.0.1:\(service.listeningPort!)/files/activity.html")!)
+        let headers = response as! HTTPURLResponse
+        try require(headers.value(forHTTPHeaderField: "Content-Disposition")?.hasPrefix("attachment;") == true, "browser files force attachment")
+        try require(headers.value(forHTTPHeaderField: "X-Content-Type-Options") == "nosniff" && headers.value(forHTTPHeaderField: "Content-Security-Policy")?.contains("sandbox") == true, "browser file content cannot execute with sharing origin")
+        try require(data == contents, "attachment preserves exact file bytes")
+        try await service.stop(); return 3
+    }
+    @MainActor static func assets(root: URL) async throws -> Int {
+        let store = try FileStore(root: root)
+        let service = NetworkSharingService(root: store.root)
+        try await service.start(folder: store.root, mode: .browser)
+        let base = URL(string: "http://127.0.0.1:\(service.listeningPort!)/")!
+        let session = URLSession(configuration: .ephemeral)
+        var passed = 0
+        for (name, mime) in [("", "text/html"), ("sharing.js", "application/javascript"), ("sharing.css", "text/css")] {
+            let url = base.appendingPathComponent(name)
+            let (data, response) = try await session.data(from: url)
+            try require((response as! HTTPURLResponse).statusCode == 200 && !data.isEmpty, "packaged browser asset \(name)")
+            try require((response as! HTTPURLResponse).mimeType == mime, "browser asset MIME \(name)")
+            #if os(iOS)
+            let package = Bundle.main.bundleURL
+            #else
+            let package = URL(fileURLWithPath: CommandLine.arguments[0]).standardizedFileURL.deletingLastPathComponent()
+            #endif
+            let resourceBundle = Bundle(url: package.appendingPathComponent("ShuNetwork_ShuNetwork.bundle"))!
+            let resource = resourceBundle.url(forResource: name.isEmpty ? "index.html" : name, withExtension: nil)!
+            try require(data == Data(contentsOf: resource), "asset exact packaged bytes \(name)")
+            var head = URLRequest(url: url); head.httpMethod = "HEAD"
+            let (empty, headResponse) = try await session.data(for: head)
+            try require(empty.isEmpty && (headResponse as! HTTPURLResponse).statusCode == 200, "asset HEAD \(name)")
+            passed += 4
+        }
+        let (listing, _) = try await session.data(from: base.appendingPathComponent("api/list"))
+        let entries = (try JSONSerialization.jsonObject(with: listing) as! [String: Any])["entries"] as! [[String: Any]]
+        try require(Set(entries.compactMap { $0["name"] as? String }) == Set(WorkspaceCategory.allCases.map(\.rawValue) + ["Downloads", "共享"]), "browser root lists all homepage folders")
+        try await service.stop(); session.invalidateAndCancel()
+        return passed + 1
+    }
+    @MainActor static func dav(root: URL) async throws -> Int {
+        let store = try FileStore(root: root)
+        let service = NetworkSharingService(root: store.root)
+        try await service.start(folder: store.root, mode: .webDAV)
+        let base = "http://127.0.0.1:\(service.listeningPort!)"
+        let session = URLSession(configuration: .ephemeral)
+        var passed = 0
+        func request(_ method: String, _ path: String, _ body: Data? = nil, _ headers: [String: String] = [:]) async throws -> (Data, HTTPURLResponse) {
+            var req = URLRequest(url: URL(string: base + path)!, cachePolicy: .reloadIgnoringLocalCacheData); req.httpMethod = method; req.httpBody = body
+            for (name, value) in headers { req.setValue(value, forHTTPHeaderField: name) }
+            let (data, response) = try await session.data(for: req)
+            return (data, response as! HTTPURLResponse)
+        }
+        func check(_ condition: Bool, _ message: String) throws { try require(condition, message); passed += 1 }
+        let bytes = Data("真实 DAV 中文内容".utf8)
+        let encoded = "/" + "中文 & 空格.txt".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
+        let options = try await request("OPTIONS", "/")
+        try check(options.1.statusCode == 200 && options.1.value(forHTTPHeaderField: "Allow")?.contains("PROPFIND") == true, "DAV OPTIONS methods")
+        try check(try await request("PUT", encoded, bytes).1.statusCode == 201, "DAV PUT")
+        try check(try await request("GET", encoded).0 == bytes, "DAV exact GET")
+        let head = try await request("HEAD", encoded)
+        try check(head.0.isEmpty && head.1.value(forHTTPHeaderField: "Content-Length") == String(bytes.count), "DAV HEAD status=\(head.1.statusCode) headers=\(head.1.allHeaderFields) bytes=\(head.0.count)")
+        let listing = try await request("PROPFIND", "/", nil, ["Depth": "1"])
+        let xml = String(decoding: listing.0, as: UTF8.self)
+        try check(listing.1.statusCode == 207 && XMLParser(data: listing.0).parse(), "DAV multistatus valid XML")
+        try check(xml.contains("中文 &amp; 空格.txt") && xml.contains("/Downloads/"), "DAV escaped names and directory href")
+        try check(!xml.contains("Thu, 01 Jan 1970"), "DAV root uses actual directory modification date")
+        let zero = try await request("PROPFIND", encoded, nil, ["Depth": "0"])
+        try check(zero.1.statusCode == 207 && String(decoding: zero.0, as: UTF8.self).components(separatedBy: "<D:response>").count == 2, "DAV Depth zero single response")
+        try check(try await request("PROPFIND", "/", nil, ["Depth": "infinity"]).1.statusCode == 403, "DAV refuses unlimited depth")
+        try check(try await request("PROPFIND", "/", Data("<bad".utf8), ["Depth": "0"]).1.statusCode == 400, "DAV malformed XML")
+        let unknown = try await request("PROPFIND", "/", Data("<D:propfind xmlns:D='DAV:' xmlns:X='urn:custom'><D:prop><X:unknown/></D:prop></D:propfind>".utf8), ["Depth": "0"])
+        try check(unknown.1.statusCode == 207 && String(decoding: unknown.0, as: UTF8.self).contains("404 Not Found"), "DAV unknown property 404")
+        let external = Data("<!DOCTYPE p [<!ENTITY secret SYSTEM 'file:///etc/passwd'>]><D:propfind xmlns:D='DAV:'><D:prop>&secret;</D:prop></D:propfind>".utf8)
+        try check(try await request("PROPFIND", "/", external, ["Depth": "0"]).1.statusCode == 400, "DAV rejects DTD before entity resolution")
+        try check(try await request("MKCOL", "/Folder").1.statusCode == 201, "DAV MKCOL")
+        try check(try await request("PUT", "/Folder/inner", bytes).1.statusCode == 201, "DAV child PUT")
+        try check(try await request("COPY", "/Folder", nil, ["Destination": base + "/shallow", "Depth": "0"]).1.statusCode == 201, "DAV shallow collection COPY")
+        let shallow = try await request("PROPFIND", "/shallow", nil, ["Depth": "1"])
+        try check(String(decoding: shallow.0, as: UTF8.self).components(separatedBy: "<D:response>").count == 2, "DAV Depth zero COPY excludes children")
+        try check(try await request("DELETE", "/shallow").1.statusCode == 204, "DAV shallow directory DELETE")
+        try check(try await request("COPY", encoded, nil, ["Destination": base + "/invalid-depth", "Depth": "1"]).1.statusCode == 400, "DAV COPY rejects invalid Depth")
+        try check(try await request("MOVE", encoded, nil, ["Destination": base + "/invalid-depth", "Depth": "0"]).1.statusCode == 400, "DAV MOVE rejects invalid Depth")
+        try check(try await request("COPY", encoded, nil, ["Destination": base + "/copy"]).1.statusCode == 201, "DAV COPY")
+        try check(try Data(contentsOf: store.root.appendingPathComponent("copy")) == bytes, "DAV COPY exact bytes")
+        let noOverwrite = try await request("COPY", encoded, nil, ["Destination": base + "/copy", "Overwrite": "F"])
+        let overwrite = try await request("COPY", encoded, nil, ["Destination": base + "/copy", "Overwrite": "T"])
+        try check(noOverwrite.1.statusCode == 412 && overwrite.1.statusCode == 409, "DAV no-overwrite policy")
+        try check(try Data(contentsOf: store.root.appendingPathComponent("copy")) == bytes, "DAV conflict preserves bytes")
+        try check(try await request("MOVE", "/copy", nil, ["Destination": base + "/Folder/moved"]).1.statusCode == 201, "DAV MOVE")
+        try check(!FileManager.default.fileExists(atPath: store.root.appendingPathComponent("copy").path), "DAV MOVE source absent")
+        for destination in ["http://evil.invalid/x", "http://127.0.0.1:1/x", base + "/.hidden", base + "/%2e%2e/outside"] {
+            try check(try await request("COPY", encoded, nil, ["Destination": destination]).1.statusCode == 403, "DAV invalid Destination \(destination)")
+        }
+        try check(try await request("MOVE", "/Folder", nil, ["Destination": base + "/Folder/child"]).1.statusCode == 403, "DAV rejects descendant move")
+        try check(try await request("COPY", encoded, nil, ["Destination": base + encoded]).1.statusCode == 409, "DAV rejects identical destination")
+        for method in ["LOCK", "UNLOCK", "PROPPATCH"] { try check(try await request(method, "/").1.statusCode == 501, "DAV unsupported \(method)") }
+        try check(try await request("DELETE", "/").1.statusCode == 403, "DAV protects root")
+        try check(try await request("DELETE", "/Folder").1.statusCode == 204, "DAV recursive DELETE")
+        try check(try await request("PUT", "/empty", Data()).1.statusCode == 201, "DAV empty PUT")
+        try await service.stop(); session.invalidateAndCancel()
+        return passed
+    }
     static func components(root: URL, sourceBytes: Data, sentinel: URL) throws -> Int {
         let manager = FileManager.default
         var passed = 0
@@ -361,7 +532,26 @@ enum NetworkChecks {
 @main struct NetworkSmoke {
     @MainActor static func main() async {
         do {
-            let passed = try await NetworkChecks.http(root: URL(fileURLWithPath: CommandLine.arguments[1]))
+            let root = URL(fileURLWithPath: CommandLine.arguments[1])
+            let passed: Int
+            switch CommandLine.arguments[2] {
+            case "serve-dav":
+                _ = try FileStore(root: root)
+                let service = NetworkSharingService(root: root)
+                try await service.start(folder: root, mode: .webDAV)
+                FileHandle.standardOutput.write(Data("NETWORK_CURL_URL http://127.0.0.1:\(service.listeningPort!)/\n".utf8))
+                try await Task.sleep(for: .seconds(60))
+                try await service.stop(); return
+            case "assets": passed = try await NetworkChecks.assets(root: root)
+            case "dav": passed = try await NetworkChecks.dav(root: root)
+            case "move-boundary": passed = try await NetworkChecks.moveBoundary(root: root)
+            case "stop-copy": passed = try await NetworkChecks.stopDuringCopy(root: root)
+            case "download-safety": passed = try await NetworkChecks.downloadSafety(root: root)
+            case "chunk-endings": passed = try await NetworkChecks.chunkEndings(root: root)
+            case "content-encoding": passed = try await NetworkChecks.contentEncoding(root: root)
+            case "http": passed = try await NetworkChecks.http(root: root)
+            default: throw NSError(domain: "NetworkChecks", code: 3)
+            }
             print("NETWORK_HTTP_RESULT {\"passed\":\(passed),\"failed\":0,\"skipped\":0}")
         } catch {
             print("NETWORK_HTTP_FAILED: \(error.localizedDescription)")

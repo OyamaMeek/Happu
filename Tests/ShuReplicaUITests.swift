@@ -1,6 +1,91 @@
 import XCTest
+import UIKit
 
 final class ShuReplicaUITests: XCTestCase {
+    @MainActor func testNetworkSharingLifecycleAndTransfer() async throws {
+        let app = XCUIApplication(); app.launch()
+        app.tabBars.buttons["网络共享"].tap()
+        app.buttons["启动共享"].tap()
+        let address = app.staticTexts["network-access-url"].firstMatch
+        XCTAssertTrue(address.waitForExistence(timeout: 10))
+        let url = try XCTUnwrap(URL(string: address.label))
+        app.buttons["复制地址"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["地址已复制"].waitForExistence(timeout: 5))
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 2; configuration.urlCache = nil
+        let session = URLSession(configuration: configuration)
+        defer { session.invalidateAndCancel() }
+        let name = "网络上传-\(UUID().uuidString.prefix(6)).txt"
+        let bytes = Data("实际原生入口共享文件".utf8)
+        var upload = URLRequest(url: url.appendingPathComponent("files").appendingPathComponent(name))
+        upload.httpMethod = "PUT"; upload.httpBody = bytes
+        let (_, uploaded) = try await session.data(for: upload)
+        XCTAssertEqual((uploaded as! HTTPURLResponse).statusCode, 201)
+        let (downloaded, _) = try await session.data(from: upload.url!)
+        XCTAssertEqual(downloaded, bytes)
+        app.tabBars.buttons["文件"].tap()
+        app.buttons["所有文件"].tap()
+        reveal(fileRow(app, name), in: app)
+        XCTAssertTrue(fileRow(app, name).waitForExistence(timeout: 10))
+        func waitClosed(_ url: URL) async throws {
+            for _ in 0..<30 {
+                do { _ = try await session.data(from: url) } catch { return }
+                try await Task.sleep(for: .milliseconds(100))
+            }
+            XCTFail("共享端口未关闭")
+        }
+        try await waitClosed(url)
+        app.tabBars.buttons["更多"].tap()
+        app.buttons["下载"].tap()
+        app.buttons["新建下载"].tap()
+        let pasteField = app.textFields["https://example.com/file.zip"]
+        pasteField.tap(); pasteField.press(forDuration: 1)
+        let paste = app.menuItems.matching(NSPredicate(format: "label IN %@", ["粘贴", "Paste"])).firstMatch
+        XCTAssertTrue(paste.waitForExistence(timeout: 5))
+        paste.tap()
+        XCTAssertEqual(pasteField.value as? String, url.absoluteString)
+        app.buttons["取消"].tap()
+        app.tabBars.buttons["网络共享"].tap()
+        XCTAssertTrue(app.staticTexts["共享已停止"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["启动共享"].isEnabled)
+        app.buttons["启动共享"].tap()
+        XCTAssertTrue(address.waitForExistence(timeout: 10))
+        let restarted = try XCTUnwrap(URL(string: address.label))
+        XCUIDevice.shared.press(.home)
+        try await waitClosed(restarted)
+        app.activate()
+        XCTAssertTrue(app.staticTexts["共享已停止"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["启动共享"].isEnabled)
+        app.buttons["更换文件夹"].tap()
+        reveal(app.buttons["图片"], in: app, list: app.collectionViews["destination-folders"])
+        app.buttons["图片"].tap()
+        app.buttons["共享这个文件夹"].tap()
+        XCTAssertTrue(app.staticTexts["network-shared-folder"].label.contains("图片"))
+        app.buttons["启动共享"].tap()
+        XCTAssertTrue(address.waitForExistence(timeout: 10))
+        app.buttons["停止共享"].tap()
+        XCTAssertTrue(app.buttons["启动共享"].waitForExistence(timeout: 10))
+    }
+    func testNetworkSharingEntrypoints() {
+        let app = XCUIApplication(); app.launch()
+        XCTAssertTrue(app.tabBars.buttons["网络共享"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.tabBars.buttons["下载"].exists)
+        app.tabBars.buttons["网络共享"].tap()
+        XCTAssertTrue(app.navigationBars["本地网络共享"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["network-shared-folder"].label.contains("首页全部文件夹"))
+        XCTAssertTrue(app.buttons["启动共享"].isEnabled)
+        app.tabBars.buttons["更多"].tap()
+        app.buttons["下载"].tap()
+        XCTAssertTrue(app.navigationBars["下载"].waitForExistence(timeout: 5))
+        app.tabBars.buttons["文件"].tap()
+        app.buttons["所有文件"].tap()
+        app.buttons["新增"].tap()
+        app.buttons["通过本地网络共享"].tap()
+        XCTAssertTrue(app.navigationBars["本地网络共享"].waitForExistence(timeout: 5))
+        app.buttons["完成"].tap()
+        XCTAssertTrue(app.navigationBars["文件"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.collectionViews["workspace-files"].exists)
+    }
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
@@ -54,16 +139,17 @@ final class ShuReplicaUITests: XCTestCase {
     }
 
     func testTabsFolderNavigationAndSelection() {
-        let app = startApplication()
+        let app = XCUIApplication(); app.launch()
 
-        app.tabBars.buttons["下载"].tap()
-        XCTAssertTrue(app.navigationBars["下载"].waitForExistence(timeout: 5))
         app.tabBars.buttons["更多"].tap()
+        app.buttons["下载"].tap()
+        XCTAssertTrue(app.navigationBars["下载"].waitForExistence(timeout: 5))
+        app.navigationBars.buttons["更多"].tap()
         XCTAssertTrue(app.navigationBars["更多"].waitForExistence(timeout: 5))
         app.tabBars.buttons["文件"].tap()
         app.buttons["所有文件"].tap()
 
-        let folderName = "交互测试-\(UUID().uuidString.prefix(6))"
+        let folderName = "000-交互测试-\(UUID().uuidString.prefix(6))"
         app.buttons["新增"].tap()
         app.buttons["新建文件夹"].tap()
         let name = app.alerts.textFields["名称"]
@@ -113,9 +199,10 @@ final class ShuReplicaUITests: XCTestCase {
         XCTAssertEqual(count.label, "已选 0 项")
         app.buttons["关闭"].tap()
         app.buttons["完成"].tap()
-        XCTAssertTrue(app.tabBars.buttons["下载"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.tabBars.buttons["下载"].isHittable)
-        app.tabBars.buttons["下载"].tap()
+        XCTAssertTrue(app.tabBars.buttons["网络共享"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.tabBars.buttons["网络共享"].isHittable)
+        app.tabBars.buttons["更多"].tap()
+        app.buttons["下载"].tap()
         XCTAssertTrue(app.navigationBars["下载"].waitForExistence(timeout: 5))
         app.tabBars.buttons["文件"].tap()
         app.buttons[folderName].tap()

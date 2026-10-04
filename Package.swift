@@ -14,8 +14,8 @@ let package = Package(
         name: "ShuServices",
         dependencies: ["ArchiveBridge", .product(name: "ShuNetwork", package: "ShuNetwork"), .product(name: "ZipArchive", package: "ZipArchive"), .product(name: "libwebp", package: "libwebp-Xcode"), .product(name: "LAME", package: "LAME-xcframework")],
         path: "ShuReplica",
-        exclude: ["PDFService.swift", "Info.plist", "ShuReplicaApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DocumentOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift"],
-        sources: ["ArchiveService.swift", "FileStore.swift", "WorkspaceCategory.swift", "ImageService.swift", "MediaWorkspace.swift", "AudioService.swift", "NetworkSharingService.swift"],
+        exclude: ["PDFService.swift", "Info.plist", "ShuReplicaApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DocumentOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift", "NetworkSharingView.swift"],
+        sources: ["ArchiveService.swift", "FileStore.swift", "WorkspaceCategory.swift", "ImageService.swift", "MediaWorkspace.swift", "AudioService.swift", "NetworkSharingService.swift", "NetworkSharingAddresses.swift", "NetworkSharingQRCode.swift"],
         linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path"], .when(platforms: [.macOS]))]
     ), .executableTarget(
         name: "ArchiveSmoke",

@@ -8,7 +8,7 @@ struct ShuReplicaApp: App {
         startup = Result {
             let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let store = try FileStore(root: documents)
-            return Runtime(store: store, downloads: try DownloadManager(store: store))
+            return Runtime(store: store, downloads: try DownloadManager(store: store), sharing: NetworkSharingService(root: store.root))
         }
     }
 
@@ -23,16 +23,17 @@ struct ShuReplicaApp: App {
                     .tabItem { Label("文件", systemImage: "folder") }
 
                     NavigationStack {
-                        DownloadsView(manager: runtime.downloads)
+                        NetworkSharingView(store: runtime.store, request: NetworkSharingRequest(initialFolder: runtime.store.root))
                     }
-                    .tabItem { Label("下载", systemImage: "arrow.down.circle") }
+                    .tabItem { Label("网络共享", systemImage: "network") }
 
                     NavigationStack {
-                        MoreView(store: runtime.store)
+                        MoreView(store: runtime.store, downloads: runtime.downloads)
                     }
                     .tabItem { Label("更多", systemImage: "ellipsis.circle") }
                 }
                 .tint(.blue)
+                .environmentObject(runtime.sharing)
             case .failure(let error):
                 ContentUnavailableView("无法打开工作区", systemImage: "folder.badge.questionmark",
                                        description: Text(error.localizedDescription))
@@ -44,4 +45,5 @@ struct ShuReplicaApp: App {
 private struct Runtime {
     let store: FileStore
     let downloads: DownloadManager
+    let sharing: NetworkSharingService
 }

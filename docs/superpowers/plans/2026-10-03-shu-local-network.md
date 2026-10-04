@@ -1,14 +1,16 @@
 # Shu 本地网络共享实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. 沿用已选择的顺序实施、每任务独立审查和阶段整体审查；在当前 main 工作区执行，普通推送已配置的 origin/main。
+> 用户要求root直接完成实施，使用executing-plans顺序执行和独立整体审查；在当前main工作区执行，普通推送已配置的origin/main。
 
 **Goal:** 让同一 Wi-Fi 或个人热点上的设备通过浏览器或 WebDAV 操作选定应用目录，提供真实地址、二维码及可确认完成的停止清理。
 
-**Architecture:** 固定 GCDWebServer 源码包提供 HTTP 核心及 DAV 解析，局部适配统一处理受限文件操作、完整上传发布与连接终止。单个 NetworkSharingService 管理会话及生命周期；原生页面和本地浏览器页面调用同一文件服务。
+**Architecture:** 固定GCDWebServer源码包提供HTTP核心，libxml2解析和生成DAV XML；局部适配统一处理受限文件操作、完整上传发布与连接终止。单个NetworkSharingService管理会话及生命周期；原生页面和本地浏览器页面调用同一文件服务。
 
 **Tech Stack:** Swift/SwiftUI、Objective-C、GCDWebServer 3.5.4（`1c36bf07c848476111d523057a3a63b05328ce2a`）、Darwin 文件描述符 API、libxml2、Network、CoreImage、XCTest/WKWebView。
 
 **Spec:** [已确认设计](../specs/2026-10-03-shu-local-network-design.md)。用户已分别回复“确认”批准设计和本实施计划；从 Task1 顺序执行。
+
+**实施状态（2026-10-05）：** 三任务产品与独立质量审查完成；相关8个唯一Runtime/UI方法分别通过，最终Web25及两共享UI包3/0/0。默认签名Simulator、generic Device构建和严格签名校验通过。实测与真机/视觉限制见[网络共享验证](../../NETWORK_SHARING_VERIFICATION.md)。以下步骤保留实施检查要求，当前结果以验证记录为准。
 
 ## Global Constraints
 
@@ -67,7 +69,7 @@
 
 **Files:** 创建 DAVServer 与三项本地网页资源、NetworkBrowserRuntimeTests；扩展 Service、NetworkSmoke/NetworkRuntimeTests，注册资源与 hosted 测试。
 
-**Interfaces:** 消费 Task 1 的服务与文件边界；新增 `@MainActor NetworkChecks.dav(root: URL) async throws -> Int`。webDAV 使用同一端口的 `/` 作为共享根，browser 保持 Task 1 API，并增加 `GET/HEAD /`、`/sharing.js`、`/sharing.css`。Bridge target 声明 `resources: [.copy("Resources")]`，Objective-C 通过 `SWIFTPM_MODULE_BUNDLE` 读取保留结构的 `Resources` 子目录；不使用 Swift 的 Bundle.module 或当前工作目录，Xcode 通过同一本地包携带资源。
+**Interfaces:** 消费 Task 1 的服务与文件边界；新增 `@MainActor NetworkChecks.dav(root: URL) async throws -> Int`。webDAV 使用同一端口的 `/` 作为共享根，browser 保持 Task 1 API，并增加 `GET/HEAD /`、`/sharing.js`、`/sharing.css`。Bridge target 声明 `resources: [.process("Resources")]`，Objective-C 通过 `SWIFTPM_MODULE_BUNDLE` 从标准资源包读取文件；不使用 Swift 的 Bundle.module 或当前工作目录，Xcode 通过同一本地包携带可正常签名的资源。
 
 - [ ] **Step 1：写 DAV 行为测试。** 实际请求 OPTIONS、PROPFIND Depth 0/1、GET/HEAD、PUT、MKCOL、DELETE、COPY/MOVE，检查 207 XML href/propstat、真实文件字节和中文/空格/XML 特殊名称；未知属性返回对应 404。无限深度 403/finite-depth、无效 XML 400、未实现 LOCK/UNLOCK/PROPPATCH 501；不宣称完整 Class 1/2 或 Finder 兼容。Destination 外部 authority/端口/越界、源目标相同、目录移动至自身子目录均拒绝；已存在目标 `Overwrite: F` 为 412，T 或缺省为 409 并明确无覆盖策略。
 

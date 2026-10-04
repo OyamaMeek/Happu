@@ -4,6 +4,7 @@
 #import <dirent.h>
 #import <unistd.h>
 #import <stdio.h>
+#import <stdatomic.h>
 
 NSError *ShuError(NSInteger code, NSString *message) {
     return [NSError errorWithDomain:@"ShuNetwork" code:code userInfo:@{NSLocalizedDescriptionKey: message}];
@@ -77,12 +78,14 @@ BOOL ShuFinishFile(int *fd, NSError **error) {
     NSArray *_rootParts;
     NSString *_stageName;
     NSMutableSet<ShuUpload *> *_uploads;
-    BOOL _valid;
+    _Atomic(BOOL) _valid;
+    NSLock *_publicationLock;
 }
 - (instancetype)initWithWorkspaceURL:(NSURL *)workspaceURL sharedDirectoryURL:(NSURL *)directoryURL error:(NSError **)error {
     if ((self = [super init])) {
         _workspace = _root = _stage = -1;
         _uploads = [NSMutableSet new];
+        _publicationLock = [NSLock new];
         NSArray *base = workspaceURL.standardizedURL.pathComponents;
         NSArray *folder = directoryURL.standardizedURL.pathComponents;
         if (folder.count < base.count || ![[folder subarrayWithRange:NSMakeRange(0, base.count)] isEqual:base]) {
@@ -129,6 +132,23 @@ BOOL ShuFinishFile(int *fd, NSError **error) {
     *leaf = parts.lastObject;
     return OpenParts(_root, [parts subarrayWithRange:NSMakeRange(0, parts.count - 1)], error);
 }
+- (NSDictionary *)metadataAtRelativePath:(NSString *)path error:(NSError **)error {
+    @synchronized(self) {
+        if (![self validate:error]) return nil;
+        struct stat info;
+        int result;
+        if (!path.length) result = fstat(_root, &info);
+        else {
+            NSString *leaf; int parent = [self parent:path leaf:&leaf error:error];
+            if (parent < 0) return nil;
+            result = fstatat(parent, leaf.fileSystemRepresentation, &info, AT_SYMLINK_NOFOLLOW);
+            int saved = errno; close(parent); errno = saved;
+        }
+        if (result) { IOFail(error); return nil; }
+        if (!S_ISREG(info.st_mode) && !S_ISDIR(info.st_mode)) { Fail(error, 403, @"只允许普通文件与目录。"); return nil; }
+        return @{@"name":path.lastPathComponent ?: @"", @"isDirectory":@(S_ISDIR(info.st_mode)), @"size":@(info.st_size), @"modified":@((double)info.st_mtimespec.tv_sec + info.st_mtimespec.tv_nsec / 1e9)};
+    }
+}
 - (NSArray<NSDictionary *> *)listAtRelativePath:(NSString *)path error:(NSError **)error {
     @synchronized(self) {
         NSArray *parts = Parts(path, YES, error);
@@ -168,14 +188,16 @@ BOOL ShuFinishFile(int *fd, NSError **error) {
 }
 - (BOOL)createDirectoryAtRelativePath:(NSString *)path error:(NSError **)error {
     @synchronized(self) {
+        [_publicationLock lock];
         NSString *leaf; int parent = [self parent:path leaf:&leaf error:error];
-        if (parent < 0) return NO;
+        if (parent < 0) { [_publicationLock unlock]; return NO; }
         int result = mkdirat(parent, leaf.fileSystemRepresentation, 0755);
-        int saved = errno; close(parent); errno = saved;
+        int saved = errno; close(parent); [_publicationLock unlock]; errno = saved;
         return result == 0 || IOFail(error);
     }
 }
-static BOOL Remove(int parent, NSString *name, BOOL internal, NSError **error) {
+static BOOL Remove(int parent, NSString *name, BOOL internal, BOOL (^isValid)(void), NSError **error) {
+    if (isValid && !isValid()) return Fail(error, 503, @"共享会话已停止。");
     struct stat info;
     if (fstatat(parent, name.fileSystemRepresentation, &info, AT_SYMLINK_NOFOLLOW)) return IOFail(error);
     if (!S_ISDIR(info.st_mode)) {
@@ -191,7 +213,7 @@ static BOOL Remove(int parent, NSString *name, BOOL internal, NSError **error) {
         if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) continue;
         NSString *child = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:entry->d_name length:strlen(entry->d_name)];
         if (!internal && entry->d_name[0] == '.') { ok = Fail(error, 403, @"目录含隐藏项目，拒绝删除。"); break; }
-        if (!Remove(fd, child, internal, error)) { ok = NO; break; }
+        if (!Remove(fd, child, internal, isValid, error)) { ok = NO; break; }
         errno = 0;
     }
     if (ok && errno) ok = IOFail(error);
@@ -203,7 +225,7 @@ static BOOL Remove(int parent, NSString *name, BOOL internal, NSError **error) {
     @synchronized(self) {
         NSString *leaf; int parent = [self parent:path leaf:&leaf error:error];
         if (parent < 0) return NO;
-        BOOL ok = Remove(parent, leaf, NO, error); close(parent); return ok;
+        BOOL ok = Remove(parent, leaf, NO, ^{ return self->_valid; }, error); close(parent); return ok;
     }
 }
 - (ShuUpload *)beginUpload:(NSString *)path error:(NSError **)error {
@@ -230,6 +252,7 @@ static BOOL Remove(int parent, NSString *name, BOOL internal, NSError **error) {
 }
 - (BOOL)finishUpload:(ShuUpload *)upload error:(NSError **)error {
     @synchronized(self) {
+        if (![self validate:error]) return NO;
         if (![_uploads containsObject:upload] || upload->fd < 0) return Fail(error, 500, @"上传已结束。");
         BOOL ok = ShuFinishFile(&upload->fd, error);
         upload->finished = ok;
@@ -239,15 +262,17 @@ static BOOL Remove(int parent, NSString *name, BOOL internal, NSError **error) {
 - (BOOL)publishUpload:(ShuUpload *)upload error:(NSError **)error {
     @synchronized(self) {
         if (!upload || !upload->finished || ![_uploads containsObject:upload]) return Fail(error, 400, @"上传请求尚未完整结束。");
+        [_publicationLock lock];
         NSString *leaf; int parent = [self parent:upload->destination leaf:&leaf error:error];
-        if (parent < 0) return NO;
+        if (parent < 0) { [_publicationLock unlock]; return NO; }
         BOOL ok = renameatx_np(_stage, upload->name.fileSystemRepresentation, parent, leaf.fileSystemRepresentation, RENAME_EXCL) == 0;
-        int saved = errno; close(parent); errno = saved;
+        int saved = errno; close(parent); [_publicationLock unlock]; errno = saved;
         if (!ok) return IOFail(error);
         [_uploads removeObject:upload]; return YES;
     }
 }
-static BOOL Copy(int source, NSString *name, int destination, NSString *target, NSError **error) {
+static BOOL Copy(int source, NSString *name, int destination, NSString *target, BOOL (^isValid)(void), NSError **error) {
+    if (!isValid()) return Fail(error, 503, @"共享会话已停止。");
     struct stat info;
     if (fstatat(source, name.fileSystemRepresentation, &info, AT_SYMLINK_NOFOLLOW)) return IOFail(error);
     if (!S_ISREG(info.st_mode) && !S_ISDIR(info.st_mode)) return Fail(error, 403, @"复制包含链接或特殊文件。");
@@ -264,7 +289,7 @@ static BOOL Copy(int source, NSString *name, int destination, NSString *target, 
             if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, "..")) continue;
             if (entry->d_name[0] == '.') { ok = Fail(error, 403, @"复制目录包含隐藏项目。"); break; }
             NSString *child = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:entry->d_name length:strlen(entry->d_name)];
-            if (!Copy(input, child, output, child, error)) { ok = NO; break; }
+            if (!Copy(input, child, output, child, isValid, error)) { ok = NO; break; }
             errno = 0;
         }
         if (ok && errno) ok = IOFail(error);
@@ -275,12 +300,15 @@ static BOOL Copy(int source, NSString *name, int destination, NSString *target, 
     int output = openat(destination, target.fileSystemRepresentation, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
     if (output < 0) { close(input); return IOFail(error); }
     BOOL ok = YES; uint8_t buffer[65536]; ssize_t n;
-    while ((n = read(input, buffer, sizeof(buffer))) != 0) {
+    while (ok) {
+        if (!isValid()) { ok = Fail(error, 503, @"共享会话已停止。"); break; }
+        n = read(input, buffer, sizeof(buffer));
+        if (n == 0) break;
         if (n < 0) { if (errno == EINTR) continue; ok = IOFail(error); break; }
         if (!ShuWriteAll(output, [NSData dataWithBytesNoCopy:buffer length:n freeWhenDone:NO], error)) { ok = NO; break; }
     }
     if (close(input) && ok) ok = IOFail(error);
-    if (fsync(output) && ok) ok = IOFail(error);
+    if (ok && fsync(output)) ok = IOFail(error);
     if (close(output) && ok) ok = IOFail(error);
     return ok;
 }
@@ -293,7 +321,18 @@ static BOOL Copy(int source, NSString *name, int destination, NSString *target, 
         NSString *stage = NSUUID.UUID.UUIDString;
         struct stat sourceIdentity;
         if (fstatat(src, from.fileSystemRepresentation, &sourceIdentity, AT_SYMLINK_NOFOLLOW)) { close(src); close(dst); return IOFail(error); }
-        BOOL ok = Copy(src, from, _stage, stage, error);
+        BOOL ok = Copy(src, from, _stage, stage, ^{ return self->_valid; }, error);
+        [_publicationLock lock];
+        if (ok) {
+            NSString *freshLeaf;
+            int fresh = [self parent:source leaf:&freshLeaf error:error];
+            struct stat current;
+            ok = fresh >= 0 && Same(src, fresh);
+            if (ok && fstatat(fresh, freshLeaf.fileSystemRepresentation, &current, AT_SYMLINK_NOFOLLOW)) ok = IOFail(error);
+            else if (ok && (current.st_ino != sourceIdentity.st_ino || current.st_dev != sourceIdentity.st_dev || current.st_mode != sourceIdentity.st_mode)) ok = Fail(error, 403, @"复制源已被替换。");
+            else if (!ok && fresh >= 0) Fail(error, 403, @"源父目录已被替换。");
+            if (fresh >= 0) close(fresh);
+        }
         if (ok) {
             close(dst); dst = [self parent:destination leaf:&to error:error];
             ok = dst >= 0 && [self validate:error];
@@ -304,14 +343,17 @@ static BOOL Copy(int source, NSString *name, int destination, NSString *target, 
             else if (current.st_ino != sourceIdentity.st_ino || current.st_dev != sourceIdentity.st_dev || current.st_mode != sourceIdentity.st_mode) ok = Fail(error, 403, @"移动源已被替换。");
             else if (renameatx_np(src, from.fileSystemRepresentation, dst, to.fileSystemRepresentation, RENAME_EXCL)) ok = IOFail(error);
         } else if (ok && renameatx_np(_stage, stage.fileSystemRepresentation, dst, to.fileSystemRepresentation, RENAME_EXCL)) ok = IOFail(error);
+        [_publicationLock unlock];
         if (!ok || move) {
             NSError *cleanupError;
-            if (!Remove(_stage, stage, YES, &cleanupError) && cleanupError.code != 404) { if (error) *error = cleanupError; ok = NO; }
+            if (!Remove(_stage, stage, YES, nil, &cleanupError) && cleanupError.code != 404) { if (error) *error = cleanupError; ok = NO; }
         }
         close(src); if (dst >= 0) close(dst); return ok;
     }
 }
-- (void)invalidate { @synchronized(self) { _valid = NO; } }
+- (void)invalidate {
+    [_publicationLock lock]; _valid = NO; [_publicationLock unlock];
+}
 - (void)discardUpload:(ShuUpload *)upload {
     @synchronized(self) {
         if (![_uploads containsObject:upload]) return;
@@ -328,7 +370,7 @@ static BOOL Copy(int source, NSString *name, int destination, NSString *target, 
                 if (result) return IOFail(error);
             }
         }
-        if (_stageName && !Remove(_root, _stageName, YES, error)) return NO;
+        if (_stageName && !Remove(_root, _stageName, YES, nil, error)) return NO;
         _stageName = nil; [_uploads removeAllObjects];
         if (_stage >= 0) { int result = close(_stage); _stage = -1; if (result) return IOFail(error); }
         return YES;
