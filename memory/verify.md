@@ -1,5 +1,14 @@
 # 验证标准
 
+## 视频Task2（2026-10-05服务验证通过）
+
+- 四容器、高中低缩放与不放大、方向/帧内容、音轨/区间信号、时间偏移、多轨选择、路径/无覆盖/取消/清理真实验证；Mac与iOS hosted结果分别记录。普通签名Simulator/Device/build-for-testing依次运行，不进行视觉检查。
+- 有效RED93405退出1（video-red4.log，编译后正常输入触达stub）。ProRes兼容性问题23571退出1（video-complete3.log），修复后37910退出0；发布完成取消63724退出1（video-publish-red.log），修复后24701退出0。
+- 最终Mac87522退出0（video-final-mjpeg-mac.log），13项主要操作、extended/boundaries及ProRes→MP4/MotionJPEG→3GP两个不兼容原质量转码通过；音频59157完整33项/图片36862/归档70786回归退出0。Simulator99195、当前产品Device28603、最终普通签名build-for-testing69813退出0。
+- 最终iOS76484退出0，video-runtime-mjpeg.log/VideoRuntimeMJPEG.xcresult及summary已读取：Passed，total1/pass1/fail0/skip0，arm64 iOS27.0，方法215.559秒，内部13/13/0/0且extended/boundaries完整通过。原生HAL初始化延迟和两条QoS运行警告保留；没有真机或iOS18/26运行与页面/视觉证据。
+- iOS64708与重启后2034均进入视频方法后等待音频锁，精确TERM自有测试进程均退出143；前者音频方法33项通过仅为日志证据。中断xcresult缺Info.plist，xcresulttool不能汇总，不能把中断包记为有效结构化通过结果。重启后先有Metal夹具初始化延迟，完成后再次进入音频等待。Mac和iOS原生调用栈及宿主默认Apple Virtual Sound Device信息已保存，未重启系统音频服务或弱化测试。
+- 独立初审R1短剪辑信号检查与R2逐轨时间验证已补强；最终Mac通过。M1方向断言有向比较仍列为媒体整体验收待补。原质量按实际保留轨道判断native兼容，同名沿用自动编号；没有用推测的静音重编码问题冒充实际RED。
+
 ## PDF／图片操作页面当前证据（2026-10-01）
 
 - `DocumentUITargetRed.xcresult` 的真实 `testDocumentCancellationAndRetry` 已从工作区进入 PDFs 并长按 locked.pdf，因缺“PDF 处理”入口失败；方法132.466秒，session11501退出65，结构化total1/failed1/passed0/skipped0。前一轮三项文件标签/启动前提失败不记为目标RED。

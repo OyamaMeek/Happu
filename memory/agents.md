@@ -1,6 +1,6 @@
 # 当前工具与环境
 
-- 主实现与复查：Codex 子代理分步执行完整复刻，SwiftUI / Foundation / XCTest，Xcode 27.0。
+- 主实现：root直接执行已批准计划；视频Task2由video_review独立只读初审。SwiftUI / Foundation / AVFoundation / XCTest，Xcode 27.0。
 - 逆向路由：本地 `reverse-skill` 仓库，R2 mobile-reverse；本次离线授权范围见 `work/payload-liquid-glass/scope.md`。
 - 原版样本：`Payload/Shu.app`；无需在线连接目标。
 - Git：用户明确要求直接在 main 开发；已切换 main 并快进合入此前功能分支，已有 upstream `origin/main`；普通自动推送已获授权。

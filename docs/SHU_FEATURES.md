@@ -19,8 +19,8 @@
 | PDF 内嵌素材提取 | 指南、`file.extract.pdf.fail` | 待实施；按页导出不能替代素材提取。 |
 | 图片 TIFF/GIF/WebP/PNG/JPEG/BMP 转换、质量压缩、合成 | 指南、`file.convert/compress/composite.image` | 服务、真实文件自检、Simulator/Device 构建及独立审查/最终补强复查通过；iOS27完整图片交互、最新完整六项回归与全部实际产物校验通过，含JPEG质量0.6、显式选帧、全帧提取、批量选择及调整顺序合成。UI和阶段代码审查完成，代码及整体审查修复已普通推送。 |
 | 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | 服务已实现提取和 GIF/WebP 帧、时长、播放语义保留，真实自检和独立审查通过；显式选帧/全帧提取UI及实际输出内容重读通过，逐帧查看仍待补齐。 |
-| 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | 待实施；原生编码能力核查见 `docs/SHU_MEDIA_CAPABILITIES.md`，Mac 探测不代表 iOS 运行通过。 |
-| 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | 待实施；MP3 属常见格式，需要真实编码能力。 |
+| 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | VideoService与真实自检已实现，Mac13项及时间线/选轨/取消边界、三构建通过；iOS27完整方法1通过/0失败/0跳过，包含相同13项与扩展/边界。页面待Task4，提取复用已验收AudioService。证据见`docs/SHU_VIDEO_VALIDATION.md`。 |
+| 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | AudioService、固定LAME编码器、真实Mac/iOS33项及独立审查通过，759d1bd已普通推送；音频转换和提取页面待媒体Task4。 |
 | 视频转动图、动图帧率/颜色/质量 | 指南、`more.anim.*`、`more.gif.*` | 待实施。 |
 | Photos 多选导入/导出、LivePhoto 导入/导出及转换 | 指南、`public.export.livephoto.*` | 待实施。 |
 | 相机扫描文档 | `file.scan.*` | 待实施；设备授权拒绝必须明确处理。 |

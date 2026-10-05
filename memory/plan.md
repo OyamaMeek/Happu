@@ -31,12 +31,13 @@
 ## 媒体阶段准备
 
 - 原版需求、native 实测和 MP3 编码器依据记录于 `docs/SHU_MEDIA_CAPABILITIES.md`；后续规格 `docs/superpowers/specs/2026-10-01-shu-media-design.md` 包含四种视频、五种音频、质量/音轨/区间和 GIF/WebP 动图参数、边界与真实验证。
-- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 包含四任务。音频 Task1 服务已提交759d1bd并普通推送；Mac33项、两平台构建及hosted iOS33项通过，独立审查规格/质量通过。媒体 Tasks2–4 未执行，音频 UI 尚未完成。
+- 媒体实施计划 `docs/superpowers/plans/2026-10-01-shu-media.md` 包含四任务。音频Task1已提交759d1bd并普通推送；Mac33项、两平台构建及hosted iOS33项通过，独立审查通过。视频Task2已实现，Mac完整13项/扩展/边界、三构建及完整iOS方法1/0/0通过，初审两项补强完成。动图Task3和页面Task4待执行。
 - PDF/图片三个任务和整体修复复查已完成，cb7e7e5已普通推送；完成记录保存与八项判断披露后继续媒体。Photos/LivePhoto另阶段实施，完整范围不缩小。
 
 ## 最新优先级
 
-- 用户要求当前部分完成后优先本地网络共享；音频 Task1 已验收，暂不派发媒体 Task2。音频 UI 仍属 Task4，完整目标继续保留。
+- 2026-10-05 网络共享已完成，恢复媒体Task2视频、Task3动图、Task4页面，由root直接实施，沿用main与普通推送授权。
+
 - 网络设计及实施计划均已获用户“确认”。`docs/superpowers/plans/2026-10-03-shu-local-network.md` 分为受限 HTTP/停止、DAV/浏览器、原生入口/地址/生命周期三任务；用户“你做啊”后由root直接实施，保留一次独立代码审查，沿用main和普通推送。
 - 网络HTTP修复90ca408已推送；DAV/中文浏览器、原生网络共享入口与更多下载已实施。Mac HTTP98/DAV37/资源13和故障边界通过；普通签名Simulator、generic Device最新构建和严格应用签名校验退出0。五项Runtime和三项UI方法分别取得成功终态，最终Web25及两共享UI包3/0/0；独立代码质量通过。真机网络、权限拒绝和锁屏尚缺设备证据。
 - 2026-10-04 用户要求优先完成本地网络共享，浏览器首页显示应用首页各个文件夹。底部标签为文件/网络共享/更多，共享默认工作区根目录；现有下载页面移到更多并复用原DownloadManager，不新增下载功能。浏览器列出全部分类目录、下载、共享及用户实际目录，Downloads仅在根目录显示为“下载”。沿用已确认三任务计划，继续实施、运行及审查。

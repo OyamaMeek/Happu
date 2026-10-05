@@ -805,3 +805,23 @@
 - **Git 提交**：`22c3936d736f6f841a713e52eb902257e7cbf72b feat: add browser and WebDAV network sharing`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-05 08:16] 完整复刻：视频转换、静音与剪辑服务
+
+- **需求/问题描述**：
+  > 继续完整复刻，按已批准媒体计划完成视频转换、质量压缩、移除音频与区间剪辑。
+- **实际实现的功能与改动**：
+  - VideoService提供MP4/MOV/M4V/3GP、原质量及高/中/低质量、音轨选择、静音和秒数剪辑；保持显示方向、完整时间线及可表达音轨。同名沿用自动编号，安全暂存与无覆盖发布复用现有服务。
+  - 原质量通过实际保留轨道的原生兼容性决定直通或H.264/AAC，输出重读尺寸、内容帧实际时间与逐音轨有效样本范围；完成进度取消仍清理并禁止发布。
+  - 新增真实VideoSmoke和iOS hosted用例、MotionJPEG测试资源及平台注册。独立初审两项Important测试与校验补强已完成；有向空间标记断言的Minor保留到媒体整体审查。
+  - [测试/验证]：正常服务stub、不兼容原质量与发布边界取消均取得有效RED/GREEN。最终Mac完整13项及扩展/边界、两个不兼容转码、音频33/图片/归档回归通过；Simulator、Device与普通签名测试构建退出0。iOS最终方法1通过/0失败/0跳过，内部13项及全部扩展/边界通过，215.559秒。
+  - iOS原生HAL初始化延迟及两条QoS警告保留。Simulator缺ProRes codec，iOS成功转码用例用已核实不兼容的MotionJPEG→3GP，Mac仍验证ProRes→MP4；未弱化断言。真机、iOS18/26运行、页面和视觉未验证，动图与媒体页面继续下一任务。
+  - 保存截至归档的26条用户与助手可见消息，排除内部推理与工具输出；用户AGENTS及Xcode个人配置保持原样。
+- **涉及文件**：
+  - `ShuReplica/VideoService.swift`、`Tests/VideoSmoke.swift`、`Tests/MediaRuntimeTests.swift`、`Tests/fixtures/video-mjpeg.mov`
+  - `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj`
+  - `docs/SHU_VIDEO_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
+  - `docs/CHANGELOG.md`、`context/2026/10/05/08-15-49/对话.md`
+- **Git 提交**：待提交；验证已通过，正在保存原子提交与普通推送。
+
+---
