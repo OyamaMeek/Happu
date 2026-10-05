@@ -12,7 +12,10 @@ on:
       - 'Package.resolved'
       - 'scripts/release_version.py'
       - 'scripts/package_ipa.py'
+      - 'scripts/release_notes.py'
+      - 'docs/APP_FEATURES.md'
       - 'Tests/test_release_version.py'
+      - 'Tests/test_release_notes.py'
       - '.github/workflows/release-ipa.yml'
   workflow_dispatch:
 
@@ -38,7 +41,9 @@ jobs:
           fetch-depth: 0
 
       - name: Test version allocation
-        run: python3 Tests/test_release_version.py
+        run: |
+          python3 Tests/test_release_version.py
+          python3 Tests/test_release_notes.py
 
       - name: Allocate or reuse release version
         id: version
@@ -72,6 +77,8 @@ jobs:
           python3 scripts/package_ipa.py \
             DerivedData/IPA/Build/Products/Release-iphoneos/Happu.app \
             "DerivedData/Happu-$VERSION.ipa" "$VERSION" "$GITHUB_RUN_NUMBER"
+          python3 scripts/release_notes.py "DerivedData/Happu-$VERSION.ipa" \
+            --releases releases.json --output DerivedData/release-notes.md
 
       - name: Publish IPA to GitHub Release
         if: steps.version.outputs.state != 'published'
@@ -88,10 +95,11 @@ jobs:
           if [ "$STATE" = new ]; then
             gh release create "$TAG" --draft --verify-tag \
               --title "Happu $VERSION" \
-              --notes "自动构建版本 $VERSION。IPA 供侧载工具重新签名安装。源代码提交：$GITHUB_SHA。"
+              --notes-file DerivedData/release-notes.md
           fi
           gh release upload "$TAG" "DerivedData/Happu-$VERSION.ipa" --clobber
-          gh release edit "$TAG" --draft=false --latest="$LATEST"
+          gh release edit "$TAG" --notes-file DerivedData/release-notes.md \
+            --draft=false --latest="$LATEST"
 
       - name: Release link
         env:

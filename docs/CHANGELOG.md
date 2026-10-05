@@ -899,3 +899,18 @@
 - **Git 提交**：`fb2e25031e83bc1807f8cd605a8a878d38531f60 feat: publish versioned IPA releases automatically`，提交和普通推送exit0；远端验证及实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-05 16:54] Release 介绍展示功能、更新和编译时间
+
+- **需求/问题描述**：
+  > 修改介绍为 App 主要功能 + 本次更新内容 + 编译时间。
+- **实际实现的功能与改动**：
+  - v0.0.1 介绍已改为三个区块，主要功能覆盖文件管理、ZIP、PDF、图片、HTTP下载及局域网共享，编译时间读取其实际IPA，为北京时间2026-10-05 16:44:15；资产保持。
+  - 后续发布从当前提交历史中的上一已公开正式Release至当前提交提取应用/构建相关更新，排除草稿、预发布、日志和会话提交；实际IPA时间转北京时间到秒。UTF-8 Markdown文件通过gh --notes-file创建及更新正文。
+  - [测试/验证]：介绍初始3项RED exit1→GREEN exit0；独立审查的草稿基线遗漏问题经行为RED→GREEN修复，历史ref/UTF-8文件补强通过，最终介绍5项及原版本9项通过；YAML/全部shell step通过。GitHubAPI更新并回读v0.0.1正文与生成文件一致，无U+FFFD；资产大小与SHA-256保持。新工作流远端运行待验证，不宣称真机安装验证。
+- **涉及文件**：
+  - `.github/workflows/release-ipa.yml`、`scripts/release_notes.py`、`docs/APP_FEATURES.md`、`Tests/test_release_notes.py`
+  - 本次`memory/`、`docs/CHANGELOG.md`及会话归档；已有媒体修改保持。
+- **Git 提交**：待提交。
+
+---

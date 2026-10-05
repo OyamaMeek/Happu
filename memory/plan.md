@@ -1,5 +1,12 @@
 # Shu 完整复刻设计状态
 
+## 2026-10-05 Release 介绍
+
+- 当前 v0.0.1 和后续发布均使用 App 主要功能、本次更新内容、编译时间三个区块。
+- 主要功能来自已核实的公开功能说明；更新内容读取前一个已公开且非预发布的ancestor版本至当前发布提交的应用/构建相关提交标题，首次发布明确标注。排除草稿tag、纯日志和会话提交。
+- 使用 zipfile/plistlib 读取实际 IPA 的 HappuBuildTime，显示北京时间到秒；使用 UTF-8 Markdown 文件传给 gh --notes-file，防止行内中文参数编码问题。
+- 先验证生成器的真实 Git/IPA 输入及错误处理，再补改 v0.0.1、更新自动发布流程、运行远端发布并核实正文。
+
 ## 2026-10-05 IPA 自动 Release
 
 - 应用和构建相关文件推送到 main 后，通过 GitHub Actions 在 macOS 上构建 Release iphoneos 应用，打包 IPA 并公开发布；文档和会话归档单独推送不触发。
