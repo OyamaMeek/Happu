@@ -961,6 +961,7 @@
   - `Happu/Assets.xcassets/Contents.json`、`Happu/Assets.xcassets/AppIcon.appiconset/Contents.json`、`HappuIcon.png`
   - `Happu.xcodeproj/project.pbxproj`、`Package.swift`
   - `docs/HAPPU_ICON.md`、`memory/`、`docs/CHANGELOG.md`及本次会话归档
-- **Git 提交**：`5735b9f05f947432c263eb6996ee9a32756aa754 feat: add blue-purple feather app icon`；普通推送31287退出0，HEAD与origin/main一致；48条可见文字消息保存于`context/2026/10/05/18-32-58/对话.md`。GitHub自动IPA工作流终态继续核实，未宣称已发布新版本。
+- **Git 提交**：`5735b9f05f947432c263eb6996ee9a32756aa754 feat: add blue-purple feather app icon`；普通推送31287退出0，HEAD与origin/main一致；48条可见文字消息保存于`context/2026/10/05/18-32-58/对话.md`。
+- **远端验证**：[Actions37297328468](https://github.com/OyamaMeek/Happu/actions/runs/37297328468)和全部步骤success；[v0.0.3](https://github.com/OyamaMeek/Happu/releases/tag/v0.0.3)已公开，tag指向5735b9f。实际IPA下载退出0，ZIP CRC、版本0.0.3/build3、iPhone/iPad图标、非空Assets.car及可执行文件通过；大小2,630,981 bytes，SHA-256与GitHub digest一致。包内2026-10-05T10:34:55Z对应正文北京时间18:34:55。产物核对使用Python标准库，未验证真机安装；证据DerivedData/IconRelease/。
 
 ---

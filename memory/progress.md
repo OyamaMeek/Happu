@@ -5,7 +5,8 @@
 - [x] 按用户要求参考原版羽毛，内置imagegen生成，sips1024不透明PNG已进入原生AppIcon；Simulator构建15596退出0，包内主图标AppIcon及120×120文件存在。
 - [x] Device9243与签名69654/75694退出0；实际iPhone/iPad图标资源元数据及普通签名严格校验退出0。
 - [x] 图标5735b9f提交，48条真实可见文字归档context/2026/10/05/18-32-58/对话.md；媒体7d3a2eb/33c2aeb及图标普通推送31287退出0，HEAD=origin/main，用户AGENTS/Xcode个人文件与旧context未混入。
-- [ ] 核实5735b9f的GitHub自动IPA工作流终态及实际发布产物；媒体Task4继续。
+- [x] Actions37297328468及全部步骤success；v0.0.3公开正式且tag指向5735b9f。实际IPA下载30058退出0，CRC、0.0.3/build3、iPhone/iPad图标/Assets.car和GitHub SHA-256核对通过；2,630,981bytes，编译10:34:55Z与北京时间18:34:55正文一致。证据DerivedData/IconRelease/，未验证真机安装。媒体Task4继续。
+- 发布验证收尾归档为context/2026/10/05/18-38-08/对话.md，共49条实际可见文字消息；当前图标交付已完成，Task4下一步读取精确brief与当前Happu页面，不恢复旧“所有文件”首页。
 - 媒体Task3功能7d3a2eb、修复33c2aeb已推送；animation_review单次初审With fixes，root修复两Important。Image内容RED62123编译后exit133，发布RED22171编译后exit1（29234编译失败不计RED）；最终Image+Animation93652和Audio33+Video13/边界90287整体退出0，hosted69636退出0/内部48+新增Progress/Task取消和清理失败，28.378秒，独立summary1/0/0/runtimeWarnings=[]。Task4和完整目标继续，不标complete。
 
 ## 2026-10-05 Release 介绍

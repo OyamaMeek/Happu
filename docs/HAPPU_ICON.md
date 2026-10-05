@@ -6,7 +6,8 @@
 - 生成方式：内置 imagegen；原始图像1254×1254，经系统sips规范为1024×1024不透明PNG。
 - 交付文件：`Happu/Assets.xcassets/AppIcon.appiconset/HappuIcon.png`；Debug与Release使用AppIcon，SwiftPM服务目标排除资源目录。
 - 验证：Simulator15596与Device9243构建退出0/BUILD SUCCEEDED；签名测试构建69654、补强用例后75694均退出0/TEST BUILD SUCCEEDED，codesign严格校验退出0。实际包内iPhone/iPad的CFBundlePrimaryIcon/CFBundleIconName为AppIcon，包含AppIcon60x60与AppIcon76x76；小尺寸AppIcon60x60@2x.png为120×120。日志位于忽略的DerivedData/icon-*.log。
-- Git：5735b9f提交并普通推送成功；生成图像已在会话中展示，完整生成提示词见下文。自动IPA新版本继续核实。
+- Git：5735b9f提交并普通推送成功；生成图像已在会话中展示，完整生成提示词见下文。
+- 发布：[v0.0.3](https://github.com/OyamaMeek/Happu/releases/tag/v0.0.3)为公开正式Release，tag指向5735b9f；[Actions37297328468](https://github.com/OyamaMeek/Happu/actions/runs/37297328468)与所有步骤success。实际公开IPA下载退出0，ZIP CRC、0.0.3/build3、iPhone/iPad图标及SHA-256核对通过；包内2026-10-05T10:34:55Z与正文北京时间18:34:55一致。资产2,630,981 bytes，SHA-256为18f8fbce6e67e974abf7d00909ca20dd97b19fd819c4dd4d4cf86e4d6866d6bb，和GitHub digest一致；证据位于DerivedData/IconRelease/。未验证真机安装。
 
 ## 最终生成提示词
 
