@@ -860,6 +860,6 @@
   - `ShuReplica/FilesView.swift` (+3 / -11)
   - `Tests/ShuReplicaUITests.swift` (+60 / -12)、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `docs/CHANGELOG.md`、`context/2026/10/05/14-25-06/对话.md`
-- **Git 提交**：待提交。
+- **Git 提交**：`0d66135118f1e7eaeea46bf25fac8f4d028a0650 fix: simplify file home navigation`，提交和普通推送 exit0；实际哈希通过后续文档提交保存。
 
 ---
