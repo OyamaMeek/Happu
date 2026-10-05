@@ -878,6 +878,6 @@
   - `Happu/`、`Happu.xcodeproj/`（从原工程目录更名）、`Package.swift`
   - `Tests/HappuUITests.swift`、`Tests/verify_app_metadata.py`及iOS测试模块引用
   - `docs/SHU_ANALYSIS.md`、`docs/SHU_VIDEO_VALIDATION.md`、`docs/NETWORK_SHARING_VERIFICATION.md`、本次`memory/`记录、`docs/CHANGELOG.md`与对话归档
-- **Git 提交**：待提交；仅包含本次更名及编译时间，已有媒体改动通过原Git内容及独立暂存版本排除。
+- **Git 提交**：`4ec303df5c56bc0b0d6c331b975afd99431d0ad1 feat: rename app to Happu and show build time`，提交及普通推送exit0，HEAD与origin/main一致。仅包含本次更名及编译时间；已有媒体改动通过原Git内容及独立暂存版本排除。
 
 ---

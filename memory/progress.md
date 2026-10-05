@@ -8,7 +8,7 @@
 - [x] 签名测试构建、元数据2项及真实 UI 3项通过（NameGreen：3/0/0，运行警告为空）；增量时间由07:01:28Z变为07:08:43Z，签名校验 exit0。
 - [x] Release Device首次exit0但保留5条SwiftCompile异常诊断；最终复核exit0/BUILD SUCCEEDED、无error，实际arm64应用元数据2项通过。关闭设备签名，仅证明编译。
 - [x] rename_review只读审查无待修问题，独立核实UI计数及签名；当前iPhone 18 Pro安装/启动exit0，已打开Happu.xcodeproj。
-- [ ] 记录、归档、仅提交本次改动并普通推送。
+- [x] 开发记录和截至归档的可见消息已保存；`4ec303df5c56bc0b0d6c331b975afd99431d0ad1 feat: rename app to Happu and show build time`提交及普通推送exit0，HEAD=origin/main。未提交差异仍为原有11文件264新增/84删除，目录已随更名迁移；实际哈希通过后续文档提交保存。
 
 ## 2026-10-05 文件首页调整
 
