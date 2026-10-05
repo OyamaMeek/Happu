@@ -28,8 +28,17 @@ struct MediaWorkspace {
         do { result = .success(try await operation(staging)) }
         catch { result = .failure(error) }
         do { try manager.removeItem(at: staging) }
-        catch { throw MediaError("媒体暂存清理失败：\(error.localizedDescription)；暂存目录：\(staging.path)") }
-        return try result.get()
+        catch {
+            if case let .success(output) = result { try withdraw(output) }
+            throw MediaError("媒体暂存清理失败：\(error.localizedDescription)；暂存目录：\(staging.path)")
+        }
+        let output = try result.get()
+        do { try Self.checkCancellation(progress) }
+        catch {
+            try withdraw(output)
+            throw error
+        }
+        return output
     }
 
     func publish(_ output: URL, in folder: URL, named name: String, progress: Progress) throws -> URL {
@@ -39,7 +48,18 @@ struct MediaWorkspace {
         let store = try FileStore(root: root)
         let renamed = try store.rename(output, to: name)
         try Self.checkCancellation(progress)
-        return try store.move(renamed, to: folder)
+        let published = try store.move(renamed, to: folder)
+        do { try Self.checkCancellation(progress) }
+        catch {
+            try withdraw(published)
+            throw error
+        }
+        return published
+    }
+
+    private func withdraw(_ output: URL) throws {
+        do { try manager.removeItem(at: output) }
+        catch { throw MediaError("媒体结果撤回失败：\(error.localizedDescription)；结果路径：\(output.path)") }
     }
 
     static func checkCancellation(_ progress: Progress) throws {

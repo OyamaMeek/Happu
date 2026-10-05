@@ -158,6 +158,17 @@ struct ImageService {
             try checkCancellation(progress)
             let expected = try frameAt(index)
             guard decoded.width == expected.width, decoded.height == expected.height else { throw ImageServiceError("输出动画尺寸核对失败。") }
+            func pixels(_ image: CGImage) throws -> [UInt8] {
+                let sample = try context(64, 64, white: false)
+                sample.interpolationQuality = .high
+                sample.draw(image, in: CGRect(x: 0, y: 0, width: 64, height: 64))
+                guard let bytes = sample.data?.assumingMemoryBound(to: UInt8.self) else { throw ImageServiceError("无法读取动画验证像素。") }
+                return Array(UnsafeBufferPointer(start: bytes, count: 64 * 64 * 4))
+            }
+            let actual = try pixels(decoded), original = try pixels(expected)
+            let error = zip(actual, original).reduce(0) { $0 + abs(Int($1.0) - Int($1.1)) }
+            // 统一为预乘 RGBA 缩略图，允许调色板和有损编码的平均通道误差。
+            guard Double(error) / Double(actual.count) <= 32 else { throw ImageServiceError("输出动画第 \(index + 1) 帧内容核对失败。") }
             progress.completedUnitCount += 1
         }
         if source.webp {

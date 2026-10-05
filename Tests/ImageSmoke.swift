@@ -191,6 +191,27 @@ struct ImageSmoke {
         let red = image(32, 24, color: CGColor(red: 1, green: 0, blue: 0, alpha: 1))
         let blue = image(32, 24, color: CGColor(red: 0, green: 0, blue: 1, alpha: 1))
         for format in [ImageFormat.gif, .webp] {
+            let contentBefore = Set(try manager.contentsOfDirectory(atPath: output.path))
+            var contentCalls = 0
+            rejects("内容") {
+                _ = try service.encodeAnimation(frameCount: 1, frameAt: { _ in
+                    contentCalls += 1
+                    return contentCalls == 1 ? red : blue
+                }, durations: [0.1], loop: 0, to: format, quality: 1, in: output, named: "changed-content", progress: Progress())
+            }
+            precondition(contentCalls == 2)
+            check(Set(try manager.contentsOfDirectory(atPath: output.path)) == contentBefore)
+            var sequenceCalls = 0
+            rejects("内容") {
+                _ = try service.encodeAnimation(frameCount: 3, frameAt: { index in
+                    sequenceCalls += 1
+                    return (sequenceCalls <= 3 ? index : 2 - index) == 0 ? red : blue
+                }, durations: [0.1, 0.1, 0.1], loop: 0, to: format, quality: 1, in: output, named: "changed-sequence", progress: Progress())
+            }
+            precondition(sequenceCalls == 4)
+            check(Set(try manager.contentsOfDirectory(atPath: output.path)) == contentBefore)
+            let lowQuality = try service.encodeAnimation(frameCount: 1, frameAt: { _ in red }, durations: [0.1], loop: 0, to: format, quality: 0.1, in: output, named: "low-quality-content", progress: Progress())
+            precondition(pixel(read(lowQuality)[0])[0] > 200)
             let fractional = try service.encodeAnimation(frameCount: 29, frameAt: { _ in red }, durations: Array(repeating: 1.0 / 29, count: 29), loop: 0, to: format, quality: 1, in: output, named: "stream-fractional-\(format)", progress: Progress())
             let times = animation(fractional).0
             precondition(times.count == 29 && abs(times.reduce(0, +) - 1) <= (format == .gif ? 0.01 : 0.001) + 1e-8, "Cumulative duration drift")

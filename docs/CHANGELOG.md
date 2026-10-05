@@ -931,6 +931,21 @@
   - `Tests/VideoAnimationSmoke.swift`、`Tests/ImageSmoke.swift`、`Tests/MediaRuntimeTests.swift`
   - `Vendor/ShuWebP/`、`Package.swift`、`Package.resolved`、`Happu.xcodeproj/project.pbxproj`及共享SwiftPM锁文件
   - `docs/SHU_ANIMATION_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/`、`docs/CHANGELOG.md`、`context/2026/10/05/18-03-25/对话.md`
-- **Git 提交**：待提交；独立审查及实际哈希记录随后保存。
+- **Git 提交**：`7d3a2eb38ad8828c8b68279f9e28b2103a4fb6f3 feat: add configurable video animation conversion`；本地提交成功，单次初审With fixes，两项Important由root继续修复，普通推送待完成。
+
+## [2026-10-05 18:27] 动图内容核对与最终发布撤回
+
+- **需求/问题描述**：
+  > 完成媒体Task3单次独立审查的两项Important：最终发布取消/清理失败撤回，以及逐帧内容核对。
+- **实际实现的功能与改动**：
+  - 共享MediaWorkspace在最终移动及清理后检查取消，撤回本次真实编号输出；清理失败同样撤回，撤回失败明确报告结果路径，保留旧同名文件。
+  - GIF/WebP逐帧重读增加64×64预乘RGBA内容核对，平均通道误差上限32，容许有损编码；实际同尺寸内容变更、顺序变更及低质量输出检查。
+  - [测试/验证]：内容RED62123编译后exit133；发布取消RED22171编译后exit1。第一轮发布测试变量重名编译失败不计RED。最终Image与含Progress/Task取消和清理失败的动图48由93652顺序退出0；Audio33/Video13及边界90287顺序退出0。Device9243、签名69654/75694退出0；最终hosted69636退出0，独立summary1通过/0失败/0跳过、内部48、28.378秒、runtimeWarnings=[]；普通签名严格校验退出0。
+  - 初审结论With fixes保持原记录，root单次统一修复；跨卷实测、真机和iOS18/26运行仍缺环境，Task4继续。
+- **涉及文件**：
+  - `Happu/ImageService.swift`、`Happu/MediaWorkspace.swift`
+  - `Tests/ImageSmoke.swift`、`Tests/VideoAnimationSmoke.swift`
+  - `docs/SHU_ANIMATION_VALIDATION.md`、`docs/CHANGELOG.md`
+- **Git 提交**：待提交；全部本次必要检查已通过。
 
 ---

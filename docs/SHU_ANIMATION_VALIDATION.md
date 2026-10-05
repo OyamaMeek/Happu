@@ -9,6 +9,8 @@
 - 按累计边界量化GIF百分之一秒/WebP千分之一秒时长，保留重复帧与最后一帧。总长误差不超过0.01/0.001秒；尾帧无法表示时开始前拒绝，要求调整区间或帧率。
 - 单帧4000万像素、所有帧8000万像素、1000帧及WebP宽高16383限制在开始采样前校验。PNG暂存帧按需读取；编码和验证逐帧释放，不积存所有未压缩CGImage。
 - 采样、编码、验证均计入真实进度；取消和失败清理唯一暂存目录。同名自动编号，保留原输入及已有文件；清理失败明确报告。
+- 逐帧重读同时核对64×64预乘RGBA缩略图的平均通道误差不超过32，允许GIF调色板和WebP有损误差；核对尺寸、元数据及内容后发布。这是编码内容合理性检查，不承诺有损编码逐像素一致。
+- 最终移动及暂存清理后分别检查取消，撤回本次实际编号输出；清理失败同样撤回，撤回失败明确报告结果路径。
 
 采样使用[Apple AVAssetImageGenerator时间容差接口](https://developer.apple.com/documentation/avfoundation/avassetimagegenerator/requestedtimetolerancebefore)。原生返回值仍需检查实际时间；非整秒首帧早于区间时，在一个源帧时长内重新定位。取得的帧必须位于区间内并满足误差界限；无法满足时明确失败。
 
@@ -34,7 +36,15 @@
 | 当前Happu hosted iOS | animation-happu-runtime.log /5108退出0；AnimationHappuRuntime.xcresult结构化Passed/1通过/0失败/0跳过，内部48/48，arm64 iOS27.0，22.956秒，runtimeWarnings=[] |
 | 更名前hosted iOS | animation-runtime.log /20881退出0；AnimationRuntime.xcresult为1通过/0失败/0跳过，内部48/48，arm64 iOS27.0，18.101秒，runtimeWarnings=[] |
 
-当前Happu模块已完成三构建及hosted运行，更名前结果保持其原有范围。全部日志和xcresult位于忽略的DerivedData，不读取视觉附件或截图。独立审查及提交尚未完成。
+当前Happu模块已完成三构建及hosted运行，更名前结果保持其原有范围。全部日志和xcresult位于忽略的DerivedData，不读取视觉附件或截图。功能已本地提交7d3a2eb，单次animation_review初审With fixes；root修复两项Important并补充真实用例，最终运行通过，未派第二审查者。
+
+## 单次审查修复
+
+- R1最终发布取消：animation-publish-red2.log /22171编译后退出1；第一轮29234因测试变量重名编译失败，不计行为RED。保留真实重名旧文件，输出移动后Progress取消、Task取消和暂存清理失败须撤回新文件；撤回失败明确抛出错误。
+- R2内容验证：image-content-red.log /62123编译后退出133/Expected rejection；实现归一化内容核对后image-review-green.log /46143完整退出0，补强单帧变化、三帧顺序变化和低质量编码后image-review-final.log /93652完整通过。
+- animation-review-green.log /31479为完整48及新增发布/清理边界退出0；Task取消补强后的animation-review-final.log与前项由93652顺序执行，整体退出0。
+- 共享发布改动相关完整Audio33和Video13及边界由90287顺序运行，整体退出0，日志audio-review-green.log/video-review-green.log。Simulator15596及Device9243退出0，签名69654/75694退出0。
+- 最终hosted69636退出0/TEST EXECUTE SUCCEEDED；AnimationReviewRuntime.xcresult独立summaryPassed/1通过/0失败/0跳过/runtimeWarnings=[]，内部48及新增Progress/Task取消、清理失败验证通过，方法28.378秒。普通签名codesign --verify --deep --strict退出0。
 
 ## 验证边界
 

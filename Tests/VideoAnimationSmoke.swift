@@ -148,6 +148,38 @@ enum AnimationChecks {
         try manager.createDirectory(at: root, withIntermediateDirectories: true)
         let output = root.appendingPathComponent("outputs", isDirectory: true)
         try manager.createDirectory(at: output, withIntermediateDirectories: false)
+        let workspace = MediaWorkspace(root: root)
+        let publicationSentinel = output.appendingPathComponent("published.txt")
+        try Data("existing".utf8).write(to: publicationSentinel)
+        for cleanupFailure in [false, true] {
+            let progress = Progress()
+            let before = Set(try manager.contentsOfDirectory(atPath: output.path))
+            try await rejected(cleanupFailure ? "清理失败" : nil, cancellation: !cleanupFailure) {
+                try await workspace.withStaging(progress: progress) { staging in
+                    let input = staging.appendingPathComponent("new.txt")
+                    try Data("new".utf8).write(to: input)
+                    let result = try workspace.publish(input, in: output, named: "published.txt", progress: progress)
+                    if cleanupFailure { try manager.removeItem(at: staging) }
+                    else { progress.cancel() }
+                    return result
+                }
+            }
+            try require(Set(manager.contentsOfDirectory(atPath: output.path)) == before, "late cancellation or cleanup failure published output")
+            try require(Data(contentsOf: publicationSentinel) == Data("existing".utf8), "existing output changed")
+            try require(!manager.contentsOfDirectory(atPath: root.path).contains { $0.hasPrefix(".media-") }, "late cleanup leaked staging")
+        }
+        let taskBefore = Set(try manager.contentsOfDirectory(atPath: output.path))
+        let cancelledTask = Task {
+            try await workspace.withStaging(progress: Progress()) { staging in
+                let input = staging.appendingPathComponent("task.txt")
+                try Data("task".utf8).write(to: input)
+                let result = try workspace.publish(input, in: output, named: "published.txt", progress: Progress())
+                withUnsafeCurrentTask { $0?.cancel() }
+                return result
+            }
+        }
+        try await rejected(cancellation: true) { try await cancelledTask.value }
+        try require(Set(manager.contentsOfDirectory(atPath: output.path)) == taskBefore, "late Task cancellation published output")
         let video = root.appendingPathComponent("marker.mov")
         try await fixture(video)
         let original = try Data(contentsOf: video), service = VideoAnimationService(root: root)
