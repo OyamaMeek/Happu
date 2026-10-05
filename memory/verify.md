@@ -1,5 +1,13 @@
 # 验证标准
 
+## IPA 自动 Release（2026-10-05）
+
+- 使用真实临时 Git 仓库验证无 tag 返回 v0.0.1、数字排序递增、非正式 tag 忽略、同提交轻量/附注 tag 复用、无 Git 仓库明确失败。
+- 本地构建 iphoneos Release，运行正式打包脚本；使用 Python zipfile/plistlib 校验 IPA 完整性、Payload/Happu.app、版本、构建号、编译时间和非空 arm64 Mach-O。
+- GitHub 工作流须触发 main 应用相关推送，contents:write、串行排队；上传完成后发布，失败不公开空 Release，重跑复用 tag/恢复草稿。
+- 读取远端工作流终态及 Release 资产，以实际结论报告。IPA 无 Apple 分发签名，供侧载工具重新签名；不声称真机安装或签名验证通过。
+- 当前证据：6项版本测试 RED exit1、GREEN exit0；独立审查的旧版本恢复覆盖 Latest 由2项 RED→GREEN 修复，完整9项通过。暂存内容导出的 Release Device 构建 exit0，实际 IPA ZIP/版本/构建号/arm64 校验及元数据2项通过。错误版本拒绝、不生成 IPA。YAML、全部 shell step 和 Python 编译检查通过；构建保留5项原有 API 弃用警告。证据位于 ignored DerivedData/HappuRelease/。
+
 ## Happu 更名与编译时间（2026-10-05）
 
 - 真实 XCUITest 验证首页 Happu、下载目录返回标题及关于应用名称，编译时间存在且重启不变。

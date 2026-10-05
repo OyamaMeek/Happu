@@ -1,0 +1,100 @@
+name: Publish IPA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Happu/**'
+      - 'Happu.xcodeproj/**'
+      - 'ArchiveBridge/**'
+      - 'Vendor/**'
+      - 'Package.swift'
+      - 'Package.resolved'
+      - 'scripts/release_version.py'
+      - 'scripts/package_ipa.py'
+      - 'Tests/test_release_version.py'
+      - '.github/workflows/release-ipa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: happu-release
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Test version allocation
+        run: python3 Tests/test_release_version.py
+
+      - name: Allocate or reuse release version
+        id: version
+        run: |
+          TAG=$(python3 scripts/release_version.py)
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          gh api --paginate --slurp "repos/$GH_REPO/releases?per_page=100" > releases.json
+          STATE=$(jq -r --arg tag "$TAG" '[.[][] | select(.tag_name == $tag)] | if length == 0 then "new" elif .[0].draft then "draft" else "published" end' releases.json)
+          echo "state=$STATE" >> "$GITHUB_OUTPUT"
+          LATEST=$(python3 scripts/release_version.py --latest releases.json)
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+
+      - name: Build Release for iPhone and iPad
+        if: steps.version.outputs.state != 'published'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          xcodebuild -version
+          xcodebuild -project Happu.xcodeproj -scheme Happu \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath DerivedData/IPA \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO build
+
+      - name: Package and verify IPA
+        if: steps.version.outputs.state != 'published'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python3 scripts/package_ipa.py \
+            DerivedData/IPA/Build/Products/Release-iphoneos/Happu.app \
+            "DerivedData/Happu-$VERSION.ipa" "$VERSION" "$GITHUB_RUN_NUMBER"
+
+      - name: Publish IPA to GitHub Release
+        if: steps.version.outputs.state != 'published'
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          STATE: ${{ steps.version.outputs.state }}
+          LATEST: ${{ steps.version.outputs.latest }}
+        run: |
+          if ! git show-ref --verify --quiet "refs/tags/$TAG"; then
+            git tag "$TAG" "$GITHUB_SHA"
+            git push origin "refs/tags/$TAG"
+          fi
+          if [ "$STATE" = new ]; then
+            gh release create "$TAG" --draft --verify-tag \
+              --title "Happu $VERSION" \
+              --notes "自动构建版本 $VERSION。IPA 供侧载工具重新签名安装。源代码提交：$GITHUB_SHA。"
+          fi
+          gh release upload "$TAG" "DerivedData/Happu-$VERSION.ipa" --clobber
+          gh release edit "$TAG" --draft=false --latest="$LATEST"
+
+      - name: Release link
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          echo "Release: https://github.com/$GH_REPO/releases/tag/$TAG" >> "$GITHUB_STEP_SUMMARY"

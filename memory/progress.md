@@ -1,5 +1,14 @@
 # 进度
 
+## 2026-10-05 IPA 自动 Release
+
+- [x] 读取工程、现有修改和远端；main/origin/main，远端暂无 Release，无现有工作流及 Apple 签名团队。
+- [x] 真实 Git tag 版本分配测试6项 RED exit1、GREEN exit0；无仓库错误检查通过。独立审查的旧版本恢复覆盖 Latest 已通过2项 RED→GREEN 修复，完整9项通过；公开版本比较忽略草稿及预发布。
+- [x] 实施自动构建、IPA 校验及草稿上传后发布，保留用户媒体改动。tag 在上传前指向实际提交；失败后可复用版本和恢复草稿。
+- [x] 导出暂存文件后的真实 Release Device 构建 exit0/BUILD SUCCEEDED；0.0.1/build1 的实际 arm64 IPA 校验和元数据2项 exit0。错误版本明确拒绝且没有产物；保留5项原有 API 弃用警告，未验证真机安装。
+- [ ] 远端工作流和首个 Release 验证。
+- [ ] 开发记录、对话归档、原子提交和普通推送。
+
 ## 2026-10-05 Happu 更名与编译时间
 
 - [x] 读取现有页面、工程、测试与用户修改；main/origin/main 保持，改动前副本保存在 ignored DerivedData/HappuRename/before。

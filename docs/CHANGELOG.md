@@ -881,3 +881,20 @@
 - **Git 提交**：`4ec303df5c56bc0b0d6c331b975afd99431d0ad1 feat: rename app to Happu and show build time`，提交及普通推送exit0，HEAD与origin/main一致。仅包含本次更名及编译时间；已有媒体改动通过原Git内容及独立暂存版本排除。
 
 ---
+
+## [2026-10-05 16:38] IPA 自动发布到 GitHub Release
+
+- **需求/问题描述**：
+  > 每次自动把 IPA 发布到 Release，版本号从 0.0.1 开始。
+- **实际实现的功能与改动**：
+  - main 应用及构建文件推送触发 GitHub Actions，串行构建 iphoneos Release；初始 v0.0.1，随后按最高正式版本 tag 的 patch 递增。同一提交重跑复用 tag，上传失败保留草稿并可重试。
+  - 应用版本和构建号由 Xcode 设置写入 Info.plist；真实 IPA 检查 Payload、包元数据、arm64 和 ZIP 完整性。上传完成才公开发布，文档及对话提交不额外触发。
+  - 无 Apple 分发证书，IPA 供侧载工具重新签名安装；保留已有媒体和依赖修改，构建验证使用暂存文件导出的代码。
+  - [测试/验证]：版本6项 RED exit1、GREEN exit0；独立审查发现的旧版本恢复覆盖 Latest 已通过2项 RED→GREEN 修复，最终完整9项通过。Release Device 构建 exit0/BUILD SUCCEEDED，实际 0.0.1/build1 IPA 校验及元数据2项通过。错误版本拒绝且没有输出；YAML/全部shell step/Python编译检查通过。保留5项既有 API 弃用警告；远端首次发布待取得，未验证真机安装。
+- **涉及文件**：
+  - `.github/workflows/release-ipa.yml`、`scripts/release_version.py`、`scripts/package_ipa.py`
+  - `Tests/test_release_version.py`、`Happu/Info.plist`、`Happu.xcodeproj/project.pbxproj`（仅版本设置）
+  - 本次 `memory/` 记录、`docs/CHANGELOG.md`、`context/2026/10/05/16-38-21/对话.md`
+- **Git 提交**：待提交。
+
+---
