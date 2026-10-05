@@ -822,6 +822,6 @@
   - `Package.swift`、`ShuReplica.xcodeproj/project.pbxproj`
   - `docs/SHU_VIDEO_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `docs/CHANGELOG.md`、`context/2026/10/05/08-15-49/对话.md`
-- **Git 提交**：待提交；验证已通过，正在保存原子提交与普通推送。
+- **Git 提交**：`47c420c055e984ddc223669d8fb89be8993c0c6f feat: add video conversion and editing`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
 
 ---

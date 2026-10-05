@@ -1,6 +1,6 @@
 # 进度
 
-- [x] 2026-10-05 媒体Task2服务验证：BASE=26e9e55，VideoService/VideoSmoke已实现，独立初审R1/R2补强。最终Mac87522完整13+扩展/边界及两个不兼容转码通过；音频33/图片/归档回归、Simulator/Device/build-for-testing退出0。最终iOS76484退出0，VideoRuntimeMJPEG.xcresult结构化1通过/0失败/0跳过，13项主要操作与全部扩展/边界通过，215.559秒；保留HAL初始化延迟及两条QoS警告。MotionJPEG→3GP实际不兼容样本替代iOS不具备codec的ProRes成功用例，Mac保留ProRes→MP4；断言未删除。提交与普通推送待当前收尾；完整目标active，下一项Task3动图，再Task4页面。
+- [x] 2026-10-05 媒体Task2服务：47c420c已提交并普通推送，HEAD=origin/main，index空；BASE=26e9e55，独立初审R1/R2补强。最终Mac87522完整13+扩展/边界及两个不兼容转码通过；音频33/图片/归档回归、三个构建退出0。最终iOS76484退出0，VideoRuntimeMJPEG.xcresult为1通过/0失败/0跳过，13项主要操作与全部扩展/边界通过，215.559秒；保留HAL延迟及两条QoS警告。iOS用实际不兼容的MotionJPEG→3GP，Mac另保留ProRes→MP4；同名自动编号，方向有向断言Minor交整体验收。当前无运行测试，完整目标active，下一项Task3动图，再Task4页面。
 
 - [x] 核实样本与范围，建立逆向授权记录。
 - [x] 从 Info.plist、中文字符串和内置指南识别栏目与功能。
