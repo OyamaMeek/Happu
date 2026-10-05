@@ -7,6 +7,7 @@
 - GitHub 工作流须触发 main 应用相关推送，contents:write、串行排队；上传完成后发布，失败不公开空 Release，重跑复用 tag/恢复草稿。
 - 读取远端工作流终态及 Release 资产，以实际结论报告。IPA 无 Apple 分发签名，供侧载工具重新签名；不声称真机安装或签名验证通过。
 - 当前证据：6项版本测试 RED exit1、GREEN exit0；独立审查的旧版本恢复覆盖 Latest 由2项 RED→GREEN 修复，完整9项通过。暂存内容导出的 Release Device 构建 exit0，实际 IPA ZIP/版本/构建号/arm64 校验及元数据2项通过。错误版本拒绝、不生成 IPA。YAML、全部 shell step 和 Python 编译检查通过；构建保留5项原有 API 弃用警告。证据位于 ignored DerivedData/HappuRelease/。
+- 远端有效终态：Actions 37285352308 completed/success，云端构建/校验/上传/公开全部success，v0.0.1 tag 指向 fb2e25031e83bc1807f8cd605a8a878d38531f60。Release为非草稿，资产Happu-0.0.1.ipa为uploaded/1,075,036 bytes且为Latest；实际公开链接下载exit0、元数据2项通过、0.0.1/build1/arm64确认。SHA-256为5b91580037153f96e81d96fcf81c1c07261627420bde037895fd2f917bf39a22，与GitHub digest相同。
 
 ## Happu 更名与编译时间（2026-10-05）
 

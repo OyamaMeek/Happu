@@ -6,8 +6,8 @@
 - [x] 真实 Git tag 版本分配测试6项 RED exit1、GREEN exit0；无仓库错误检查通过。独立审查的旧版本恢复覆盖 Latest 已通过2项 RED→GREEN 修复，完整9项通过；公开版本比较忽略草稿及预发布。
 - [x] 实施自动构建、IPA 校验及草稿上传后发布，保留用户媒体改动。tag 在上传前指向实际提交；失败后可复用版本和恢复草稿。
 - [x] 导出暂存文件后的真实 Release Device 构建 exit0/BUILD SUCCEEDED；0.0.1/build1 的实际 arm64 IPA 校验和元数据2项 exit0。错误版本明确拒绝且没有产物；保留5项原有 API 弃用警告，未验证真机安装。
-- [ ] 远端工作流和首个 Release 验证。
-- [ ] 开发记录、对话归档、原子提交和普通推送。
+- [x] GitHub Actions 37285352308 completed/success，全部步骤成功；公开 v0.0.1，Happu-0.0.1.ipa 为1,075,036 bytes，tag 指向功能提交。实际下载后元数据2项、0.0.1/build1/arm64及SHA-256与GitHub摘要一致；没有真机安装证据。
+- [x] 功能提交 fb2e25031e83bc1807f8cd605a8a878d38531f60 `feat: publish versioned IPA releases automatically` 已普通推送exit0。开发记录与截至归档的可见消息已保存；本次验证补记随文档提交保存。原有11文件264新增/84删除保持未提交。
 
 ## 2026-10-05 Happu 更名与编译时间
 
