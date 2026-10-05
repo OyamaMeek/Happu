@@ -841,6 +841,7 @@
   - `Vendor/ShuNetwork/Sources/Resources/index.html`、`sharing.js`、`sharing.css`
   - `BrowserTests/network-upload.cjs`、`Tests/NetworkSmoke.swift`、`Tests/NetworkRuntimeTests.swift`
   - `docs/NETWORK_SHARING_VERIFICATION.md`、`docs/CHANGELOG.md`、本次`memory/`记录和会话归档
-- **Git 提交**：待提交。
+- **Git 提交**：`cf00921e51fa138bd28ca1a0d1737ecbaa3d8a7b feat: automatically upload selected and dropped files`，提交及普通推送exit0；实际哈希通过后续文档提交保存。
+- **对话归档**：`context/2026/10/05/13-00-10/对话.md`，保存截至归档的10条用户与助手可见消息，排除内部推理和工具输出。
 
 ---
