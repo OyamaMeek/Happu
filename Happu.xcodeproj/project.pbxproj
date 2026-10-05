@@ -6,6 +6,7 @@
     objects = {
 
 /* Begin PBXBuildFile section */
+        AI1000000000000000000001 = {isa = PBXBuildFile; fileRef = AI2000000000000000000001; };
         AF1000000000000000000001 = {isa = PBXBuildFile; fileRef = AF2000000000000000000001; };
         AF1000000000000000000002 = {isa = PBXBuildFile; fileRef = AF2000000000000000000002; };
         AE1000000000000000000001 = {isa = PBXBuildFile; fileRef = AE2000000000000000000001; };
@@ -43,6 +44,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+        AI2000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Happu/Assets.xcassets; sourceTree = SOURCE_ROOT; };
         AF2000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAnimationService.swift; sourceTree = "<group>"; };
         AF2000000000000000000002 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAnimationSmoke.swift; sourceTree = "<group>"; };
         AE2000000000000000000001 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoService.swift; sourceTree = "<group>"; };
@@ -87,7 +89,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-        A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002, A40000000000000000000004, A40000000000000000000003, A40000000000000000000005, AC4000000000000000000001); sourceTree = "<group>"; };
+        A40000000000000000000001 = {isa = PBXGroup; children = (A40000000000000000000002, A40000000000000000000004, A40000000000000000000003, A40000000000000000000005, AC4000000000000000000001, AI2000000000000000000001); sourceTree = "<group>"; };
         AC4000000000000000000001 = {isa = PBXGroup; children = (AC2000000000000000000001, AC2000000000000000000002, AC2000000000000000000003, AD2000000000000000000001, AD2000000000000000000002, AD2000000000000000000003); name = Network; sourceTree = "<group>"; };
         A40000000000000000000002 = {isa = PBXGroup; children = (A20000000000000000000001, A20000000000000000000002, A20000000000000000000003, A20000000000000000000004, A20000000000000000000005, A20000000000000000000006, A20000000000000000000007, A2000000000000000000000A, A2000000000000000000000D, A20000000000000000000010, A20000000000000000000011, A20000000000000000000012, A20000000000000000000014, AB2000000000000000000001, AB2000000000000000000002, AE2000000000000000000001, AF2000000000000000000001, A20000000000000000000008); path = Happu; sourceTree = "<group>"; };
         A40000000000000000000003 = {isa = PBXGroup; children = (A20000000000000000000009, A2000000000000000000000C, AB2000000000000000000005); name = Products; sourceTree = "<group>"; };
@@ -96,7 +98,7 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-        A50000000000000000000001 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000002; buildPhases = (A30000000000000000000002, A30000000000000000000001, AH3000000000000000000001); buildRules = (); dependencies = (); name = Happu; packageProductDependencies = (AA0000000000000000000002, AA0000000000000000000004, AB0000000000000000000002, AC0000000000000000000002); productName = Happu; productReference = A20000000000000000000009; productType = "com.apple.product-type.application"; };
+        A50000000000000000000001 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000002; buildPhases = (A30000000000000000000002, A30000000000000000000001, AI3000000000000000000001, AH3000000000000000000001); buildRules = (); dependencies = (); name = Happu; packageProductDependencies = (AA0000000000000000000002, AA0000000000000000000004, AB0000000000000000000002, AC0000000000000000000002); productName = Happu; productReference = A20000000000000000000009; productType = "com.apple.product-type.application"; };
         A50000000000000000000002 = {isa = PBXNativeTarget; buildConfigurationList = A80000000000000000000003; buildPhases = (A30000000000000000000004, A30000000000000000000003); buildRules = (); dependencies = (A90000000000000000000001); name = HappuUITests; productName = HappuUITests; productReference = A2000000000000000000000C; productType = "com.apple.product-type.bundle.ui-testing"; };
         AB5000000000000000000001 = {isa = PBXNativeTarget; buildConfigurationList = AB8000000000000000000001; buildPhases = (AB3000000000000000000003, AB3000000000000000000002, AE3000000000000000000001); buildRules = (); dependencies = (A90000000000000000000001); name = HappuRuntimeTests; productName = HappuRuntimeTests; productReference = AB2000000000000000000005; productType = "com.apple.product-type.bundle.unit-test"; };
 /* End PBXNativeTarget section */
@@ -120,6 +122,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
+        AI3000000000000000000001 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AI1000000000000000000001); runOnlyForDeploymentPostprocessing = 0; };
         AE3000000000000000000001 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (AE1000000000000000000003); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
@@ -130,8 +133,8 @@
 /* Begin XCBuildConfiguration section */
         A70000000000000000000001 = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 18.0; ONLY_ACTIVE_ARCH = YES; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Debug; };
         A70000000000000000000002 = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; IPHONEOS_DEPLOYMENT_TARGET = 18.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Release; };
-        A70000000000000000000003 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = ""; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Happu/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 18.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 0.0.1; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTS_MACCATALYST = NO; SWIFT_OBJC_BRIDGING_HEADER = ArchiveBridge/ArchiveBridge.h; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
-        A70000000000000000000004 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = ""; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Happu/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 18.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 0.0.1; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTS_MACCATALYST = NO; SWIFT_OBJC_BRIDGING_HEADER = ArchiveBridge/ArchiveBridge.h; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
+        A70000000000000000000003 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Happu/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 18.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 0.0.1; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTS_MACCATALYST = NO; SWIFT_OBJC_BRIDGING_HEADER = ArchiveBridge/ArchiveBridge.h; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
+        A70000000000000000000004 = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Happu/Info.plist; IPHONEOS_DEPLOYMENT_TARGET = 18.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks"); MARKETING_VERSION = 0.0.1; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTS_MACCATALYST = NO; SWIFT_OBJC_BRIDGING_HEADER = ArchiveBridge/ArchiveBridge.h; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
         A70000000000000000000005 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 18.0; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = Happu; }; name = Debug; };
         A70000000000000000000006 = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 18.0; PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = Happu; }; name = Release; };
         AB7000000000000000000001 = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 18.0; LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks", "@loader_path/Frameworks"); PRODUCT_BUNDLE_IDENTIFIER = com.happu.shureplica.runtimetests; PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Happu.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Happu"; }; name = Debug; };

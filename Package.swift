@@ -14,7 +14,7 @@ let package = Package(
         name: "ShuServices",
         dependencies: ["ArchiveBridge", .product(name: "ShuNetwork", package: "ShuNetwork"), .product(name: "ZipArchive", package: "ZipArchive"), .product(name: "libwebp", package: "ShuWebP"), .product(name: "LAME", package: "LAME-xcframework")],
         path: "Happu",
-        exclude: ["PDFService.swift", "Info.plist", "HappuApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DocumentOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift", "NetworkSharingView.swift"],
+        exclude: ["Assets.xcassets", "PDFService.swift", "Info.plist", "HappuApp.swift", "FilesView.swift", "ArchiveOperationView.swift", "DocumentOperationView.swift", "DownloadRequest.swift", "DownloadManager.swift", "DownloadsView.swift", "MoreView.swift", "NetworkSharingView.swift"],
         sources: ["ArchiveService.swift", "FileStore.swift", "WorkspaceCategory.swift", "ImageService.swift", "MediaWorkspace.swift", "AudioService.swift", "VideoService.swift", "VideoAnimationService.swift", "NetworkSharingService.swift", "NetworkSharingAddresses.swift", "NetworkSharingQRCode.swift"],
         linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path"], .when(platforms: [.macOS]))]
     ), .executableTarget(

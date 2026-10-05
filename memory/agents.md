@@ -1,5 +1,7 @@
 # 当前工具与环境
 
+- 2026-10-05图标由root使用内置imagegen生成，参照本地Shu羽毛；sips规范化不透明1024PNG，Xcode原生Assets/AppIcon接入，两平台/签名构建与严格签名通过。媒体animation_review单次初审With fixes，root两项Important修复33c2aeb，实际RED/GREEN和hosted48通过；无实施/复查代理。
+
 - 媒体Task3由root直接实施，当前Happu源码/模块/工程沿用其它会话已推送更名和发布设置；AVAssetImageGenerator/ImageIO/逐帧libwebp1.6.0固定源码包Vendor/ShuWebP，仅两上游文件补保留单帧动画入口。Mac48、完整图片/视频/音频回归、三构建及当前hosted48已取得成功终态，待单次独立审查；不截图。
 
 - 2026-10-05 IPA 自动发布由 root 直接实施；GitHub Actions/macOS、xcodebuild、git、Python 标准库、ditto 和 runner 内置 gh。本机没有 gh，远端状态通过 GitHub connector 读取；当前 Apple 团队未配置，产物供侧载重新签名。不截图。

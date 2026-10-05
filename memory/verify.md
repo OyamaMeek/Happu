@@ -1,5 +1,12 @@
 # 验证标准
 
+## Happu 图标及媒体审查修复（2026-10-05）
+
+- 图标1024×1024、不透明PNG，原生Asset编译成功；Debug/Release均AppIcon，实际包有CFBundleIconName和各设备图标文件。生成图像已显示，未进行应用截图。
+- 动图内容重读须核对归一化像素，允许编码误差；同尺寸帧内容变化须拒绝且不发布。
+- 真实发布之后取消及暂存清理失败须撤回本次输出、保留同名旧文件；MediaWorkspace改变后完整Audio/Video/Animation相关回归与平台构建/hosted需重新取得终态。
+- 当前证据：Simulator15596、Device9243、签名69654/75694、严格codesign均exit0；Image+Animation93652完整通过，Audio33+Video13/边界90287顺序exit0；iOS69636及独立summary通过1/0/0，内部48及发布边界，28.378秒/runtimeWarnings=[]。媒体初审With fixes、root单次修复33c2aeb，不伪称独立复查Approved。
+
 ## Release 介绍（2026-10-05）
 
 - 实际 Git 仓库与 ZIP/plist 输入验证三个区块、首版、中文更新、仅当前区间、排除 docs 提交、同提交 tag 和北京时间转换；缺编译时间明确失败。
