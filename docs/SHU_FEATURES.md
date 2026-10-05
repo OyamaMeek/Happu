@@ -21,7 +21,7 @@
 | 多帧图片查看、按帧提取、动画完整性 | 指南、`public.btn.view.frames` | 服务已实现提取和 GIF/WebP 帧、时长、播放语义保留，真实自检和独立审查通过；显式选帧/全帧提取UI及实际输出内容重读通过，逐帧查看仍待补齐。 |
 | 视频 MP4/MOV/M4V/3GP 转换、质量压缩、提取/去除音频、区间剪辑 | 指南、`file.convert.video`、`file.compress.video`、`file.extract/remove.audio`、`public.trim.video` | VideoService与真实自检已实现，Mac13项及时间线/选轨/取消边界、三构建通过；iOS27完整方法1通过/0失败/0跳过，包含相同13项与扩展/边界。页面待Task4，提取复用已验收AudioService。证据见`docs/SHU_VIDEO_VALIDATION.md`。 |
 | 音频 M4A/WAV/MP3/CAF/FLAC 转换 | 指南、`file.convert.audio` | AudioService、固定LAME编码器、真实Mac/iOS33项及独立审查通过，759d1bd已普通推送；音频转换和提取页面待媒体Task4。 |
-| 视频转动图、动图帧率/颜色/质量 | 指南、`more.anim.*`、`more.gif.*` | GIF/WebP逐帧服务已实现，当前Happu Mac48输出及完整图片回归、三构建和iOS48均通过（22.956秒，方法1通过/0失败/0跳过）。审查/提交和Task4页面待完成。证据见`docs/SHU_ANIMATION_VALIDATION.md`。 |
+| 视频转动图、动图帧率/颜色/质量 | 指南、`more.anim.*`、`more.gif.*` | GIF/WebP逐帧服务已实现，完整Mac48/Image/Audio33/Video13回归、两平台与签名构建、iOS48及发布边界通过（28.378秒，方法1通过/0失败/0跳过）。单次初审两Important由root实际RED/GREEN修复，7d3a2eb/33c2aeb已推送；Task4页面待完成。证据见`docs/SHU_ANIMATION_VALIDATION.md`。 |
 | Photos 多选导入/导出、LivePhoto 导入/导出及转换 | 指南、`public.export.livephoto.*` | 待实施。 |
 | 相机扫描文档 | `file.scan.*` | 待实施；设备授权拒绝必须明确处理。 |
 | 通讯录预览/保存、VCF 合并 | `file.save/delete.contact`、`file.merge.vcf` | 待实施；删除需显式确认。 |

@@ -5,7 +5,8 @@
 - 参考：本地原版 `Payload/Shu.app/AppIcon60x60@3x.png`，仅作造型和色彩参考。
 - 生成方式：内置 imagegen；原始图像1254×1254，经系统sips规范为1024×1024不透明PNG。
 - 交付文件：`Happu/Assets.xcassets/AppIcon.appiconset/HappuIcon.png`；Debug与Release使用AppIcon，SwiftPM服务目标排除资源目录。
-- 验证：Simulator15596与Device9243构建退出0/BUILD SUCCEEDED；签名测试构建69654、补强用例后75694均退出0/TEST BUILD SUCCEEDED。实际包内iPhone/iPad的CFBundlePrimaryIcon/CFBundleIconName为AppIcon，包含AppIcon60x60与AppIcon76x76；小尺寸AppIcon60x60@2x.png为120×120。日志位于忽略的DerivedData/icon-*.log；推送待完成。
+- 验证：Simulator15596与Device9243构建退出0/BUILD SUCCEEDED；签名测试构建69654、补强用例后75694均退出0/TEST BUILD SUCCEEDED，codesign严格校验退出0。实际包内iPhone/iPad的CFBundlePrimaryIcon/CFBundleIconName为AppIcon，包含AppIcon60x60与AppIcon76x76；小尺寸AppIcon60x60@2x.png为120×120。日志位于忽略的DerivedData/icon-*.log。
+- Git：5735b9f提交并普通推送成功；生成图像已在会话中展示，完整生成提示词见下文。自动IPA新版本继续核实。
 
 ## 最终生成提示词
 

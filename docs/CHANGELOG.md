@@ -931,7 +931,7 @@
   - `Tests/VideoAnimationSmoke.swift`、`Tests/ImageSmoke.swift`、`Tests/MediaRuntimeTests.swift`
   - `Vendor/ShuWebP/`、`Package.swift`、`Package.resolved`、`Happu.xcodeproj/project.pbxproj`及共享SwiftPM锁文件
   - `docs/SHU_ANIMATION_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/`、`docs/CHANGELOG.md`、`context/2026/10/05/18-03-25/对话.md`
-- **Git 提交**：`7d3a2eb38ad8828c8b68279f9e28b2103a4fb6f3 feat: add configurable video animation conversion`；本地提交成功，单次初审With fixes，两项Important由root继续修复，普通推送待完成。
+- **Git 提交**：`7d3a2eb38ad8828c8b68279f9e28b2103a4fb6f3 feat: add configurable video animation conversion`；单次初审With fixes，两项Important通过33c2aeb修复；与图标一并普通推送31287退出0。
 
 ## [2026-10-05 18:27] 动图内容核对与最终发布撤回
 
@@ -946,7 +946,7 @@
   - `Happu/ImageService.swift`、`Happu/MediaWorkspace.swift`
   - `Tests/ImageSmoke.swift`、`Tests/VideoAnimationSmoke.swift`
   - `docs/SHU_ANIMATION_VALIDATION.md`、`docs/CHANGELOG.md`
-- **Git 提交**：`33c2aeb fix: verify animation content and withdraw cancelled outputs`；本地提交成功，普通推送与图标提交一并执行。
+- **Git 提交**：`33c2aeb642abd48f77126892d553ddb8e7fb730c fix: verify animation content and withdraw cancelled outputs`；与图标一并普通推送31287退出0。
 
 ## [2026-10-05 18:30] Happu 蓝紫羽毛应用图标
 
@@ -961,6 +961,6 @@
   - `Happu/Assets.xcassets/Contents.json`、`Happu/Assets.xcassets/AppIcon.appiconset/Contents.json`、`HappuIcon.png`
   - `Happu.xcodeproj/project.pbxproj`、`Package.swift`
   - `docs/HAPPU_ICON.md`、`memory/`、`docs/CHANGELOG.md`及本次会话归档
-- **Git 提交**：待提交；已完成图标与平台构建验证。
+- **Git 提交**：`5735b9f05f947432c263eb6996ee9a32756aa754 feat: add blue-purple feather app icon`；普通推送31287退出0，HEAD与origin/main一致；48条可见文字消息保存于`context/2026/10/05/18-32-58/对话.md`。GitHub自动IPA工作流终态继续核实，未宣称已发布新版本。
 
 ---
