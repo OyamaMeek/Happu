@@ -535,10 +535,10 @@ enum NetworkChecks {
             let root = URL(fileURLWithPath: CommandLine.arguments[1])
             let passed: Int
             switch CommandLine.arguments[2] {
-            case "serve-dav":
+            case "serve-dav", "serve-browser":
                 _ = try FileStore(root: root)
                 let service = NetworkSharingService(root: root)
-                try await service.start(folder: root, mode: .webDAV)
+                try await service.start(folder: root, mode: CommandLine.arguments[2] == "serve-dav" ? .webDAV : .browser)
                 FileHandle.standardOutput.write(Data("NETWORK_CURL_URL http://127.0.0.1:\(service.listeningPort!)/\n".utf8))
                 try await Task.sleep(for: .seconds(60))
                 try await service.stop(); return

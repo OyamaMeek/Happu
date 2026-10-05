@@ -6,6 +6,8 @@
 
 浏览器首页显示文稿、图片、视频、音频、电子书、压缩文档、镜像文件、脚本配置、工具配置、下载、共享及用户实际创建的目录和文件。下载目录的显示名称为“下载”，实际路径仍为 Downloads。支持导航、逐项上传进度、文件下载、新建目录和确认删除；同名文件明确拒绝覆盖。
 
+选择文件后立即上传；将文件或文件夹拖到页面也会自动上传到操作开始时的当前目录。文件夹保留顶层名称、嵌套层级和空目录；已有目录可以合并，同名文件拒绝覆盖并显示逐项错误。上传期间文件选择暂时禁用，完成后可继续添加；这一批文件的目标不会随页面导航改变。
+
 共享只在前台运行。切离共享页、关闭目录共享页、进入后台或锁屏会停止监听和在途传输；清理完成后才能重新启动，回到前台不会自动启动。WebDAV 支持 OPTIONS、PROPFIND Depth 0/1、GET/HEAD、PUT、MKCOL、DELETE、COPY、MOVE；无限查询深度及锁定方法明确拒绝，不宣称完整 Finder/Class 2 兼容性。
 
 ## 已取得的证据
@@ -22,6 +24,27 @@
 - 最终应用 `codesign --verify --deep --strict` 独立命令退出0；网页Impeccable机械检测一次退出0、输出空问题列表。最后Mac资源GET/HEAD与准确包字节13项退出0。
 
 ## 验证命令
+
+### 自动上传（2026-10-05）
+
+- Chrome真实文件选择与CDP原生拖放：8组通过，核对服务端实际磁盘字节；覆盖105个同级文件、空目录、中文与特殊名称、混合拖放、目录合并、文件冲突、忙碌保护、导航目标固定和原生File回退。测试为 `BrowserTests/network-upload.cjs`，无 mock。
+- 修改前选择文件用例exit1，20秒内未发生上传；实现后完整用例exit0，日志 `DerivedData/network-auto-final.log`。
+- Mac网络回归HTTP98、DAV37、资源13、MOVE3、提前COPY取消5、下载安全3均exit0。
+- iOS普通签名构建及完整NetworkRuntimeTests：隔离重跑exit0，`NetworkAutoUploadIsolated.xcresult` 为5通过/0失败/0跳过、无运行警告。初轮4通过/1失败，既有COPY响应时限测得411毫秒，隔离重跑通过；保留原始结果。
+- 目录行显示“文件夹已创建”，子项结果独立显示；只读代码审查及针对性复查无未解决问题。
+- 审查后最终Chrome8组再次exit0（`network-auto-reviewed.log`），最终普通签名Simulator及WebKit方法exit0；`NetworkAutoUploadReviewed.xcresult` 为1通过/0失败/0跳过、无运行警告。
+- 网页机械检测一次exit0、空问题列表；JavaScript语法和本次改动空白检查通过。设备签名构建因未配置Development Team失败，关闭签名的设备平台编译exit0；该结果仅证明编译。没有真机或视觉验证。
+
+安装了Node.js、Playwright及Chrome后，可使用新的项目内目录运行：
+
+```sh
+swift build --scratch-path DerivedData/NetworkPackage --product NetworkSmoke
+node BrowserTests/network-upload.cjs DerivedData/NetworkPackage/out/Products/Debug/NetworkSmoke DerivedData/AutoUpload-<唯一名称>
+```
+
+Playwright通过现有运行环境提供，本项目没有增加前端依赖。测试使用本机 `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`；服务器复用NetworkSmoke的 `serve-browser` 模式。
+
+### 网络服务
 
 CLI 使用项目根目录的 SwiftPM 清单，产物位于 `DerivedData/NetworkPackage`：
 

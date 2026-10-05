@@ -1,5 +1,13 @@
 # 验证标准
 
+## 网络共享自动上传（2026-10-05）
+
+- 真实 Chrome 通过文件选择和 CDP 原生文件拖放操作页面，访问同一 NetworkSharingService；检查实际磁盘字节，无 mock。
+- 验证选择即上传、拖入即上传、目录层级、空目录、特殊名称、105个同级文件完整读取、混合拖放、目录合并、同名拒绝覆盖及文件/目录冲突。
+- 验证读取/上传忙碌状态、批次目标目录固定、逐项错误与恢复；更新真实 WKWebView 上传回归。
+- 运行 HTTP/DAV/资源既有检查和 iOS 相关构建/测试，以实际退出码及 xcresult 为依据。未授权截图，不进行视觉检查。
+- 最终证据：Chrome8组exit0（network-auto-reviewed.log）；Mac各组exit0；NetworkAutoUploadIsolated为5/0/0，最终网页NetworkAutoUploadReviewed为1/0/0，两命令exit0、运行警告为空。generic Device关闭签名编译exit0，普通设备签名缺少Development Team。只读审查问题已关闭。
+
 ## 视频Task2（2026-10-05服务验证通过）
 
 - 四容器、高中低缩放与不放大、方向/帧内容、音轨/区间信号、时间偏移、多轨选择、路径/无覆盖/取消/清理真实验证；Mac与iOS hosted结果分别记录。普通签名Simulator/Device/build-for-testing依次运行，不进行视觉检查。

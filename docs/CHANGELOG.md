@@ -825,3 +825,22 @@
 - **Git 提交**：`47c420c055e984ddc223669d8fb89be8993c0c6f feat: add video conversion and editing`，提交及普通推送退出0；实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-05 12:58] 网络共享选择与拖放自动上传
+
+- **需求/问题描述**：
+  > 文件/文件夹拖动到里面自动上传，选择好文件也不用点“上传到这里”，直接上传。
+- **实际实现的功能与改动**：
+  - 删除二次上传按钮，选择文件和拖放文件/文件夹立即上传到当前目录。递归创建目录并保留空目录、顶层名称与嵌套层级；循环读取完整目录，超过100个条目不会遗漏。
+  - 复用既有目录POST和文件PUT，已有目录合并、同名文件拒绝覆盖；保留逐项进度、错误和汇总，忙碌时阻止重复拖放，导航后批次目标保持不变。
+  - 新增真实Chrome原生拖放测试，更新WKWebView自动上传测试；只读审查和针对性复查无未解决问题，目录行准确显示“文件夹已创建”。
+  - [验证]：修改前真实选择用例exit1，修改后Chrome8组exit0；Mac HTTP98/DAV37/资源13/MOVE3/COPY取消5/下载安全3均exit0。iOS完整网络隔离重跑exit0、5通过/0失败/0跳过、无运行警告；初轮既有COPY响应时限失败的结果保留。
+  - 普通签名Simulator构建及运行通过；generic Device签名缺少Development Team，关闭签名的设备平台编译exit0，仅证明编译。机械检测一次exit0/空问题列表；没有截图和真机互联验证。
+  - 审查后最终Chrome8组再次exit0，最终普通签名Simulator和WebKit方法exit0、1通过/0失败/0跳过，无运行警告。
+- **涉及文件**：
+  - `Vendor/ShuNetwork/Sources/Resources/index.html`、`sharing.js`、`sharing.css`
+  - `BrowserTests/network-upload.cjs`、`Tests/NetworkSmoke.swift`、`Tests/NetworkRuntimeTests.swift`
+  - `docs/NETWORK_SHARING_VERIFICATION.md`、`docs/CHANGELOG.md`、本次`memory/`记录和会话归档
+- **Git 提交**：待提交。
+
+---

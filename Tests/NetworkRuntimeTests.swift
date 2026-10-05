@@ -79,12 +79,12 @@ final class NetworkRuntimeTests: XCTestCase {
             throw NSError(domain: "BrowserChecks", code: 1)
         }
         try await wait("document.querySelectorAll('#entries li').length === 12")
-        let uploadDisabled = try await js("document.querySelector('#upload').disabled") as? Bool
+        let pickerReady = try await js("!document.querySelector('#files').disabled") as? Bool
         let folderTitle = try await js("document.querySelector('#folder-title')?.textContent") as? String
         let icons = try await js("document.querySelectorAll('#entries svg').length") as? Int
         let fitsPhone = try await js("document.documentElement.scrollWidth <= innerWidth") as? Bool
         let touchTarget = try await js("document.querySelector('#refresh').getBoundingClientRect().height >= 44") as? Bool
-        XCTAssertEqual(uploadDisabled, true)
+        XCTAssertEqual(pickerReady, true)
         XCTAssertEqual(folderTitle, "首页")
         XCTAssertEqual(icons, 24)
         XCTAssertEqual(fitsPhone, true)
@@ -102,18 +102,14 @@ final class NetworkRuntimeTests: XCTestCase {
         _ = try await js("location.hash=encodeURIComponent('网页目录')")
         try await wait("document.querySelector('#breadcrumbs').textContent.includes('网页目录') && document.querySelector('#entries').children.length===0")
         _ = try await js("const transfer=new DataTransfer(); transfer.items.add(new File(['真实页面上传'], '中文 空格.txt')); transfer.items.add(new File([], 'empty.txt')); transfer.items.add(new File([new Uint8Array(4194304).fill(37)], 'progress.bin')); document.querySelector('#files').files=transfer.files; document.querySelector('#files').dispatchEvent(new Event('change', {bubbles:true}))")
-        let selectedCount = try await js("document.querySelector('#selection').textContent") as? String
-        let canUpload = try await js("!document.querySelector('#upload').disabled") as? Bool
-        XCTAssertEqual(selectedCount, "已选择 3 个文件"); XCTAssertEqual(canUpload, true)
-        _ = try await js("document.querySelector('#upload').click()")
         try await wait("document.querySelectorAll('#uploads [data-result=success]').length===3")
         XCTAssertEqual(try Data(contentsOf: root.appendingPathComponent("网页目录/中文 空格.txt")), Data("真实页面上传".utf8))
         XCTAssertEqual(try Data(contentsOf: root.appendingPathComponent("网页目录/empty.txt")).count, 0)
         XCTAssertEqual(try Data(contentsOf: root.appendingPathComponent("网页目录/progress.bin")), Data(repeating: 37, count: 4194304))
         let progressEvent = try await js("document.querySelectorAll('#uploads progress[data-event=progress]').length > 0") as? Bool
         XCTAssertEqual(progressEvent, true)
-        try await wait("document.querySelector('#upload').disabled && document.querySelector('#files').files.length===0")
-        _ = try await js("const retry=new DataTransfer(); retry.items.add(new File(['真实页面上传'], '中文 空格.txt')); retry.items.add(new File([], 'empty.txt')); retry.items.add(new File([new Uint8Array(4194304).fill(37)], 'progress.bin')); document.querySelector('#files').files=retry.files; document.querySelector('#files').dispatchEvent(new Event('change', {bubbles:true})); document.querySelector('#upload').click()")
+        try await wait("!document.querySelector('#files').disabled && document.querySelector('#files').files.length===0")
+        _ = try await js("const retry=new DataTransfer(); retry.items.add(new File(['真实页面上传'], '中文 空格.txt')); retry.items.add(new File([], 'empty.txt')); retry.items.add(new File([new Uint8Array(4194304).fill(37)], 'progress.bin')); document.querySelector('#files').files=retry.files; document.querySelector('#files').dispatchEvent(new Event('change', {bubbles:true}))")
         try await wait("document.querySelectorAll('#uploads [data-result=error]').length===3")
         XCTAssertEqual(try Data(contentsOf: root.appendingPathComponent("网页目录/中文 空格.txt")), Data("真实页面上传".utf8))
         _ = try await js("Array.from(document.querySelectorAll('#entries li')).find(row=>row.dataset.name==='empty.txt').querySelector('button').click()")
@@ -128,7 +124,7 @@ final class NetworkRuntimeTests: XCTestCase {
         let sameFolder = try await js("location.hash === '#' + encodeURIComponent('网页目录') && document.activeElement.id === 'entries'") as? Bool
         XCTAssertEqual(sameFolder, true)
         try await service.stop()
-        print("NETWORK_BROWSER_RESULT {\"passed\":25,\"failed\":0,\"skipped\":0}")
+        print("NETWORK_BROWSER_RESULT {\"result\":\"passed\",\"scenario\":\"automatic-upload\"}")
     }
     func testHTTPFilesAndStop() async throws {
         let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("network-http-" + UUID().uuidString)
