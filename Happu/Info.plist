@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleDevelopmentRegion</key><string>zh_CN</string>
-    <key>CFBundleDisplayName</key><string>Shu Replica</string>
+    <key>CFBundleDisplayName</key><string>Happu</string>
     <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
@@ -11,6 +11,7 @@
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>1.0</string>
     <key>CFBundleVersion</key><string>1</string>
+    <key>HappuBuildTime</key><string></string>
     <key>LSRequiresIPhoneOS</key><true/>
     <key>NSAppTransportSecurity</key>
     <dict><key>NSAllowsArbitraryLoads</key><true/></dict>

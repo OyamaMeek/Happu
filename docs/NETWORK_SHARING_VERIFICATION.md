@@ -58,7 +58,7 @@ DerivedData/NetworkPackage/out/Products/Debug/NetworkSmoke DerivedData/TestRuns/
 DerivedData/NetworkPackage/out/Products/Debug/NetworkSmoke DerivedData/TestRuns/<唯一目录> download-safety
 ```
 
-iOS 验收目标是 ShuReplicaRuntimeTests/NetworkRuntimeTests；原生两方法位于 ShuReplicaUITests/ShuReplicaUITests。测试使用真实 URLSession、BSD socket、WKWebView、磁盘文件和接口地址，不使用 mock。构建、结果包及失败尝试保存在忽略的 DerivedData；以命令退出码和 xcresulttool 的结构化计数为准。
+iOS 验收目标是 HappuRuntimeTests/NetworkRuntimeTests；原生两方法位于 HappuUITests/HappuUITests。测试使用真实 URLSession、BSD socket、WKWebView、磁盘文件和接口地址，不使用 mock。构建、结果包及失败尝试保存在忽略的 DerivedData；以命令退出码和 xcresulttool 的结构化计数为准。
 
 ## 实测范围
 

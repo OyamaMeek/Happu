@@ -2,7 +2,7 @@ import Foundation
 import AVFoundation
 import CryptoKit
 #if os(iOS)
-@testable import ShuReplica
+@testable import Happu
 #else
 @testable import ShuServices
 #endif

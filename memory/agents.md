@@ -1,5 +1,7 @@
 # 当前工具与环境
 
+- 2026-10-05 当前工程为 `Happu.xcodeproj`，scheme/app/module 为 Happu，源码位于 Happu/；测试目标 HappuUITests、HappuRuntimeTests。root 直接实施本次更名，保留原安装标识和现有媒体改动；构建时间由 PlistBuddy 在签名前写入，SwiftUI/Foundation 在关于中显示。不截图。
+
 - 2026-10-05 自动上传由root直接实施，upload_review按requesting-code-review技能只读审查与复查，问题已关闭；浏览器使用已安装Chrome、bundled Node.js/Playwright与真实NetworkSmoke服务，目录读取采用File and Directory Entries API。保持main和已有用户修改；不截图。
 
 - 主实现：root直接执行已批准计划；视频Task2由video_review独立只读初审。SwiftUI / Foundation / AVFoundation / XCTest，Xcode 27.0。

@@ -1,7 +1,7 @@
 import Foundation
 import AVFoundation
 #if os(iOS)
-@testable import ShuReplica
+@testable import Happu
 #else
 @testable import ShuServices
 #endif

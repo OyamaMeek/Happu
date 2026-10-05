@@ -5,7 +5,7 @@ struct DownloadRequestSmoke {
     static func main() throws {
         let request = try DownloadRequest.make(
             urlText: "https://example.com/file.zip",
-            headersText: "User-Agent: ShuReplica\nCookie: session=abc"
+            headersText: "User-Agent: Happu\nCookie: session=abc"
         )
         assert(request.url?.absoluteString == "https://example.com/file.zip")
         assert(request.value(forHTTPHeaderField: "Cookie") == "session=abc")

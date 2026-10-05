@@ -11,6 +11,18 @@ struct MoreView: View {
     @State private var request: DocumentOperationRequest?
     @State private var errorMessage: String?
 
+    private var buildTime: String {
+        guard let timestamp = Bundle.main.object(forInfoDictionaryKey: "HappuBuildTime") as? String,
+              let date = ISO8601DateFormatter().date(from: timestamp) else {
+            preconditionFailure("应用包缺少有效的编译时间")
+        }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = .autoupdatingCurrent
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: date)
+    }
+
     var body: some View {
         Form {
             Section("传输") {
@@ -28,8 +40,9 @@ struct MoreView: View {
                 }
             }
             Section("关于") {
-                LabeledContent("应用", value: "Shu Replica")
+                LabeledContent("应用", value: "Happu")
                 LabeledContent("原版参考", value: "Shu 1.2.4")
+                LabeledContent("编译时间", value: buildTime)
             }
         }
         .navigationTitle("更多")

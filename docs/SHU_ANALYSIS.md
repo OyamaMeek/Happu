@@ -43,7 +43,7 @@ shasum -a 256 Payload/Shu.app/Shu
 
 ```mermaid
 flowchart TD
-    A[Shu Replica] --> B[文件]
+    A[Happu] --> B[文件]
     A --> C[下载]
     A --> D[更多]
     B --> E[工作区与文件分类]
@@ -73,4 +73,4 @@ ZIP 使用固定版本 SSZipArchive 2.6.0，提供单项及批量打包、普通
 - ZIP UI 测试目标编译通过；已有 XCTest runner 启动阻碍，新增菜单、密码和处理页测试未执行到测试方法，未声明触控或视觉验收通过。
 - PDF／图片、媒体、文本与结构化文档转换、下载增强、局域网传输和设置增强尚待实施，整体复刻未完成。
 
-在 Xcode 中打开 `ShuReplica.xcodeproj`，选择 iOS 18 或更高版本的设备运行；实体设备需在 Xcode 配置签名团队。当前使用 Xcode 27，部署目标为 iOS 18。
+在 Xcode 中打开 `Happu.xcodeproj`，选择 Happu scheme 和 iOS 18 或更高版本的设备运行；实体设备需在 Xcode 配置签名团队。当前使用 Xcode 27，部署目标为 iOS 18。首页标题和应用名称为 Happu；“更多 → 关于”显示本地时区的编译时间，每次构建自动更新。

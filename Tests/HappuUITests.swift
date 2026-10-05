@@ -1,7 +1,34 @@
 import XCTest
 import UIKit
 
-final class ShuReplicaUITests: XCTestCase {
+final class HappuUITests: XCTestCase {
+    func testHappuHomeAndAboutName() {
+        let app = XCUIApplication(); app.launch()
+        XCTAssertTrue(app.navigationBars["Happu"].waitForExistence(timeout: 5))
+        app.buttons["下载"].tap()
+        XCTAssertTrue(app.navigationBars["Downloads"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars.buttons["Happu"].exists)
+        app.tabBars.buttons["更多"].tap()
+        let name = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Happu")).firstMatch
+        reveal(name, in: app, list: app.collectionViews.firstMatch)
+        XCTAssertTrue(name.waitForExistence(timeout: 5))
+    }
+
+    func testAboutBuildTimeSurvivesRelaunch() {
+        let app = XCUIApplication(); app.launch()
+        app.tabBars.buttons["更多"].tap()
+        let label = app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "编译时间")).firstMatch
+        reveal(label, in: app, list: app.collectionViews.firstMatch)
+        XCTAssertTrue(label.waitForExistence(timeout: 5))
+        let timestamp = app.staticTexts.matching(NSPredicate(format: "label MATCHES %@", ".*[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.*")).firstMatch
+        XCTAssertTrue(timestamp.exists)
+        let compiled = timestamp.label
+        app.terminate(); app.launch()
+        app.tabBars.buttons["更多"].tap()
+        reveal(label, in: app, list: app.collectionViews.firstMatch)
+        XCTAssertEqual(timestamp.label, compiled)
+    }
+
     func testFileCategoriesAndDownloadsNavigation() {
         let app = XCUIApplication(); app.launch()
         XCTAssertTrue(app.staticTexts["文件分类"].waitForExistence(timeout: 5))
@@ -22,7 +49,7 @@ final class ShuReplicaUITests: XCTestCase {
         app.alerts.textFields["名称"].typeText(name)
         app.alerts.buttons["保存"].tap()
         XCTAssertTrue(app.buttons[name].waitForExistence(timeout: 5))
-        app.navigationBars.buttons["文件"].tap()
+        app.navigationBars.buttons["Happu"].tap()
         reveal(downloads, in: app, list: app.collectionViews.firstMatch)
         downloads.tap()
         XCTAssertTrue(app.buttons[name].waitForExistence(timeout: 5))
@@ -418,7 +445,7 @@ final class ShuReplicaUITests: XCTestCase {
         print("SYSTEM BROWSE LOCATIONS STATE: \(app.debugDescription)")
         let fileView = app.collectionViews["File View"]
         XCTAssertTrue(fileView.waitForExistence(timeout: 10))
-        let appFolder = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Shu Replica,")).firstMatch
+        let appFolder = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Happu,")).firstMatch
         for _ in 0..<6 {
             if appFolder.exists && appFolder.isHittable { break }
             let back = app.buttons["DOC.navBarButton.backInHistory"]

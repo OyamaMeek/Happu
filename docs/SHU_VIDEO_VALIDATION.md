@@ -48,4 +48,4 @@ ProRes夹具编码/97875失败后，真实ProRes输入/40769仍因Simulator缺�
 
 ## 复现入口
 
-Mac执行`swift run --scratch-path DerivedData/MediaPackage VideoSmoke <全新项目内目录>`。iOS执行共享ShuReplica scheme的build-for-testing，再在专用模拟器运行ShuReplicaRuntimeTests/MediaRuntimeTests；运行完读取xcresulttool test-results summary，不以编译代替方法通过。
+Mac执行`swift run --scratch-path DerivedData/MediaPackage VideoSmoke <全新项目内目录>`。iOS执行共享Happu scheme的build-for-testing，再在专用模拟器运行HappuRuntimeTests/MediaRuntimeTests；运行完读取xcresulttool test-results summary，不以编译代替方法通过。

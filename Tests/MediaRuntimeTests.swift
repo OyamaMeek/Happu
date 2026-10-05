@@ -1,5 +1,5 @@
 import XCTest
-@testable import ShuReplica
+@testable import Happu
 
 final class MediaRuntimeTests: XCTestCase {
     func testVideoContainersAndEdits() async throws {

@@ -21,7 +21,7 @@ struct FilesHomeView: View {
                 } label: { Label("下载", systemImage: "arrow.down.circle") }
             }
         }
-        .navigationTitle("文件")
+        .navigationTitle("Happu")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("一键归组", systemImage: "square.grid.2x2") {
@@ -130,7 +130,7 @@ struct FolderView: View {
                                        description: Text("从“文件”App 导入，或新建文件夹"))
             }
         }
-        .navigationTitle(folder == store.root ? "文件" : folder.lastPathComponent)
+        .navigationTitle(folder == store.root ? "Happu" : folder.lastPathComponent)
         .navigationBarTitleDisplayMode(folder == store.root ? .large : .inline)
         .searchable(text: $search, placement: .navigationBarDrawer(displayMode: .always), prompt: "搜索当前文件夹")
         .toolbar(selecting ? .hidden : .automatic, for: .tabBar)
@@ -405,6 +405,6 @@ struct FolderPicker: View {
             }
         }
         .accessibilityIdentifier("destination-folders")
-        .navigationTitle(folder == store.root ? "文件" : folder.lastPathComponent))
+        .navigationTitle(folder == store.root ? "Happu" : folder.lastPathComponent))
     }
 }

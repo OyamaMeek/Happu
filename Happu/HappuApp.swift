@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct ShuReplicaApp: App {
+struct HappuApp: App {
     private let startup: Result<Runtime, Error>
 
     init() {

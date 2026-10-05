@@ -1,5 +1,15 @@
 # 进度
 
+## 2026-10-05 Happu 更名与编译时间
+
+- [x] 读取现有页面、工程、测试与用户修改；main/origin/main 保持，改动前副本保存在 ignored DerivedData/HappuRename/before。
+- [x] 实际应用包元数据两项测试 RED exit1，暴露旧名称及缺失编译时间；初轮 UI 等待启动且无方法结果，以 TERM 结束 exit143，未记为行为 RED。
+- [x] 更名工程、代码引用及当前文档，构建阶段写入 UTC 编译时间、关于按本地时区显示；保留安装标识和原版参考。
+- [x] 签名测试构建、元数据2项及真实 UI 3项通过（NameGreen：3/0/0，运行警告为空）；增量时间由07:01:28Z变为07:08:43Z，签名校验 exit0。
+- [x] Release Device首次exit0但保留5条SwiftCompile异常诊断；最终复核exit0/BUILD SUCCEEDED、无error，实际arm64应用元数据2项通过。关闭设备签名，仅证明编译。
+- [x] rename_review只读审查无待修问题，独立核实UI计数及签名；当前iPhone 18 Pro安装/启动exit0，已打开Happu.xcodeproj。
+- [ ] 记录、归档、仅提交本次改动并普通推送。
+
 ## 2026-10-05 文件首页调整
 
 - [x] 读取首页、分类、交互测试和已有修改；确认 main 的 origin/main 推送目标。

@@ -3,7 +3,7 @@ import Darwin
 import ShuNetwork
 #if os(iOS)
 import XCTest
-@testable import ShuReplica
+@testable import Happu
 #else
 @testable import ShuServices
 #endif

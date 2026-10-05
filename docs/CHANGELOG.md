@@ -863,3 +863,21 @@
 - **Git 提交**：`0d66135118f1e7eaeea46bf25fac8f4d028a0650 fix: simplify file home navigation`，提交和普通推送 exit0；实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-05 15:12] Happu 更名与关于编译时间
+
+- **需求/问题描述**：
+  > 把首页标题换成 Happu，项目叫 Happu，所有 Shu Replica 的地方替换成 Happu，在关于下面加编译时间。
+- **实际实现的功能与改动**：
+  - 首页及工作区根目录标题、应用显示名、Xcode工程/target/scheme/module、App类型、源码目录与测试引用统一为Happu；同步当前使用说明及测试复现入口。保留安装标识、原版参考和历史记录，保护已有用户数据。
+  - 每次Debug/Release构建在签名前向最终Info.plist写入UTC编译时间；关于按本地时区显示到秒。应用重启不改变时间，增量构建自动刷新。
+  - [验证]：实际旧应用包元数据2项RED exit1，修改后Debug/Release各2项通过exit0；普通签名Simulator测试构建和增量构建exit0、严格签名校验exit0。NameGreen.xcresult为3通过/0失败/0跳过、运行警告为空，覆盖首页/返回/关于及编译时间重启保持。时间07:01:28Z→07:08:43Z。
+  - Release Device首次exit0但保留5条SwiftCompile异常诊断；最终复核exit0/BUILD SUCCEEDED、无error，实际arm64应用包元数据有效。设备构建关闭签名，没有真机运行证据。初轮UI等待启动后TERM exit143，无方法结果，未记为行为RED。
+  - 只读审查未发现待修问题，机械检测exit0/[]；当前iPhone 18 Pro模拟器安装与启动exit0，已打开Happu.xcodeproj。未进行截图或图像检查；已有媒体、依赖、工程及个人配置改动保持未提交。
+- **涉及文件**：
+  - `Happu/`、`Happu.xcodeproj/`（从原工程目录更名）、`Package.swift`
+  - `Tests/HappuUITests.swift`、`Tests/verify_app_metadata.py`及iOS测试模块引用
+  - `docs/SHU_ANALYSIS.md`、`docs/SHU_VIDEO_VALIDATION.md`、`docs/NETWORK_SHARING_VERIFICATION.md`、本次`memory/`记录、`docs/CHANGELOG.md`与对话归档
+- **Git 提交**：待提交；仅包含本次更名及编译时间，已有媒体改动通过原Git内容及独立暂存版本排除。
+
+---

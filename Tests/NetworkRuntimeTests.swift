@@ -1,7 +1,7 @@
 import XCTest
 import WebKit
 import CoreImage
-@testable import ShuReplica
+@testable import Happu
 
 @MainActor private final class BrowserConfirmation: NSObject, WKUIDelegate {
     var confirmations = 0

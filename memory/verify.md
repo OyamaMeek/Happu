@@ -1,5 +1,14 @@
 # 验证标准
 
+## Happu 更名与编译时间（2026-10-05）
+
+- 真实 XCUITest 验证首页 Happu、下载目录返回标题及关于应用名称，编译时间存在且重启不变。
+- 更名后普通签名测试构建和 generic Device 编译成功；最终应用 Info.plist 显示 Happu，并含有效 UTC 构建时间。
+- 连续两次构建实际写入不同时间，应用重启显示同一编译值；Debug/Release 均使用该构建阶段。
+- 保留用户媒体和工程改动；不运行截图或图像检查。只暂存本次差异及文件更名，历史日志/会话不重写。
+- 当前结果：实际应用包元数据 RED exit1/2失败，修改后 Debug/Release 各 GREEN exit0/2通过；初轮 UI 未产生方法结果、TERM exit143。签名 build-for-testing、增量 build 与严格签名校验 exit0；NameGreen.xcresult Passed/3通过0失败0跳过，runtimeWarnings为空。增量时间07:01:28Z→07:08:43Z，UI重启前后显示2026-10-05 15:01:28不变。
+- Release Device首次exit0但有5条SwiftCompile异常诊断，保留release-device.log；最终release-final.log exit0/BUILD SUCCEEDED、无error，实际arm64应用包有效。关闭签名，不代表真机/设备签名验证。当前用户模拟器安装/启动exit0、Xcode已打开新工程；只读审查无待修问题。机械检测exit0/[]，未进行截图或图像检查。
+
 ## 文件首页调整（2026-10-05）
 
 - 真实 XCUITest 确认“工作区”“所有文件”“共享”入口移除，下载位于工具配置之后，并能打开 Downloads、新建目录、返回后再次访问及删除。
