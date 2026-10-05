@@ -69,6 +69,8 @@
 
 ## 最新优先级
 
+- 媒体Task3按已批准逐帧API/PNG暂存/AVAssetImageGenerator方案实施，累计量化GIF/WebP边界，按真实采样、编码和解码验证计算进度。固定libwebp1.6.0改本地源码包，只有两个上游文件增加保留单帧动画入口，标准入口不变；不新增字节解析器。48输出矩阵、边界及hosted运行通过后再进入Task4。
+
 - 2026-10-05 网络共享已完成，恢复媒体Task2视频、Task3动图、Task4页面，由root直接实施，沿用main与普通推送授权。
 
 - 网络设计及实施计划均已获用户“确认”。`docs/superpowers/plans/2026-10-03-shu-local-network.md` 分为受限 HTTP/停止、DAV/浏览器、原生入口/地址/生命周期三任务；用户“你做啊”后由root直接实施，保留一次独立代码审查，沿用main和普通推送。

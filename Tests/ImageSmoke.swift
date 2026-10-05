@@ -187,6 +187,87 @@ struct ImageSmoke {
         }
     }
 
+    static func streaming(_ service: ImageService, root: URL, output: URL) throws {
+        let red = image(32, 24, color: CGColor(red: 1, green: 0, blue: 0, alpha: 1))
+        let blue = image(32, 24, color: CGColor(red: 0, green: 0, blue: 1, alpha: 1))
+        for format in [ImageFormat.gif, .webp] {
+            let fractional = try service.encodeAnimation(frameCount: 29, frameAt: { _ in red }, durations: Array(repeating: 1.0 / 29, count: 29), loop: 0, to: format, quality: 1, in: output, named: "stream-fractional-\(format)", progress: Progress())
+            let times = animation(fractional).0
+            precondition(times.count == 29 && abs(times.reduce(0, +) - 1) <= (format == .gif ? 0.01 : 0.001) + 1e-8, "Cumulative duration drift")
+            for loop in [0, 1, 4] {
+                var calls: [Int] = []
+                let progress = Progress()
+                let result = try service.encodeAnimation(frameCount: 3, frameAt: { index in
+                    calls.append(index)
+                    return index == 2 ? blue : red
+                }, durations: [0.03, 0.04, 0.03], loop: loop, to: format, quality: 1, in: output, named: "stream-\(format)-\(loop)", progress: progress)
+                precondition(calls == [0, 1, 2, 0, 1, 2], "Every frame must be encoded and validated on demand")
+                let frames = read(result), metadata = animation(result)
+                precondition(frames.count == 3 && pixel(frames[0])[0] > 230 && pixel(frames[1])[0] > 230 && pixel(frames[2])[2] > 230)
+                precondition(metadata.1 == loop && zip(metadata.0, [0.03, 0.04, 0.03]).allSatisfy { abs($0 - $1) < 0.0011 })
+                precondition(progress.completedUnitCount == 6 && progress.totalUnitCount == 6)
+                let single = try service.encodeAnimation(frameCount: 1, frameAt: { _ in red }, durations: [0.25], loop: loop, to: format, quality: 1, in: output, named: "stream-single-\(format)-\(loop)", progress: Progress())
+                precondition(animation(single).1 == loop && abs(animation(single).0[0] - 0.25) < 0.0011)
+            }
+            let before = Set(try manager.contentsOfDirectory(atPath: output.path))
+            for boundary in [1, 3, 6] {
+                let progress = Progress()
+                let observation = progress.observe(\.completedUnitCount) { value, _ in
+                    if value.completedUnitCount >= boundary { value.cancel() }
+                }
+                rejects(cancellation: true) {
+                    _ = try service.encodeAnimation(frameCount: 3, frameAt: { _ in red }, durations: [0.1, 0.1, 0.1], loop: 0, to: format, quality: 1, in: output, named: "stream-cancel", progress: progress)
+                }
+                observation.invalidate()
+                check(Set(try manager.contentsOfDirectory(atPath: output.path)) == before)
+                check(!(try manager.contentsOfDirectory(atPath: root.path)).contains { $0.hasPrefix(".image-") })
+            }
+            rejects("尺寸") {
+                _ = try service.encodeAnimation(frameCount: 2, frameAt: { $0 == 0 ? red : image(2, 2, color: CGColor(gray: 0, alpha: 1)) }, durations: [0.1, 0.1], loop: 0, to: format, quality: 1, in: output, named: "invalid-size", progress: Progress())
+            }
+            for times in [[0.0], [0.0001], [-0.1], [Double.nan], [Double.infinity], []] {
+                var calls = 0
+                rejects {
+                    _ = try service.encodeAnimation(frameCount: 1, frameAt: { _ in calls += 1; return red }, durations: times, loop: 0, to: format, quality: 1, in: output, named: "invalid-time", progress: Progress())
+                }
+                precondition(calls == 0)
+            }
+            for (count, quality, loop, outputFormat) in [(0, 1.0, 0, format), (1001, 1.0, 0, format), (1, 0.0, 0, format), (1, Double.nan, 0, format), (1, 1.0, -1, format), (1, 1.0, 65536, format), (1, 1.0, 0, ImageFormat.png)] {
+                var calls = 0
+                rejects {
+                    _ = try service.encodeAnimation(frameCount: count, frameAt: { _ in calls += 1; return red }, durations: Array(repeating: 0.1, count: max(0, count)), loop: loop, to: outputFormat, quality: quality, in: output, named: "invalid-params", progress: Progress())
+                }
+                precondition(calls == 0)
+            }
+            for failureAt in [2, 4] {
+                var calls = 0
+                rejects("provider failed") {
+                    _ = try service.encodeAnimation(frameCount: 3, frameAt: { _ in
+                        calls += 1
+                        if calls == failureAt { throw NSError(domain: "provider failed", code: 1, userInfo: [NSLocalizedDescriptionKey: "provider failed"]) }
+                        return red
+                    }, durations: [0.1, 0.1, 0.1], loop: 0, to: format, quality: 1, in: output, named: "invalid-provider", progress: Progress())
+                }
+                precondition(calls == failureAt)
+            }
+            check(Set(try manager.contentsOfDirectory(atPath: output.path)) == before)
+            check(!(try manager.contentsOfDirectory(atPath: root.path)).contains { $0.hasPrefix(".image-") })
+        }
+        autoreleasepool {
+            let wide = image(16384, 1, color: CGColor(gray: 0, alpha: 1))
+            rejects("16383") { _ = try service.encodeAnimation(frameCount: 1, frameAt: { _ in wide }, durations: [0.1], loop: 0, to: .webp, quality: 1, in: output, named: "invalid-wide", progress: Progress()) }
+            let large = image(6000, 5000, color: CGColor(gray: 0, alpha: 1))
+            var calls = 0
+            rejects("8000 万") { _ = try service.encodeAnimation(frameCount: 3, frameAt: { _ in calls += 1; return large }, durations: [0.1, 0.1, 0.1], loop: 0, to: .gif, quality: 1, in: output, named: "invalid-total", progress: Progress()) }
+            precondition(calls == 1)
+        }
+        let half = image(32, 24, color: CGColor(red: 1, green: 0, blue: 0, alpha: 0.5))
+        let singleAlpha = try service.encodeAnimation(frameCount: 1, frameAt: { _ in half }, durations: [0.25], loop: 4, to: .webp, quality: 1, in: output, named: "stream-single-alpha", progress: Progress())
+        let decoded = pixel(read(singleAlpha)[0])
+        precondition((126...130).contains(decoded[3]) && decoded[0] >= 120 && animation(singleAlpha).1 == 4 && abs(animation(singleAlpha).0[0] - 0.25) < 0.0011)
+        print("ImageSmoke streaming passed: lazy callbacks, duplicate and single frames, timing, loops, validation and cancellation")
+    }
+
     static func main() throws {
         let root = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true).standardizedFileURL
         precondition(!manager.fileExists(atPath: root.path), "Use a fresh test directory")
@@ -377,6 +458,7 @@ struct ImageSmoke {
         check(try Data(contentsOf: input) == original && Data(contentsOf: sentinel) == original)
         check(try Data(contentsOf: outsideSentinel) == original && manager.contentsOfDirectory(atPath: outside.path) == ["sentinel.png"])
         check(!(try manager.contentsOfDirectory(atPath: root.path)).contains { $0.hasPrefix(".image-") })
+        try streaming(service, root: root, output: output)
         print("ImageSmoke passed: six codecs, frame content/timing/loop, selection, extraction, orientation, white background, composition, collisions, validation, boundaries, cancellation, cleanup")
     }
 }

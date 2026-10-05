@@ -915,3 +915,22 @@
 - **Git 提交**：`cda0c6e86211ba39170449d64b649f491f035378 feat: 更新发布介绍，展示主要功能、本次更新与编译时间`，提交与普通推送exit0；远端验证及实际哈希通过后续文档提交保存。
 
 ---
+
+## [2026-10-05 18:03] 视频转GIF/WebP与逐帧动画编码
+
+- **需求/问题描述**：
+  > 持续完整复刻，完成已批准媒体Task3的动图帧率、颜色、质量、区间和循环参数。
+- **实际实现的功能与改动**：
+  - VideoAnimationService提供GIF/WebP输出、1–30fps、0–65535循环、六质量和四色，保留方向和区间内帧；PNG暂存后逐帧编码、验证和释放，按采样/编码/验证计进度。
+  - ImageService新增按需帧API，GIF/WebP累计边界量化，拒绝零尾帧和资源超限；失败/取消清理，同名编号且输入保持。固定libwebp1.6.0源码只在两个上游文件补保留单帧动画入口，标准入口保持。
+  - [测试/验证]：编译后stub、单帧WebP和累计时长均取得有效RED→GREEN。当前Happu Mac48真实输出及边界、完整Image（含透明单帧与两阶段回调失败）退出0；Video13完整扩展/边界和Audio33完整边界退出0。当前工程Simulator/Device/签名测试构建退出0；hosted iOS27方法1通过/0失败/0跳过、内部48/48，22.956秒，runtimeWarnings为空；原始API/PointerUI/Fig日志保留。
+  - 保留其它会话已推送的首页、更名、上传及IPA发布改动，并重新验证当前Happu工程。40条用户/助手可见消息按原顺序归档，排除内部控制、系统/开发者和工具输出。
+  - 独立审查待完成，媒体页面继续Task4；真机、iOS18/26运行和视觉尚未验证，完整目标保持。
+- **涉及文件**：
+  - `Happu/VideoAnimationService.swift`、`Happu/ImageService.swift`
+  - `Tests/VideoAnimationSmoke.swift`、`Tests/ImageSmoke.swift`、`Tests/MediaRuntimeTests.swift`
+  - `Vendor/ShuWebP/`、`Package.swift`、`Package.resolved`、`Happu.xcodeproj/project.pbxproj`及共享SwiftPM锁文件
+  - `docs/SHU_ANIMATION_VALIDATION.md`、`docs/SHU_FEATURES.md`、`docs/SHU_MEDIA_CAPABILITIES.md`、`memory/`、`docs/CHANGELOG.md`、`context/2026/10/05/18-03-25/对话.md`
+- **Git 提交**：待提交；独立审查及实际哈希记录随后保存。
+
+---

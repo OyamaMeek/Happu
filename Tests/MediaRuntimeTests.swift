@@ -2,6 +2,14 @@ import XCTest
 @testable import Happu
 
 final class MediaRuntimeTests: XCTestCase {
+    func testVideoAnimations() async throws {
+        let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("animation-runtime-" + UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let passed = try await AnimationChecks.run(root: root)
+        XCTAssertEqual(passed, 48)
+        print("ANIMATION_RUNTIME_RESULT {\"total\":48,\"passed\":\(passed),\"failed\":0,\"skipped\":0}")
+    }
+
     func testVideoContainersAndEdits() async throws {
         let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("video-runtime-" + UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: root) }

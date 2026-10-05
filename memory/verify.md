@@ -42,6 +42,8 @@
 - 运行 HTTP/DAV/资源既有检查和 iOS 相关构建/测试，以实际退出码及 xcresult 为依据。未授权截图，不进行视觉检查。
 - 最终证据：Chrome8组exit0（network-auto-reviewed.log）；Mac各组exit0；NetworkAutoUploadIsolated为5/0/0，最终网页NetworkAutoUploadReviewed为1/0/0，两命令exit0、运行警告为空。generic Device关闭签名编译exit0，普通设备签名缺少Development Team。只读审查问题已关闭。
 
+- 媒体Task3必要检查已运行：真实逐帧回调顺序为编码0…N-1及验证0…N-1，重复/单帧/透明帧和累计时间/循环；48输出覆盖GIF/WebP、1/10/29/30fps、0/1/4循环、六质量/四色、非整秒/短区间，累计误差≤0.01/0.001秒；非法、零尾帧、资源、路径、各阶段取消/清理真实验证。当前Happu Mac38559/Image14425、三构建90774/13993/4704和hosted5108退出0；AnimationHappuRuntime.xcresult独立summaryPassed/1pass/0fail/0skip/runtimeWarnings=[]、内部48、22.956秒。Video99822/Audio89847相关完整回归退出0。原始API/PointerUI/Fig日志及旧构建诊断保留，不宣称无系统诊断；审查/提交待完成，页面/真机/iOS18/26/视觉未验证。
+
 ## 视频Task2（2026-10-05服务验证通过）
 
 - 四容器、高中低缩放与不放大、方向/帧内容、音轨/区间信号、时间偏移、多轨选择、路径/无覆盖/取消/清理真实验证；Mac与iOS hosted结果分别记录。普通签名Simulator/Device/build-for-testing依次运行，不进行视觉检查。

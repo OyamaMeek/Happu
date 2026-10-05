@@ -96,6 +96,100 @@ struct ImageService {
 
     func frameCount(_ input: URL) throws -> Int { try open(input).sizes.count }
 
+    func encodeAnimation(frameCount: Int, frameAt: (Int) throws -> CGImage, durations: [Double], loop: Int, to format: ImageFormat, quality: Double, in folder: URL, named name: String, progress: Progress) throws -> URL {
+        try checkCancellation(progress)
+        try checkFolder(folder)
+        let outputName = try fileName(name, format: format)
+        guard format == .gif || format == .webp else { throw ImageServiceError("动画输出仅支持 GIF 和 WebP。") }
+        guard quality.isFinite, (0.1...1).contains(quality), (0...65535).contains(loop) else { throw ImageServiceError("动画质量必须为 0.1–1.0，循环数必须为 0–65535。") }
+        try checkCount(frameCount)
+        let unit = format == .gif ? 100.0 : 1000.0
+        let maximum = format == .gif ? 655.35 : 16777.215
+        guard durations.count == frameCount, durations.allSatisfy({ $0.isFinite && $0 > 0 && $0 <= maximum }) else { throw ImageServiceError("动画帧时长无效或无法用输出格式表示。") }
+        var elapsed = 0.0, previous = 0.0
+        let encodedDurations = try durations.map { duration -> Double in
+            elapsed += duration
+            let edge = (elapsed * unit).rounded(), encoded = (edge - previous) / unit
+            guard encoded > 0, encoded <= maximum else { throw ImageServiceError("动画帧时长无法用输出格式表示，请调整帧率或区间。") }
+            previous = edge
+            return encoded
+        }
+        let first = try frameAt(0)
+        try checkSize(first.width, first.height)
+        guard first.width * first.height <= 80_000_000 / frameCount else { throw ImageServiceError("输出所有帧合计不得超过 8000 万像素。") }
+        if format == .webp, first.width > 16383 || first.height > 16383 { throw ImageServiceError("WebP 宽高均不得超过 16383 像素。") }
+        func next(_ index: Int) throws -> CGImage {
+            try checkCancellation(progress)
+            let image = index == 0 ? first : try frameAt(index)
+            guard image.width == first.width, image.height == first.height else { throw ImageServiceError("动画所有帧尺寸必须相同。") }
+            return image
+        }
+        progress.totalUnitCount = Int64(frameCount * 2)
+        progress.completedUnitCount = 0
+        return try withStaging { staging in
+            let output = staging.appendingPathComponent("output." + format.rawValue)
+            if format == .webp {
+                try writeWebP(frameCount: frameCount, frameAt: next, animated: true, durations: encodedDurations, loop: loop, quality: quality, to: output, progress: progress, advance: true)
+            } else {
+                guard let writer = CGImageDestinationCreateWithURL(output as CFURL, UTType.gif.identifier as CFString, frameCount, nil) else { throw ImageServiceError("无法创建 GIF 编码器。") }
+                CGImageDestinationSetProperties(writer, [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: loop]] as CFDictionary)
+                for index in 0..<frameCount {
+                    try autoreleasepool {
+                        let image = try next(index)
+                        CGImageDestinationAddImage(writer, image, [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: encodedDurations[index]]] as CFDictionary)
+                        progress.completedUnitCount += 1
+                    }
+                }
+                try checkCancellation(progress)
+                guard CGImageDestinationFinalize(writer) else { throw ImageServiceError("GIF 动画编码失败。") }
+            }
+            try checkCancellation(progress)
+            let source = try open(output)
+            let tolerance = 1 / unit + 1e-8
+            guard source.sizes.count == frameCount, source.loop == loop, abs(source.durations.reduce(0, +) - elapsed) <= tolerance, zip(source.durations, encodedDurations).allSatisfy({ $0 > 0 && abs($0 - $1) <= tolerance }) else { throw ImageServiceError("输出动画帧数、时长或循环数核对失败。") }
+            try validateAnimation(source, frameAt: frameAt, progress: progress)
+            try checkCancellation(progress)
+            return try publish(output, in: folder, named: outputName, progress: progress)
+        }
+    }
+
+    private func validateAnimation(_ source: Source, frameAt: (Int) throws -> CGImage, progress: Progress) throws {
+        func validate(_ decoded: CGImage, _ index: Int) throws {
+            try checkCancellation(progress)
+            let expected = try frameAt(index)
+            guard decoded.width == expected.width, decoded.height == expected.height else { throw ImageServiceError("输出动画尺寸核对失败。") }
+            progress.completedUnitCount += 1
+        }
+        if source.webp {
+            try source.data.withUnsafeBytes { bytes in
+                var data = WebPData(bytes: bytes.bindMemory(to: UInt8.self).baseAddress, size: source.data.count)
+                guard let decoder = WebPAnimDecoderNewInternal(&data, nil, WEBP_DEMUX_ABI_VERSION) else { throw ImageServiceError("无法创建 WebP 解码器。") }
+                defer { WebPAnimDecoderDelete(decoder) }
+                var info = WebPAnimInfo()
+                guard WebPAnimDecoderGetInfo(decoder, &info) != 0 else { throw ImageServiceError("无法读取 WebP 信息。") }
+                for index in source.sizes.indices {
+                    try autoreleasepool {
+                        try checkCancellation(progress)
+                        var buffer: UnsafeMutablePointer<UInt8>?, timestamp: Int32 = 0
+                        guard WebPAnimDecoderGetNext(decoder, &buffer, &timestamp) != 0, let buffer else { throw ImageServiceError("WebP 帧解码失败。") }
+                        let pixels = Data(bytes: buffer, count: Int(info.canvas_width) * Int(info.canvas_height) * 4)
+                        guard let provider = CGDataProvider(data: pixels as CFData), let image = CGImage(width: Int(info.canvas_width), height: Int(info.canvas_height), bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: Int(info.canvas_width) * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue), provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) else { throw ImageServiceError("无法创建 WebP 验证图像。") }
+                        try validate(image, index)
+                    }
+                }
+            }
+        } else {
+            guard let native = source.native else { throw ImageServiceError("GIF 解码器缺失。") }
+            for index in source.sizes.indices {
+                try autoreleasepool {
+                    try checkCancellation(progress)
+                    guard let image = CGImageSourceCreateImageAtIndex(native, index, [kCGImageSourceShouldCache: false] as CFDictionary) else { throw ImageServiceError("GIF 帧解码失败。") }
+                    try validate(image, index)
+                }
+            }
+        }
+    }
+
     private struct Source {
         let data: Data
         let native: CGImageSource?
@@ -230,7 +324,7 @@ struct ImageService {
             guard (0...65535).contains(loop) else { throw ImageServiceError("动画循环数必须为 0–65535。") }
         }
         if format == .webp {
-            try writeWebP(frames, durations: durations, loop: loop, quality: quality, to: output, progress: progress, advance: advance)
+            try writeWebP(frameCount: frames.count, frameAt: { frames[$0] }, animated: frames.count > 1, durations: durations, loop: loop, quality: quality, to: output, progress: progress, advance: advance)
         } else {
             let types: [ImageFormat: String] = [.tiff: UTType.tiff.identifier, .gif: UTType.gif.identifier, .png: UTType.png.identifier, .jpeg: UTType.jpeg.identifier, .bmp: UTType.bmp.identifier]
             guard let type = types[format], let writer = CGImageDestinationCreateWithURL(output as CFURL, type as CFString, frames.count, nil) else { throw ImageServiceError("无法创建 \(format.rawValue) 编码器。") }
@@ -267,50 +361,54 @@ struct ImageService {
         }
     }
 
-    private func writeWebP(_ images: [CGImage], durations: [Double], loop: Int, quality: Double, to output: URL, progress: Progress, advance: Bool) throws {
+    private func writeWebP(frameCount: Int, frameAt: (Int) throws -> CGImage, animated: Bool, durations: [Double], loop: Int, quality: Double, to output: URL, progress: Progress, advance: Bool) throws {
         guard let mux = WebPNewInternal(WEBP_MUX_ABI_VERSION) else { throw ImageServiceError("无法创建 WebP 编码器。") }
         defer { WebPMuxDelete(mux) }
-        if images.count > 1 {
+        if animated {
             var params = WebPMuxAnimParams(bgcolor: 0, loop_count: Int32(loop))
             guard WebPMuxSetAnimationParams(mux, &params) == WEBP_MUX_OK else { throw ImageServiceError("WebP 动画参数设置失败。") }
         }
-        for (index, image) in images.enumerated() {
-            try checkCancellation(progress)
-            guard image.width <= 16383, image.height <= 16383 else { throw ImageServiceError("WebP 宽高均不得超过 16383 像素。") }
-            let context = try context(image.width, image.height, white: false)
-            context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
-            guard let pixels = context.data?.assumingMemoryBound(to: UInt8.self) else { throw ImageServiceError("无法读取 WebP 像素。") }
-            for offset in stride(from: 0, to: image.width * image.height * 4, by: 4) {
-                let alpha = Int(pixels[offset + 3])
-                if alpha > 0 && alpha < 255 {
-                    for channel in 0..<3 { pixels[offset + channel] = UInt8(min(255, (Int(pixels[offset + channel]) * 255 + alpha / 2) / alpha)) }
+        for index in 0..<frameCount {
+            try autoreleasepool {
+                try checkCancellation(progress)
+                let image = try frameAt(index)
+                guard image.width <= 16383, image.height <= 16383 else { throw ImageServiceError("WebP 宽高均不得超过 16383 像素。") }
+                let context = try context(image.width, image.height, white: false)
+                context.draw(image, in: CGRect(x: 0, y: 0, width: image.width, height: image.height))
+                guard let pixels = context.data?.assumingMemoryBound(to: UInt8.self) else { throw ImageServiceError("无法读取 WebP 像素。") }
+                for offset in stride(from: 0, to: image.width * image.height * 4, by: 4) {
+                    let alpha = Int(pixels[offset + 3])
+                    if alpha > 0 && alpha < 255 {
+                        for channel in 0..<3 { pixels[offset + channel] = UInt8(min(255, (Int(pixels[offset + channel]) * 255 + alpha / 2) / alpha)) }
+                    }
                 }
+                var encoded: UnsafeMutablePointer<UInt8>?
+                let count = WebPEncodeRGBA(pixels, Int32(image.width), Int32(image.height), Int32(image.width * 4), Float(quality * 100), &encoded)
+                guard count > 0, let encoded else { throw ImageServiceError("WebP 帧编码失败。") }
+                defer { WebPFree(encoded) }
+                let data = WebPData(bytes: encoded, size: count)
+                if !animated {
+                    var data = data
+                    guard WebPMuxSetImage(mux, &data, 1) == WEBP_MUX_OK else { throw ImageServiceError("WebP 图像封装失败。") }
+                } else {
+                    let milliseconds = (durations[index] * 1000).rounded()
+                    guard milliseconds.isFinite, (0...16_777_215).contains(milliseconds) else { throw ImageServiceError("WebP 单帧时长不得超过 16777.215 秒。") }
+                    var frame = WebPMuxFrameInfo()
+                    frame.bitstream = data
+                    frame.id = WEBP_CHUNK_ANMF
+                    frame.duration = Int32(milliseconds)
+                    frame.dispose_method = WEBP_MUX_DISPOSE_NONE
+                    frame.blend_method = WEBP_MUX_NO_BLEND
+                    guard WebPMuxPushFrame(mux, &frame, 1) == WEBP_MUX_OK else { throw ImageServiceError("WebP 动画帧封装失败。") }
+                }
+                if advance { progress.completedUnitCount += 1 }
             }
-            var encoded: UnsafeMutablePointer<UInt8>?
-            let count = WebPEncodeRGBA(pixels, Int32(image.width), Int32(image.height), Int32(image.width * 4), Float(quality * 100), &encoded)
-            guard count > 0, let encoded else { throw ImageServiceError("WebP 帧编码失败。") }
-            defer { WebPFree(encoded) }
-            let data = WebPData(bytes: encoded, size: count)
-            if images.count == 1 {
-                var data = data
-                guard WebPMuxSetImage(mux, &data, 1) == WEBP_MUX_OK else { throw ImageServiceError("WebP 图像封装失败。") }
-            } else {
-                let milliseconds = (durations[index] * 1000).rounded()
-                guard milliseconds.isFinite, (0...16_777_215).contains(milliseconds) else { throw ImageServiceError("WebP 单帧时长不得超过 16777.215 秒。") }
-                var frame = WebPMuxFrameInfo()
-                frame.bitstream = data
-                frame.id = WEBP_CHUNK_ANMF
-                frame.duration = Int32(milliseconds)
-                frame.dispose_method = WEBP_MUX_DISPOSE_NONE
-                frame.blend_method = WEBP_MUX_NO_BLEND
-                guard WebPMuxPushFrame(mux, &frame, 1) == WEBP_MUX_OK else { throw ImageServiceError("WebP 动画帧封装失败。") }
-            }
-            if advance { progress.completedUnitCount += 1 }
         }
         try checkCancellation(progress)
         var assembled = WebPData()
         defer { WebPFree(UnsafeMutableRawPointer(mutating: assembled.bytes)) }
-        guard WebPMuxAssemble(mux, &assembled) == WEBP_MUX_OK, let bytes = assembled.bytes else { throw ImageServiceError("WebP 文件封装失败。") }
+        let status = animated && frameCount == 1 ? ShuWebPMuxAssembleAnimation(mux, &assembled) : WebPMuxAssemble(mux, &assembled)
+        guard status == WEBP_MUX_OK, let bytes = assembled.bytes else { throw ImageServiceError("WebP 文件封装失败。") }
         try Data(bytes: bytes, count: assembled.size).write(to: output)
     }
 

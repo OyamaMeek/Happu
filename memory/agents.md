@@ -1,5 +1,7 @@
 # 当前工具与环境
 
+- 媒体Task3由root直接实施，当前Happu源码/模块/工程沿用其它会话已推送更名和发布设置；AVAssetImageGenerator/ImageIO/逐帧libwebp1.6.0固定源码包Vendor/ShuWebP，仅两上游文件补保留单帧动画入口。Mac48、完整图片/视频/音频回归、三构建及当前hosted48已取得成功终态，待单次独立审查；不截图。
+
 - 2026-10-05 IPA 自动发布由 root 直接实施；GitHub Actions/macOS、xcodebuild、git、Python 标准库、ditto 和 runner 内置 gh。本机没有 gh，远端状态通过 GitHub connector 读取；当前 Apple 团队未配置，产物供侧载重新签名。不截图。
 
 - 2026-10-05 当前工程为 `Happu.xcodeproj`，scheme/app/module 为 Happu，源码位于 Happu/；测试目标 HappuUITests、HappuRuntimeTests。root 直接实施本次更名，保留原安装标识和现有媒体改动；构建时间由 PlistBuddy 在签名前写入，SwiftUI/Foundation 在关于中显示。不截图。
