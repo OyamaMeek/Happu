@@ -907,10 +907,11 @@
 - **实际实现的功能与改动**：
   - v0.0.1 介绍已改为三个区块，主要功能覆盖文件管理、ZIP、PDF、图片、HTTP下载及局域网共享，编译时间读取其实际IPA，为北京时间2026-10-05 16:44:15；资产保持。
   - 后续发布从当前提交历史中的上一已公开正式Release至当前提交提取应用/构建相关更新，排除草稿、预发布、日志和会话提交；实际IPA时间转北京时间到秒。UTF-8 Markdown文件通过gh --notes-file创建及更新正文。
-  - [测试/验证]：介绍初始3项RED exit1→GREEN exit0；独立审查的草稿基线遗漏问题经行为RED→GREEN修复，历史ref/UTF-8文件补强通过，最终介绍5项及原版本9项通过；YAML/全部shell step通过。GitHubAPI更新并回读v0.0.1正文与生成文件一致，无U+FFFD；资产大小与SHA-256保持。新工作流远端运行待验证，不宣称真机安装验证。
+  - [测试/验证]：介绍初始3项RED exit1→GREEN exit0；独立审查的草稿基线遗漏问题经行为RED→GREEN修复，历史ref/UTF-8文件补强通过，最终介绍5项及原版本9项通过；YAML/全部shell step通过。GitHubAPI更新并回读v0.0.1正文与生成文件一致，无U+FFFD；资产大小与SHA-256保持。
+  - [远端验证]：[Actions 37286921639](https://github.com/OyamaMeek/Happu/actions/runs/37286921639) completed/success，全部步骤成功；[v0.0.2](https://github.com/OyamaMeek/Happu/releases/tag/v0.0.2)公开正文包含三个区块且中文正确，tag指向本次功能提交。实际公开IPA下载、ZIP CRC、0.0.2/build2及SHA-256与GitHub digest一致；包内2026-10-05T08:59:11Z与正文北京时间2026-10-05 16:59:11一致，资产1,075,041 bytes。未验证真机安装。
 - **涉及文件**：
   - `.github/workflows/release-ipa.yml`、`scripts/release_notes.py`、`docs/APP_FEATURES.md`、`Tests/test_release_notes.py`
   - 本次`memory/`、`docs/CHANGELOG.md`及会话归档；已有媒体修改保持。
-- **Git 提交**：待提交。
+- **Git 提交**：`cda0c6e86211ba39170449d64b649f491f035378 feat: 更新发布介绍，展示主要功能、本次更新与编译时间`，提交与普通推送exit0；远端验证及实际哈希通过后续文档提交保存。
 
 ---
