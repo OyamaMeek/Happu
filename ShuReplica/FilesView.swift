@@ -10,23 +10,15 @@ struct FilesHomeView: View {
 
     var body: some View {
         List {
-            Section("工作区") {
-                NavigationLink {
-                    FolderView(store: store, folder: store.root)
-                } label: { Label("所有文件", systemImage: "folder") }
-                NavigationLink {
-                    FolderView(store: store, folder: store.root.appendingPathComponent("Downloads"))
-                } label: { Label("下载", systemImage: "arrow.down.circle") }
-                NavigationLink {
-                    FolderView(store: store, folder: store.root.appendingPathComponent("共享"))
-                } label: { Label("共享", systemImage: "square.and.arrow.up") }
-            }
             Section("文件分类") {
                 ForEach(WorkspaceCategory.allCases, id: \.self) { category in
                     NavigationLink {
                         FolderView(store: store, folder: store.root.appendingPathComponent(category.rawValue))
                     } label: { Label(category.rawValue, systemImage: category.systemImage) }
                 }
+                NavigationLink {
+                    FolderView(store: store, folder: store.root.appendingPathComponent("Downloads"))
+                } label: { Label("下载", systemImage: "arrow.down.circle") }
             }
         }
         .navigationTitle("文件")

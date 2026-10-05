@@ -2,6 +2,38 @@ import XCTest
 import UIKit
 
 final class ShuReplicaUITests: XCTestCase {
+    func testFileCategoriesAndDownloadsNavigation() {
+        let app = XCUIApplication(); app.launch()
+        XCTAssertTrue(app.staticTexts["文件分类"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.staticTexts["工作区"].exists)
+        XCTAssertFalse(app.buttons["所有文件"].exists)
+        XCTAssertFalse(app.buttons["共享"].exists)
+        let downloads = app.buttons["下载"]
+        reveal(downloads, in: app, list: app.collectionViews.firstMatch)
+        let utility = app.buttons["工具配置"]
+        XCTAssertTrue(utility.exists)
+        XCTAssertLessThan(utility.frame.maxY, downloads.frame.midY)
+        downloads.tap()
+        XCTAssertTrue(app.navigationBars["Downloads"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.collectionViews["workspace-files"].exists)
+        let name = "000-下载导航-\(UUID().uuidString.prefix(6))"
+        app.buttons["新增"].tap()
+        app.buttons["新建文件夹"].tap()
+        app.alerts.textFields["名称"].typeText(name)
+        app.alerts.buttons["保存"].tap()
+        XCTAssertTrue(app.buttons[name].waitForExistence(timeout: 5))
+        app.navigationBars.buttons["文件"].tap()
+        reveal(downloads, in: app, list: app.collectionViews.firstMatch)
+        downloads.tap()
+        XCTAssertTrue(app.buttons[name].waitForExistence(timeout: 5))
+        app.buttons["编辑"].tap()
+        app.buttons[name].tap()
+        app.buttons["批量操作"].tap()
+        app.buttons["删除"].tap()
+        app.buttons["删除"].tap()
+        XCTAssertFalse(app.buttons[name].exists)
+    }
+
     @MainActor func testNetworkSharingLifecycleAndTransfer() async throws {
         let app = XCUIApplication(); app.launch()
         app.tabBars.buttons["网络共享"].tap()
@@ -17,14 +49,14 @@ final class ShuReplicaUITests: XCTestCase {
         defer { session.invalidateAndCancel() }
         let name = "网络上传-\(UUID().uuidString.prefix(6)).txt"
         let bytes = Data("实际原生入口共享文件".utf8)
-        var upload = URLRequest(url: url.appendingPathComponent("files").appendingPathComponent(name))
+        var upload = URLRequest(url: url.appendingPathComponent("files").appendingPathComponent("文稿").appendingPathComponent(name))
         upload.httpMethod = "PUT"; upload.httpBody = bytes
         let (_, uploaded) = try await session.data(for: upload)
         XCTAssertEqual((uploaded as! HTTPURLResponse).statusCode, 201)
         let (downloaded, _) = try await session.data(from: upload.url!)
         XCTAssertEqual(downloaded, bytes)
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["文稿"].tap()
         reveal(fileRow(app, name), in: app)
         XCTAssertTrue(fileRow(app, name).waitForExistence(timeout: 10))
         func waitClosed(_ url: URL) async throws {
@@ -78,12 +110,12 @@ final class ShuReplicaUITests: XCTestCase {
         app.buttons["下载"].tap()
         XCTAssertTrue(app.navigationBars["下载"].waitForExistence(timeout: 5))
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["文稿"].tap()
         app.buttons["新增"].tap()
         app.buttons["通过本地网络共享"].tap()
         XCTAssertTrue(app.navigationBars["本地网络共享"].waitForExistence(timeout: 5))
         app.buttons["完成"].tap()
-        XCTAssertTrue(app.navigationBars["文件"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["文稿"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.collectionViews["workspace-files"].exists)
     }
     override func setUp() {
@@ -94,7 +126,7 @@ final class ShuReplicaUITests: XCTestCase {
     func testArchiveMenusNamingProgressAndPassword() {
         let app = startApplication()
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["文稿"].tap()
         let folderName = "归档测试-\(UUID().uuidString.prefix(6))"
         app.buttons["新增"].tap()
         app.buttons["新建文件夹"].tap()
@@ -147,7 +179,7 @@ final class ShuReplicaUITests: XCTestCase {
         app.navigationBars.buttons["更多"].tap()
         XCTAssertTrue(app.navigationBars["更多"].waitForExistence(timeout: 5))
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["文稿"].tap()
 
         let folderName = "000-交互测试-\(UUID().uuidString.prefix(6))"
         app.buttons["新增"].tap()
@@ -157,6 +189,13 @@ final class ShuReplicaUITests: XCTestCase {
         name.tap()
         name.typeText(folderName)
         app.alerts.buttons["保存"].tap()
+
+        let excludedName = "001-筛选排除-\(UUID().uuidString.prefix(6))"
+        app.buttons["新增"].tap()
+        app.buttons["新建文件夹"].tap()
+        app.alerts.textFields["名称"].typeText(excludedName)
+        app.alerts.buttons["保存"].tap()
+        XCTAssertTrue(app.buttons[excludedName].waitForExistence(timeout: 5))
 
         app.buttons["编辑"].tap()
         print("SELECTION MENU STATE: \(app.debugDescription)")
@@ -175,7 +214,7 @@ final class ShuReplicaUITests: XCTestCase {
         search.typeText(folderName)
         XCTAssertEqual(count.label, selectedCount)
         XCTAssertEqual(search.value as? String, folderName)
-        XCTAssertFalse(app.buttons["Downloads"].exists)
+        XCTAssertFalse(app.buttons[excludedName].exists)
         XCTAssertTrue(app.keyboards.buttons["Search"].isHittable)
         app.keyboards.buttons["Search"].tap()
         let keyboardHidden = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.keyboards.firstMatch)
@@ -184,7 +223,7 @@ final class ShuReplicaUITests: XCTestCase {
         XCTAssertEqual(submitted, .completed)
         XCTAssertEqual(search.value as? String, folderName)
         XCTAssertEqual(count.label, selectedCount)
-        XCTAssertFalse(app.buttons["Downloads"].exists)
+        XCTAssertFalse(app.buttons[excludedName].exists)
         let originalCount = Int(selectedCount.split(separator: " ")[1])!
         XCTAssertTrue(app.buttons["选择"].isHittable)
         app.buttons["选择"].tap()
@@ -387,6 +426,9 @@ final class ShuReplicaUITests: XCTestCase {
             back.tap()
         }
         XCTAssertTrue(appFolder.exists && appFolder.isHittable)
+        let category = fileView.cells["文稿, Folder"]
+        reveal(category, in: app, list: fileView)
+        category.tap()
         let inputFolder = fileView.cells["DocumentUITests, Folder"]
         reveal(inputFolder, in: app, list: fileView)
         inputFolder.tap()
@@ -406,7 +448,10 @@ final class ShuReplicaUITests: XCTestCase {
         complete(app)
         app.buttons["关闭"].tap()
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["一键归组"].tap()
+        XCTAssertTrue(app.alerts["归组结果"].waitForExistence(timeout: 5))
+        app.alerts.buttons["好"].tap()
+        app.buttons["文稿"].tap()
         let imported = fileRow(app, "b.pdf")
         reveal(imported, in: app)
         XCTAssertTrue(imported.waitForExistence(timeout: 10))
@@ -415,7 +460,7 @@ final class ShuReplicaUITests: XCTestCase {
     private func workspace(_ folder: String) -> XCUIApplication {
         let app = startApplication()
         app.tabBars.buttons["文件"].tap()
-        app.buttons["所有文件"].tap()
+        app.buttons["文稿"].tap()
         reveal(app.buttons["DocumentUITests"], in: app)
         XCTAssertTrue(app.buttons["DocumentUITests"].waitForExistence(timeout: 10))
         app.buttons["DocumentUITests"].tap()
@@ -457,10 +502,10 @@ final class ShuReplicaUITests: XCTestCase {
         app.tabBars.buttons["文件"].tap()
         app.navigationBars.firstMatch.tap()
         for _ in 0..<4 {
-            if app.buttons["所有文件"].exists { break }
+            if app.buttons["一键归组"].exists { break }
             app.navigationBars.buttons.firstMatch.tap()
         }
-        XCTAssertTrue(app.buttons["所有文件"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["一键归组"].waitForExistence(timeout: 5))
         return app
     }
 
@@ -553,6 +598,9 @@ final class ShuReplicaUITests: XCTestCase {
         app.buttons["选择目的目录…"].tap()
         XCTAssertTrue(app.buttons["保存到这里"].waitForExistence(timeout: 10))
         print("DESTINATION PICKER STATE: \(app.debugDescription)")
+        let category = app.buttons.matching(NSPredicate(format: "label == %@ AND identifier != %@", "文稿", "BackButton")).firstMatch
+        reveal(category, in: app, list: app.collectionViews["destination-folders"])
+        category.tap()
         let folder = app.buttons.matching(NSPredicate(format: "label == %@ AND identifier != %@", "DocumentUITests", "BackButton")).firstMatch
         reveal(folder, in: app, list: app.collectionViews["destination-folders"])
         XCTAssertTrue(folder.waitForExistence(timeout: 5))
